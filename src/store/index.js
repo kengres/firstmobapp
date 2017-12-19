@@ -3,45 +3,21 @@ import Vuex from 'vuex'
 import * as firebase from 'firebase'
 
 // constant inti
-const LOG_KEY = 'timespentactivities'
+const ACTIVITIES_KEY = 'timespentactivities'
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
     user: null,
-    logs: [
-      {
-        date: '2017-12-13T00:00:00.000+03:00',
-        start: '2017-12-19T09:00:00.000+03:00',
-        lunchStart: '2017-12-19T12:10:00.000+03:00',
-        lunchEnd: '2017-12-19T12:50:00.000+03:00',
-        end: '2017-12-19T19:00:00.000+03:00'
-      },
-      {
-        date: '2017-12-14T00:00:00.000+03:00',
-        start: '2017-12-19T09:00:00.000+03:00',
-        lunchStart: '2017-12-19T12:10:00.000+03:00',
-        lunchEnd: '2017-12-19T12:50:00.000+03:00',
-        end: '2017-12-19T19:00:00.000+03:00'
-      },
-      {
-        date: '2017-12-15T00:00:00.000+03:00',
-        start: '2017-12-19T09:00:00.000+03:00',
-        lunchStart: '2017-12-19T12:10:00.000+03:00',
-        lunchEnd: '2017-12-19T12:50:00.000+03:00',
-        end: '2017-12-19T19:00:00.000+03:00'
-      }
-    ],
-    addNewOpened: false,
+    activities: null,
     loading: false,
     error: null
   },
   getters: {
     user: state => state.user,
-    logs: state => state.logs,
-    singleLog: state => state.singleLog,
-    addNewOpened: state => state.addNewOpened,
+    activities: state => state.activities,
+    singleActivity: state => state.singleActivity,
     loading: state => state.loading,
     error: state => state.error
   },
@@ -49,14 +25,11 @@ const store = new Vuex.Store({
     setUser (state, payload) {
       state.user = payload
     },
-    setLogs (state, payload) {
-      state.logs = payload
+    setActivities (state, payload) {
+      state.activities = payload
     },
-    setNewOpened (state, payload) {
-      state.addNewOpened = payload
-    },
-    addLog (state, payload) {
-      state.logs.push(payload)
+    addActivity (state, payload) {
+      state.activities.push(payload)
     },
     setLoading (state, payload) {
       state.loading = payload
@@ -69,8 +42,9 @@ const store = new Vuex.Store({
     setUser ({ commit }, payload) {
       commit('setUser', payload)
     },
-    loadLogs ({ commit }, payload) {
-      firebase.database().ref(LOG_KEY).once('value')
+    loadActivities ({ commit }, payload) {
+      commit('setLoading', true)
+      firebase.database().ref(ACTIVITIES_KEY).once('value')
         .then(response => {
           const dataObj = response.val()
           const apiLogs = []
@@ -85,15 +59,17 @@ const store = new Vuex.Store({
               apiLogs.push(newLog)
             }
           }
-          console.log('logs from firebase: ', apiLogs)
-          commit('setLogs', apiLogs)
+          console.log('activities from firebase: ', apiLogs)
+          commit('setActivities', apiLogs)
+          commit('setLoading', false)
         })
         .catch(error => {
-          console.log('error fetching logs: ', error)
+          console.log('error fetching activities: ', error)
+          commit('setLoading', false)
         })
     },
-    addLog ({ commit }, payload) {
-      commit('addLog', payload)
+    addActivity ({ commit }, payload) {
+      commit('addActivity', payload)
     },
     setLoading ({ commit }, payload) {
       commit('setLoading', payload)
@@ -140,11 +116,8 @@ const store = new Vuex.Store({
         id: payload.uid
       })
     },
-    setNewOpened ({commit}, payload) {
-      commit('setNewOpened', payload)
-    },
     fetchUserData ({commit, getters}) {
-      firebase.database().ref('/users/' + getters.user.id + `/${LOG_KEY}/`).once('value')
+      firebase.database().ref('/users/' + getters.user.id + `/${ACTIVITIES_KEY}/`).once('value')
         .then(data => {
           console.log(data)
         })
@@ -157,7 +130,7 @@ const store = new Vuex.Store({
         ...payload,
         creatorId: getters.user.id
       }
-      firebase.database().ref(LOG_KEY).push(newLog)
+      firebase.database().ref(ACTIVITIES_KEY).push(newLog)
         .then(response => {
           console.log('added log: ', response)
         })
