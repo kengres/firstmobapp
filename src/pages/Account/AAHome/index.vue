@@ -1,5 +1,5 @@
 <template>
-  <q-layout class="layout-padding">
+  <q-layout ref="mainLayout" class="layout-padding">
     <q-card>
 
       <q-item>
@@ -73,12 +73,18 @@
       </q-modal>
 
     </q-card>
+
+    <q-fixed-position corner="bottom-right" :offset="[20, 20]">
+      <q-btn round color="positive" @click="addNewLog" icon="add" />
+    </q-fixed-position>
+
   </q-layout>
 </template>
 <script>
 import avatar from 'assets/boy-avatar.jpg'
-import { diffDate, addZero } from '../../../config'
+import { diffDate, addZero, addActivityPath, loginPath } from '../../../config'
 import { ActionSheet, Toast } from 'quasar'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'home',
@@ -90,20 +96,28 @@ export default {
     }
   },
   created () {
-    console.log('home created..., welcome msg')
     this.$store.dispatch('loadLogs')
     this.welcomeMessage()
   },
-  mounted () {
-    console.log('home mounted...')
-    this.$store.dispatch('loadLogs')
+  watch: {
+    user (value) {
+      console.log('user value changed in Home. logout??? ', value)
+      if (!value) {
+        this.$refs.mainLayout.hideCurrentSide(() => {
+          this.$router.push({
+            path: loginPath,
+            query: {
+              msg: 'goodbye'
+            }
+          })
+        })
+      }
+    }
   },
   computed: {
+    ...mapGetters(['user', 'logs']),
     queryMsg () {
       return this.$route.query ? (this.$route.query.msg ? this.$route.query.msg : null) : null
-    },
-    logs () {
-      return this.$store.getters.logs
     },
     displayLogs () {
       const newLogs = []
@@ -159,6 +173,11 @@ export default {
           timeout: 4000
         })
       }
+    },
+    addNewLog () {
+      this.$router.push({
+        path: addActivityPath
+      })
     },
     getTheDate (value) {
       const d = new Date(value)

@@ -2,13 +2,14 @@ export const landingPath = '/'
 export const homePath = '/account'
 export const loginPath = '/login'
 export const registerPath = '/register'
+export const addActivityPath = '/add-activity'
 
 export const nav = {
   landingUrl: landingPath,
   loginUrl: loginPath,
   registerUrl: registerPath,
   homeUrl: homePath,
-  addLogUrl: '/addlog'
+  addActivityUrl: addActivityPath
 }
 export const diffDate = (dateA, dateB) => {
   const start = new Date(dateA)

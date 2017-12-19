@@ -37,13 +37,17 @@ export default (Vue) => {
       })
     },
     logUserOut () {
-      firebase.auth().signOut()
-        .then(resp => {
-          console.log('sing out resp: ', firebase)
-        })
-        .catch(error => {
-          console.log('sing out error: ', error)
-        })
+      return new Promise((resolve, reject) => {
+        firebase.auth().signOut()
+          .then(resp => {
+            console.log('sing out resp: ', resp)
+            resolve(resp)
+          })
+          .catch(error => {
+            console.log('sing out error: ', error)
+            reject(error)
+          })
+      })
     }
   }
 

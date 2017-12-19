@@ -20,24 +20,14 @@
   </q-list>
 </template>
 <script>
-import {
-  QList,
-  QListHeader,
-  QItem,
-  QItemSide,
-  QItemMain
-} from 'quasar'
+// import { loginPath } from '../../config'
 export default {
-  components: {
-    QList,
-    QListHeader,
-    QItem,
-    QItemSide,
-    QItemMain
-  },
   methods: {
     logout () {
       this.$auth.logUserOut()
+        .then(resp => {
+          this.$store.dispatch('setUser', null)
+        })
     }
   }
 }

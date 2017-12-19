@@ -6,7 +6,7 @@ import Login from '@/Login'
 import Register from '@/Register'
 // components
 // import Account from '@/Account.vue'
-// import AddLog from '@/AddLog.vue'
+import AddActivity from '@/Account/Activity/addActivity'
 import Layout from '@/Layout.vue'
 // into account
 import Home from '@/Account/AAHome'
@@ -82,6 +82,10 @@ export const routes = [
       {
         path: nav.homeUrl,
         component: Home
+      },
+      {
+        path: nav.addActivityUrl,
+        component: AddActivity
       }
     ]
   },

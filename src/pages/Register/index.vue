@@ -46,7 +46,8 @@
   </q-layout>
 </template>
 <script>
-import { loginPath } from '../../config'
+import { loginPath, homePath } from '../../config'
+import { Toast } from 'quasar'
 export default {
   data () {
     return {
@@ -59,9 +60,51 @@ export default {
       }
     }
   },
+  watch: {
+    user (value) {
+      console.log('user value changed: ', value)
+      if (value) {
+        this.$router.push({
+          path: homePath,
+          query: {
+            msg: 'success'
+          }
+        })
+      }
+    }
+  },
+  computed: {
+    user () {
+      return this.$store.getters.user
+    }
+  },
   methods: {
     saveUser () {
       console.log('saving user...')
+      const data = this.userForm
+      for (const formInput in data) {
+        if (data.hasOwnProperty(formInput)) {
+          const element = data[formInput]
+          if (element === '') {
+            this.notifyError(`${formInput} must not be empty!`)
+            return
+          }
+        }
+      }
+      const patt = /^\w+([.-]? w+)*@\w+([.-]? w+)*(\.\w{2,3})+$/
+      if (!patt.test(data.email)) {
+        this.notifyError('You have an invalid email!')
+        return
+      }
+      if (data.password !== data.password2) {
+        this.notifyError('Password don\'t match!')
+        return
+      }
+      console.log('form: ', this.userForm)
+      this.$store.dispatch('signUserUp', data)
+    },
+    notifyError (msg) {
+      Toast.create(msg)
     }
   }
 }

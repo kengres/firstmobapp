@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import * as firebase from 'firebase'
 
 // constant inti
-const LOG_KEY = 'timespentlogs'
+const LOG_KEY = 'timespentactivities'
 
 Vue.use(Vuex)
 
@@ -33,6 +33,7 @@ const store = new Vuex.Store({
         end: '2017-12-19T19:00:00.000+03:00'
       }
     ],
+    addNewOpened: false,
     loading: false,
     error: null
   },
@@ -40,6 +41,7 @@ const store = new Vuex.Store({
     user: state => state.user,
     logs: state => state.logs,
     singleLog: state => state.singleLog,
+    addNewOpened: state => state.addNewOpened,
     loading: state => state.loading,
     error: state => state.error
   },
@@ -49,6 +51,9 @@ const store = new Vuex.Store({
     },
     setLogs (state, payload) {
       state.logs = payload
+    },
+    setNewOpened (state, payload) {
+      state.addNewOpened = payload
     },
     addLog (state, payload) {
       state.logs.push(payload)
@@ -99,10 +104,14 @@ const store = new Vuex.Store({
     signUserUp ({ commit }, payload) {
       firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
         .then(data => {
-          console.log(data)
+          console.log('data after user create: ', data)
           const newUser = {
             id: data.uid
           }
+          firebase.database().ref('users').child(data.uid).set({
+            name: payload.name,
+            email: data.email
+          })
           commit('setUser', newUser)
         })
         .catch(error => {
@@ -131,6 +140,9 @@ const store = new Vuex.Store({
         id: payload.uid
       })
     },
+    setNewOpened ({commit}, payload) {
+      commit('setNewOpened', payload)
+    },
     fetchUserData ({commit, getters}) {
       firebase.database().ref('/users/' + getters.user.id + `/${LOG_KEY}/`).once('value')
         .then(data => {
@@ -140,8 +152,11 @@ const store = new Vuex.Store({
           console.log(error)
         })
     },
-    createLog ({ commit }, payload) {
-      const newLog = payload
+    createActivity ({ commit, getters }, payload) {
+      const newLog = {
+        ...payload,
+        creatorId: getters.user.id
+      }
       firebase.database().ref(LOG_KEY).push(newLog)
         .then(response => {
           console.log('added log: ', response)

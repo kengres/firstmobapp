@@ -59,6 +59,9 @@ export default {
           timeout: 4000
         })
       }
+      else if (this.queryMsg === 'goodbye') {
+        Toast.create.info('See you next time.')
+      }
     },
     login () {
       console.log('login...')
