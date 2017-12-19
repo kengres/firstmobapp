@@ -32,6 +32,7 @@
 </template>
 <script>
 import { registerPath, homePath } from '../../config'
+import { Toast } from 'quasar'
 export default {
   data () {
     return {
@@ -42,7 +43,23 @@ export default {
       }
     }
   },
+  mounted () {
+    this.welcomeMessage()
+  },
+  computed: {
+    queryMsg () {
+      return this.$route.query ? (this.$route.query.msg ? this.$route.query.msg : null) : null
+    }
+  },
   methods: {
+    welcomeMessage () {
+      if (this.queryMsg === 'noToken') {
+        Toast.create.negative({
+          html: 'Please login first!',
+          timeout: 4000
+        })
+      }
+    },
     login () {
       console.log('login...')
       const email = this.loginForm.email

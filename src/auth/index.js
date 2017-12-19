@@ -4,24 +4,29 @@ import 'firebase/auth'
 export default (Vue) => {
   Vue.auth = {
     firebaseInit () {
-      console.log('initializing the firebase...')
-      firebase.initializeApp({
-        apiKey: 'AIzaSyCNrNZbm97DWP4kFi_SQgp13hiz2xVrgqk',
-        authDomain: 'time-spent-app.firebaseapp.com',
-        databaseURL: 'https://time-spent-app.firebaseio.com',
-        projectId: 'time-spent-app',
-        storageBucket: 'time-spent-app.appspot.com'
-      })
+      if (firebase.apps.length === 0) {
+        console.log('initializing the firebase...')
+        firebase.initializeApp({
+          apiKey: 'AIzaSyCNrNZbm97DWP4kFi_SQgp13hiz2xVrgqk',
+          authDomain: 'time-spent-app.firebaseapp.com',
+          databaseURL: 'https://time-spent-app.firebaseio.com',
+          projectId: 'time-spent-app',
+          storageBucket: 'time-spent-app.appspot.com'
+        })
+        return
+      }
+      console.log('already have firebase... returning')
     },
     getUser () {
-      if (firebase.apps) {
-        console.log('firebase: ', firebase)
-        // this.firebaseInit()
+      if (firebase.apps.length === 0) {
+        console.log('no firebase in get user... initializing')
+        this.firebaseInit()
       }
       console.log('getting a user')
       return new Promise((resolve, reject) => {
         firebase.auth().onAuthStateChanged((user) => {
           if (user) {
+            console.log('got the user... resolving')
             resolve(user)
             return user
           }
@@ -30,18 +35,6 @@ export default (Vue) => {
           }
         })
       })
-    },
-    isLoggedIn () {
-      console.log('check if logged in: ')
-      this.getUser()
-        .then(user => {
-          console.log('user logged in: ', user)
-          return !!user
-        })
-        .catch(error => {
-          console.log('error is logged in', error)
-          return false
-        })
     },
     logUserOut () {
       firebase.auth().signOut()

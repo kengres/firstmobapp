@@ -19,28 +19,40 @@ Vue.use(Router)
 export const routes = [
   {
     path: nav.landingUrl,
-    component: Landing
+    component: Landing,
+    beforeEnter: (to, from, next) => {
+      console.log('entering landing...')
+      Vue.auth.getUser()
+        .then(user => {
+          console.log('got user before landing... push to account')
+          router.push({
+            path: nav.homeUrl
+          })
+        })
+        .catch(error => {
+          console.log('landing route user error...', error)
+          next()
+        })
+    }
   },
   {
     path: nav.loginUrl,
-    component: Login
-    // beforeEnter: (to, from, next) => {
-    //   console.log('entering login from routes')
-    //   if (Vue.auth.isLoggedIn()) {
-    //     console.log('you are logged in')
-    //     // router.push(
-    //     //   {
-    //     //     path: nav.account,
-    //     //     query: { msg: 'inSession' }
-    //     //   }
-    //     // )
-    //     next()
-    //   }
-    //   else {
-    //     console.log('you are not logged in')
-    //     next()
-    //   }
-    // }
+    component: Login,
+    beforeEnter: (to, from, next) => {
+      console.log('entering login...')
+      Vue.auth.getUser()
+        .then(user => {
+          router.push({
+            path: nav.homeUrl,
+            query: {
+              msg: 'inSession'}
+          })
+        })
+        .catch(error => {
+          console.log('you R not logged in...', error)
+          next()
+        })
+    }
   },
   {
     path: nav.registerUrl,
@@ -49,13 +61,23 @@ export const routes = [
   {
     path: nav.homeUrl,
     component: Layout,
-    // beforeEnter: (to, from, next) => {
-    //   // dont chech if from landing
-    //   console.log(from, to)
-    //   const isLoggedIn = Vue.auth.isLoggedIn()
-    //   console.log('is logged in: ', isLoggedIn)
-    //   next()
-    // },
+    beforeEnter: (to, from, next) => {
+      // dont chech if from landing
+      console.log(from, to)
+      Vue.auth.getUser()
+        .then(user => {
+          next()
+        })
+        .catch(error => {
+          console.log('no logged in my friend.', error)
+          router.push({
+            path: nav.loginUrl,
+            query: {
+              msg: 'noToken'
+            }
+          })
+        })
+    },
     children: [
       {
         path: nav.homeUrl,

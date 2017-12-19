@@ -87,12 +87,12 @@ Quasar.start(() => {
       this.$auth.firebaseInit()
       this.$auth.getUser()
         .then(response => {
-          console.log('response: ', response)
+          console.log('app getting user...: ', response)
           this.$store.dispatch('autoSignIn', response)
           // this.$store.dispatch('fetchUserData')
         })
         .catch(error => {
-          console.log('error: ', error)
+          console.log('app user error: ', error)
         })
     }
   })
