@@ -68,7 +68,10 @@ export default {
         .then(resp => {
           console.log('promise login user: ', resp)
           this.$router.push({
-            path: homePath
+            path: homePath,
+            query: {
+              msg: 'success'
+            }
           })
         })
         .catch(error => {

@@ -78,15 +78,7 @@
 <script>
 import avatar from 'assets/boy-avatar.jpg'
 import { diffDate, addZero } from '../../../config'
-import {
-  ActionSheet,
-  QInfiniteScroll,
-  QModal,
-  QToolbar,
-  QToolbarTitle,
-  QList,
-  QListHeader
-} from 'quasar'
+import { ActionSheet, Toast } from 'quasar'
 
 export default {
   name: 'home',
@@ -97,19 +89,19 @@ export default {
       open: false
     }
   },
-  components: {
-    QInfiniteScroll,
-    QModal,
-    QToolbar,
-    QToolbarTitle,
-    QList,
-    QListHeader
-  },
   created () {
-    console.log('home created...')
+    console.log('home created..., welcome msg')
+    this.$store.dispatch('loadLogs')
+    this.welcomeMessage()
+  },
+  mounted () {
+    console.log('home mounted...')
     this.$store.dispatch('loadLogs')
   },
   computed: {
+    queryMsg () {
+      return this.$route.query ? (this.$route.query.msg ? this.$route.query.msg : null) : null
+    },
     logs () {
       return this.$store.getters.logs
     },
@@ -160,9 +152,13 @@ export default {
     }
   },
   methods: {
-    testLogs () {
-      // console.log(this.displayLogs)
-      // console.log(this.totalTimeSpent)
+    welcomeMessage () {
+      if (this.queryMsg === 'success') {
+        Toast.create.positive({
+          html: 'Welcome to using our App!',
+          timeout: 4000
+        })
+      }
     },
     getTheDate (value) {
       const d = new Date(value)
