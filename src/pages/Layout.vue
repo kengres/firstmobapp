@@ -16,11 +16,6 @@
         Time Spent App
       </q-toolbar-title>
     </q-toolbar>
-     <q-tabs slot="navigation" color="green-7">
-       <q-route-tab icon="add_box" :to="addLogUrl" exact slot="title" />
-       <q-route-tab icon="home" :to="homeUrl" exact slot="title" />
-       <q-route-tab icon="account_box" :to="accountUrl" exact slot="title" />
-     </q-tabs>
 
     <div slot="left">
       <!--

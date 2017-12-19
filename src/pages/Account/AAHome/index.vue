@@ -77,30 +77,15 @@
 </template>
 <script>
 import avatar from 'assets/boy-avatar.jpg'
-import { diffDate, addZero } from '../config'
+import { diffDate, addZero } from '../../../config'
 import {
   ActionSheet,
   QInfiniteScroll,
-  QChip,
-  QLayout,
   QModal,
-  QCard,
-  QCardTitle,
-  QCardSeparator,
-  QCardMain,
-  QRouteTab,
-  QTab,
-  QTabs,
   QToolbar,
   QToolbarTitle,
-  QBtn,
-  QIcon,
   QList,
-  QListHeader,
-  QItem,
-  QItemTile,
-  QItemSide,
-  QItemMain
+  QListHeader
 } from 'quasar'
 
 export default {
@@ -114,26 +99,11 @@ export default {
   },
   components: {
     QInfiniteScroll,
-    QChip,
-    QLayout,
     QModal,
-    QCard,
-    QCardTitle,
-    QCardSeparator,
-    QCardMain,
-    QRouteTab,
-    QTab,
-    QTabs,
     QToolbar,
     QToolbarTitle,
-    QBtn,
-    QIcon,
     QList,
-    QListHeader,
-    QItem,
-    QItemTile,
-    QItemSide,
-    QItemMain
+    QListHeader
   },
   created () {
     console.log('home created...')

@@ -13,6 +13,10 @@
       <q-item-side icon="chat" />
       <q-item-main label="Gitter Channel" />
     </q-item>
+    <q-item @click="logout">
+      <q-item-side icon="exit_to_app" />
+      <q-item-main label="Logout" />
+    </q-item>
   </q-list>
 </template>
 <script>
@@ -30,6 +34,11 @@ export default {
     QItem,
     QItemSide,
     QItemMain
+  },
+  methods: {
+    logout () {
+      this.$auth.logUserOut()
+    }
   }
 }
 </script>

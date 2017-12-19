@@ -43,12 +43,33 @@ export default {
       registerUrl: registerPath
     }
   },
+  created () {
+    console.log('landing is created, get user please...', this.user)
+    if (this.user) {
+      this.pushToAccount()
+    }
+  },
+  watch: {
+    user (value) {
+      if (value) {
+        console.log('user changed: pushing to account')
+        this.pushToAccount()
+      }
+    }
+  },
   mounted () {
+    console.log('landing is mounted...')
     this.$refs.carModal.open()
   },
+  computed: {
+    user () {
+      return this.$store.getters.user
+    }
+  },
   methods: {
-    someMethod () {
-      console.log('clicked')
+    pushToAccount () {
+      this.$router.push({
+        path: '/account'})
     },
     alert () {
       console.log('alert...')

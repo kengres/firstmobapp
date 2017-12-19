@@ -31,7 +31,7 @@
   </q-layout>
 </template>
 <script>
-import { registerPath } from '../../config'
+import { registerPath, homePath } from '../../config'
 export default {
   data () {
     return {
@@ -48,6 +48,15 @@ export default {
       const email = this.loginForm.email
       const password = this.loginForm.password
       this.$store.dispatch('signUserIn', {email, password})
+        .then(resp => {
+          console.log('promise login user: ', resp)
+          this.$router.push({
+            path: homePath
+          })
+        })
+        .catch(error => {
+          console.log('promise login error: ', error)
+        })
       const user = null
       if (user) {
         this.$router.replace('/account')

@@ -110,17 +110,21 @@ const store = new Vuex.Store({
         })
     },
     signUserIn ({ commit }, payload) {
-      firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
-        .then(data => {
-          console.log('user data: ', data)
-          const user = {
-            id: data.uid
-          }
-          commit('setUser', user)
-        })
-        .catch(error => {
-          console.log('user error: ', error)
-        })
+      return new Promise((resolve, reject) => {
+        firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+          .then(data => {
+            console.log('user data: ', data)
+            const user = {
+              id: data.uid
+            }
+            resolve(user)
+            commit('setUser', user)
+          })
+          .catch(error => {
+            console.log('user error: ', error)
+            reject(error)
+          })
+      })
     },
     autoSignIn ({commit}, payload) {
       commit('setUser', {

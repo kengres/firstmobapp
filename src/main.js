@@ -12,7 +12,6 @@ require(`quasar/dist/quasar.${__THEME}.css`)
 
 import Vue from 'vue'
 import Vuelidate from 'vuelidate'
-
 // import quasar and single components
 import Quasar,
 {
@@ -28,13 +27,19 @@ import Quasar,
   QLayout,
   QModal,
   QIcon,
-  QInput
+  QInput,
+  QItem,
+  QItemTile,
+  QItemSide,
+  QItemMain,
+  QToolbar,
+  QToolbarTitle
 } from 'quasar'
 
-import * as firebase from 'firebase'
-import router from './router'
+import { router } from './router'
 import store from './store'
 
+import Auth from './auth'
 Vue.config.productionTip = false
 Vue.use(Quasar, {
   components: {
@@ -50,10 +55,17 @@ Vue.use(Quasar, {
     QLayout,
     QModal,
     QIcon,
-    QInput
+    QInput,
+    QItem,
+    QItemTile,
+    QItemSide,
+    QItemMain,
+    QToolbar,
+    QToolbarTitle
   }
 }) // Install Quasar Framework
 Vue.use(Vuelidate) // validate
+Vue.use(Auth)
 
 if (__THEME === 'mat') {
   require('quasar-extras/roboto-font')
@@ -71,19 +83,17 @@ Quasar.start(() => {
     router,
     render: h => h(require('./App').default),
     created () {
-      firebase.initializeApp({
-        apiKey: 'AIzaSyCNrNZbm97DWP4kFi_SQgp13hiz2xVrgqk',
-        authDomain: 'time-spent-app.firebaseapp.com',
-        databaseURL: 'https://time-spent-app.firebaseio.com',
-        projectId: 'time-spent-app',
-        storageBucket: 'time-spent-app.appspot.com'
-      })
-      firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          this.$store.dispatch('autoSignIn', user)
-          this.$store.dispatch('fetchUserData')
-        }
-      })
+      console.log('app created...')
+      this.$auth.firebaseInit()
+      this.$auth.getUser()
+        .then(response => {
+          console.log('response: ', response)
+          this.$store.dispatch('autoSignIn', response)
+          // this.$store.dispatch('fetchUserData')
+        })
+        .catch(error => {
+          console.log('error: ', error)
+        })
     }
   })
 })
