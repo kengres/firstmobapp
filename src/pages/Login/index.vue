@@ -27,7 +27,12 @@
       </q-card-main>
     </q-card>
 
-    <router-link :to="registerUrl">Register</router-link>
+    <q-fixed-position corner="bottom-right" :offset="[20, 250]">
+      <q-btn big color="positive" @click="$router.replace(registerUrl)">
+        register
+      </q-btn>
+    </q-fixed-position>
+    
   </q-layout>
 </template>
 <script>

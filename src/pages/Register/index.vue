@@ -42,14 +42,16 @@
             </q-field>
 
             <q-field>
-              <q-btn color="green" @click="saveUser">Save</q-btn>
+              <q-btn color="info" @click="saveUser">register</q-btn>
             </q-field>
 
       </q-card-main>
     </q-card>
-    <div>
-      already hava account? <router-link :to="loginUrl">Sign in here</router-link>
-    </div>
+    <q-fixed-position corner="bottom-right" :offset="[20, 60]">
+        <q-btn @click="$router.replace(loginUrl)" color="info">
+          Sign in here
+        </q-btn>
+    </q-fixed-position>
   </q-layout>
 </template>
 <script>
