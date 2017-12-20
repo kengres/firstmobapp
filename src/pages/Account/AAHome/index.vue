@@ -85,18 +85,13 @@
              @click="$refs.minimizedModal.close()"></q-btn>
       </q-modal>
 
+      <q-fixed-position corner="bottom-right" :offset="[20, 20]">
+        <q-btn round color="positive" @click="addNewActivity" icon="add" />
+      </q-fixed-position>
     </q-card>
-
-    <q-fixed-position corner="bottom-right" :offset="[20, 20]">
-      <q-btn round color="positive" @click="addNewActivity" icon="add" />
-    </q-fixed-position>
-
     <q-fixed-position corner="bottom-left" :offset="[20, 20]">
-      <q-btn color="positive" @click="testFirebase">
-        test
-      </q-btn>
-    </q-fixed-position>
-
+        <q-btn round color="positive" @click="testFirebase" icon="close" />
+      </q-fixed-position>
   </q-layout>
 </template>
 <script>
@@ -104,9 +99,9 @@ import avatar from 'assets/boy-avatar.jpg'
 import { addActivityPath, loginPath, addZero } from '../../../config'
 import { ActionSheet, Toast, Loading } from 'quasar'
 import { mapGetters } from 'vuex'
-import * as firebase from 'firebase/app'
-import 'firebase/auth'
-import 'firebase/database'
+// import * as firebase from 'firebase/app'
+// import 'firebase/auth'
+// import 'firebase/database'
 
 export default {
   name: 'home',
@@ -151,10 +146,21 @@ export default {
     },
     loading (value) {
       value ? Loading.show() : Loading.hide()
+    },
+    hideLeft (value) {
+      console.log('hiding left value...', value)
+      if (value) {
+        this.$refs.mainLayout.hideCurrentSide(() => {
+          console.log('closed')
+        })
+      }
+      else {
+        console.log('the value is false: ', value)
+      }
     }
   },
   computed: {
-    ...mapGetters(['user', 'activities', 'loading']),
+    ...mapGetters(['user', 'activities', 'loading', 'hideLeft']),
     queryMsg () {
       return this.$route.query ? (this.$route.query.msg ? this.$route.query.msg : null) : null
     }
@@ -206,16 +212,7 @@ export default {
   },
   methods: {
     testFirebase () {
-      console.log('testing... user: ', this.user)
-      firebase.database().ref('activities/' + this.user.id).orderByChild('category').equalTo('sport').on('value', snap => {
-        console.log(snap.val())
-      })
-      // .then(resp => {
-      //   console.log('resp: ', resp.val())
-      // })
-      // .catch(error => {
-      //   console.log('error: ', error)
-      // })
+      console.log('test hideleft: ', this.hideLeft)
     },
     fetchData () {
       if (this.user) {
@@ -289,3 +286,8 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+  .layout-padding {
+    max-height: 100vh;
+  }
+</style>

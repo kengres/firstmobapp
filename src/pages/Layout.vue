@@ -1,13 +1,13 @@
 <template>
   <q-layout
     ref="layout"
-    view="lHh Lpr fff"
+    view="lHh Lpr fFf"
     :left-class="{'bg-grey-2': true}"
   >
     <q-toolbar slot="header" color="green-8">
       <q-btn
         flat
-        @click="$refs.layout.toggleLeft()"
+        @click="toggleLeftSide"
       >
         <q-icon name="menu" />
       </q-btn>
@@ -86,7 +86,12 @@ export default {
       return this.name
     }
   },
-  methods: {}
+  methods: {
+    toggleLeftSide () {
+      this.$refs.layout.toggleLeft()
+      this.$store.dispatch('setHideLeft', false)
+    }
+  }
 }
 </script>
 

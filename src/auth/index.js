@@ -37,7 +37,7 @@ export default (Vue) => {
         firebase.auth().signOut()
           .then(resp => {
             console.log('sing out resp: ', resp)
-            resolve(resp)
+            resolve('done')
           })
           .catch(error => {
             console.log('sing out error: ', error)
