@@ -1,18 +1,14 @@
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
+import { firebaseConfig } from '../config'
 
 export default (Vue) => {
   Vue.auth = {
     firebaseInit () {
       if (firebase.apps.length === 0) {
+        console.log('is production ', process.env.NODE_ENV === 'production')
         console.log('initializing the firebase...')
-        firebase.initializeApp({
-          apiKey: 'AIzaSyCNrNZbm97DWP4kFi_SQgp13hiz2xVrgqk',
-          authDomain: 'time-spent-app.firebaseapp.com',
-          databaseURL: 'https://time-spent-app.firebaseio.com',
-          projectId: 'time-spent-app',
-          storageBucket: 'time-spent-app.appspot.com'
-        })
+        firebase.initializeApp(firebaseConfig)
         return
       }
       console.log('already have firebase... returning')

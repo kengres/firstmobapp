@@ -8,8 +8,15 @@
           <q-field
               error-label="We need a valid name"
             >
-              <q-input v-model="userForm.name"
-                float-label="Full Name" />
+              <q-input v-model="userForm.first_name"
+                float-label="First Name" />
+            </q-field>
+
+            <q-field
+              error-label="We need a valid name"
+            >
+              <q-input v-model="userForm.last_name"
+                float-label="Last Name" />
             </q-field>
 
           <q-field
@@ -53,7 +60,8 @@ export default {
     return {
       loginUrl: loginPath,
       userForm: {
-        name: '',
+        first_name: '',
+        last_name: '',
         email: '',
         password: '',
         password2: ''

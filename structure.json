@@ -1,0 +1,41 @@
+{
+  "users": {
+    "uid1": {
+      "name": "grev"
+    },
+    "uid2": {
+      "name": "bernard"
+    }
+  },
+  "categories": {
+    "id1": {
+      "name": "cat1"
+    },
+    "id2": {
+      "name": "cat2"
+    },
+    "id3": {
+      "name": "cat3"
+    }
+  },
+  "activities": {
+    "uid1": {
+      "date": "23.12.2017",
+      "start": "9:00",
+      "creatorId": "uid1",
+      "categoryId": "id1"
+    },
+    "uid2": {
+      "date": "23.12.2017",
+      "start": "19:00",
+      "creatorId": "uid1",
+      "categoryId": "id3"
+    },
+    "uid3": {
+      "date": "23.12.2017",
+      "start": "19:00",
+      "creatorId": "uid2",
+      "categoryId": "id1"
+    }
+  }
+}

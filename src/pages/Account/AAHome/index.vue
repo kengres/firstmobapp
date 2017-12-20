@@ -4,9 +4,13 @@
 
       <q-item>
         <q-item-side :avatar="avatar" />
-        <q-item-main>
-          <q-item-tile label>Kenguruka</q-item-tile>
-          <q-item-tile sublabel>Grevisse</q-item-tile>
+        <q-item-main v-if="user">
+          <q-item-tile label>{{user.last_name}}</q-item-tile>
+          <q-item-tile sublabel>{{user.first_name}}</q-item-tile>
+        </q-item-main>
+        <q-item-main v-else>
+          <q-item-tile label>Anonymous</q-item-tile>
+          <q-item-tile sublabel>User</q-item-tile>
         </q-item-main>
       </q-item>
 
@@ -49,7 +53,7 @@
       </q-card-title>
       <q-card-main v-if="activities">
         <q-list separator v-if="activities.length > 0">
-          <q-item v-for="item in activities" :key="item.date" @click="openLog(item)">
+          <q-item v-for="item in activities" :key="item.id" @click="openLog(item)">
             <q-item-side>
               <q-item-tile>{{item.category}} -- </q-item-tile>
             </q-item-side>
@@ -87,6 +91,12 @@
       <q-btn round color="positive" @click="addNewActivity" icon="add" />
     </q-fixed-position>
 
+    <q-fixed-position corner="bottom-left" :offset="[20, 20]">
+      <q-btn color="positive" @click="testFirebase">
+        test
+      </q-btn>
+    </q-fixed-position>
+
   </q-layout>
 </template>
 <script>
@@ -94,6 +104,9 @@ import avatar from 'assets/boy-avatar.jpg'
 import { addActivityPath, loginPath, addZero } from '../../../config'
 import { ActionSheet, Toast, Loading } from 'quasar'
 import { mapGetters } from 'vuex'
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/database'
 
 export default {
   name: 'home',
@@ -116,7 +129,7 @@ export default {
     Loading.show({
       delay: 0
     })
-    this.$store.dispatch('loadActivities')
+    this.fetchData()
     this.welcomeMessage()
   },
   watch: {
@@ -131,6 +144,9 @@ export default {
             }
           })
         })
+      }
+      else {
+        this.fetchData()
       }
     },
     loading (value) {
@@ -189,6 +205,26 @@ export default {
     // }
   },
   methods: {
+    testFirebase () {
+      console.log('testing... user: ', this.user)
+      firebase.database().ref('activities/' + this.user.id).orderByChild('category').equalTo('sport').on('value', snap => {
+        console.log(snap.val())
+      })
+      // .then(resp => {
+      //   console.log('resp: ', resp.val())
+      // })
+      // .catch(error => {
+      //   console.log('error: ', error)
+      // })
+    },
+    fetchData () {
+      if (this.user) {
+        this.$store.dispatch('loadActivities')
+      }
+      else {
+        console.log('there is no user in home????')
+      }
+    },
     welcomeMessage () {
       if (this.queryMsg === 'success') {
         Toast.create.positive({

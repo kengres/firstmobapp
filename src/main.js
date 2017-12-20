@@ -96,9 +96,9 @@ Quasar.start(() => {
       console.log('app created...')
       this.$auth.firebaseInit()
       this.$auth.getUser()
-        .then(response => {
-          console.log('app getting user...: ', response)
-          this.$store.dispatch('autoSignIn', response)
+        .then(user => {
+          console.log('app getting user...: ', user)
+          this.$store.dispatch('autoSignIn', user)
           // this.$store.dispatch('fetchUserData')
         })
         .catch(error => {

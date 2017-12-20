@@ -6,14 +6,14 @@
       </q-card-title>
       <q-card-separator />
       <q-card-main>
-        <q-select :options="categories" v-model="logForm.category" float-label="Category"></q-select>
-        <q-datetime v-model="logForm.date" type="date" float-label="Date" />
-        <q-datetime format24h v-model="logForm.start" type="time" float-label="Start" />
-        <q-datetime format24h v-model="logForm.end" type="time" float-label="End" />
+        <q-select :options="categories" v-model="activityForm.category" float-label="Category"></q-select>
+        <q-datetime v-model="activityForm.date" type="date" float-label="Date" />
+        <q-datetime format24h v-model="activityForm.start" type="time" float-label="Start" />
+        <q-datetime format24h v-model="activityForm.end" type="time" float-label="End" />
       </q-card-main>
       <q-card-separator />
       <q-card-actions>
-        <q-btn color="primary" @click="createLog">Save Log</q-btn>
+        <q-btn color="primary" @click="createActivity">Save Log</q-btn>
       </q-card-actions>
     </q-card>
   </q-layout>
@@ -23,7 +23,7 @@ import { Toast } from 'quasar'
 export default {
   data () {
     return {
-      logForm: {
+      activityForm: {
         category: '',
         date: '',
         start: '',
@@ -32,13 +32,14 @@ export default {
       categories: [
         { label: 'Work', value: 'work' },
         { label: 'Sport', value: 'sport' },
-        { label: 'Health', value: 'health' }
+        { label: 'Health', value: 'health' },
+        { label: 'Sex', value: 'sex' }
       ]
     }
   },
   methods: {
-    createLog () {
-      const data = this.logForm
+    createActivity () {
+      const data = this.activityForm
       for (const input in data) {
         if (data.hasOwnProperty(input)) {
           const element = data[input]
@@ -48,15 +49,14 @@ export default {
           }
         }
       }
-      const newLog = {
-        date: this.logForm.date,
-        start: this.logForm.start,
-        lunchStart: this.logForm.lunchStart,
-        lunchEnd: this.logForm.lunchEnd,
-        end: this.logForm.end
+      const newActivity = {
+        date: this.activityForm.date,
+        start: this.activityForm.start,
+        end: this.activityForm.end,
+        category: this.activityForm.category
       }
-      console.log('new log: ', newLog)
-      console.log('form: ', this.logForm)
+      console.log('new activity: ', newActivity)
+      console.log('form: ', this.activityForm)
       this.$store.dispatch('createActivity', data)
       this.$router.replace('/')
     },
