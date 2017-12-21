@@ -5,11 +5,11 @@ import Landing from '@/Landing'
 import Login from '@/Login'
 import Register from '@/Register'
 // components
-// import Account from '@/Account.vue'
-import AddActivity from '@/Account/Activity/addActivity'
 import Layout from '@/Layout.vue'
 // into account
 import Home from '@/Account/AAHome'
+import AddActivity from '@/Account/Activity/addActivity'
+import Categories from '@/Account/Categories'
 import Error404 from '@/Error404.vue'
 
 // nav routes
@@ -86,6 +86,10 @@ export const routes = [
       {
         path: nav.addActivityUrl,
         component: AddActivity
+      },
+      {
+        path: nav.categoriesUrl,
+        component: Categories
       }
     ]
   },
