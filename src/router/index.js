@@ -10,6 +10,7 @@ import Layout from '@/Layout.vue'
 import Home from '@/Account/AAHome'
 import AddActivity from '@/Account/Activity/addActivity'
 import Categories from '@/Account/Categories'
+import AddCategory from '@/Account/Categories/AddCategory'
 import Error404 from '@/Error404.vue'
 
 // nav routes
@@ -81,15 +82,31 @@ export const routes = [
     children: [
       {
         path: nav.homeUrl,
-        component: Home
+        component: Home,
+        meta: {
+          title: 'Time Spent App'
+        }
       },
       {
         path: nav.addActivityUrl,
-        component: AddActivity
+        component: AddActivity,
+        meta: {
+          title: 'Add Activity'
+        }
       },
       {
         path: nav.categoriesUrl,
-        component: Categories
+        component: Categories,
+        meta: {
+          title: 'Categories'
+        }
+      },
+      {
+        path: nav.addCategoriesUrl,
+        component: AddCategory,
+        meta: {
+          title: 'Add Category'
+        }
       }
     ]
   },

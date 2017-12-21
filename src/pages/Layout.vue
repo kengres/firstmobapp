@@ -5,15 +5,15 @@
     :left-class="{'bg-grey-2': true}"
   >
     <q-toolbar slot="header" color="green-8">
-      <q-btn
-        flat
-        @click="$refs.layout.toggleLeft()"
-      >
+      <q-btn flat @click="$refs.layout.toggleLeft()" v-if="isHome">
         <q-icon name="menu" />
+      </q-btn>
+      <q-btn flat @click="$router.go(-1)" v-else>
+        <q-icon name="arrow_back" />
       </q-btn>
 
       <q-toolbar-title>
-        Time Spent App
+        {{ viewTitle }}
       </q-toolbar-title>
     </q-toolbar>
 
@@ -57,37 +57,40 @@
 
      <router-view />
 
-    <q-toolbar slot="footer" color="faded">
-      <q-toolbar-title>
-        This is footer
-      </q-toolbar-title>
-    </q-toolbar>
+    
   </q-layout>
 </template>
 
 <script>
-import { categoriesPath } from '../config'
+import { categoriesPath, homePath, loginPath } from '../config'
 import { QSideLink } from 'quasar'
 
 export default {
   name: 'index',
   data () {
     return {
-      categoriesUrl: categoriesPath
+      categoriesUrl: categoriesPath,
+      pageTitle: 'Time Spent App'
     }
   },
   components: {
     QSideLink
   },
   computed: {
-    getName () {
-      return this.name
+    viewTitle () {
+      return this.$route.meta.title
+    },
+    isHome () {
+      return this.$route.path === homePath
     }
   },
   methods: {
     logout () {
       this.$auth.logUserOut()
         .then(resp => {
+          this.$refs.layout.hideCurrentSide(() => {
+            this.$router.push(loginPath)
+          })
         })
     }
   }

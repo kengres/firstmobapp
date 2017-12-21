@@ -1,97 +1,79 @@
 <template>
-  <q-layout ref="mainLayout" class="layout-padding">
-    <q-card>
+  <q-layout ref="mainLayout" class="layout-padding"
+      view="lHh Lpr fFf">
+    <template v-if="!loading">
+      <q-list separator v-if="activities">
+        <q-list-header inset color="positive">
+          Today
+        </q-list-header>
+        <q-item v-if="activities.length > 0">
+          <q-item-side>
+            <q-item-tile color="info" icon="work" />
+          </q-item-side>
+          <q-item-main>
+            <q-item-tile label v-if="totalTimeSpent">Total Time: {{totalTimeSpent.hours}}h {{totalTimeSpent.min}}min</q-item-tile>
+          </q-item-main>
+        </q-item>
+        <q-item v-if="activities.length > 0">
+          <q-item-side>
+            <q-item-tile color="orange" icon="directions_run" />
+          </q-item-side>
+          <q-item-main>
+            <q-item-tile label v-if="avarageTime">Avarage: {{avarageTime.hours}}h {{avarageTime.min}}min</q-item-tile>
+          </q-item-main>
+        </q-item>
+      </q-list>
+      <q-list v-else>
+        <q-item>
+          Please add activities.
+        </q-item>
+        <q-item>
+          <q-item-main>
+            <q-item-tile>To do so, click at the add button below.</q-item-tile>
+          </q-item-main>
+        </q-item>
+      </q-list>
+    </template>
 
-      <q-item>
-        <q-item-side :avatar="avatar" />
-        <q-item-main v-if="user">
-          <q-item-tile label>{{user.last_name}}</q-item-tile>
-          <q-item-tile sublabel>{{user.first_name}}</q-item-tile>
-        </q-item-main>
-        <q-item-main v-else>
-          <q-item-tile label>Anonymous</q-item-tile>
-          <q-item-tile sublabel>User</q-item-tile>
+    <q-list separator v-if="activities && activities.length > 0">
+      <q-list-header>
+        Yesterday
+      </q-list-header>
+      <q-item v-for="item in activities" :key="item.id" @click="openLog(item)">
+        <q-item-side>
+          <q-item-tile>{{item.category}} -- </q-item-tile>
+        </q-item-side>
+        <q-item-main>
+          <q-item-tile>{{ item.date | formattedDate }}</q-item-tile>
         </q-item-main>
       </q-item>
+    </q-list>
 
-      <q-card-title>
-        Time spent at work.
-      </q-card-title>
-      <q-card-main v-if="!loading">
-        
-        <q-list separator v-if="activities && activities.length > 0">
-          <q-item>
-            <q-item-side>
-              <q-item-tile color="primary" icon="access_time" />
-            </q-item-side>
-            <q-item-main>
-              <q-item-tile label v-if="totalTimeSpent">Total Time: {{totalTimeSpent.hours}}h {{totalTimeSpent.min}}min</q-item-tile>
-              <q-item-tile label v-else>Total Time: unknown</q-item-tile>
-            </q-item-main>
-          </q-item>
-          <q-item>
-            <q-item-side>
-              <q-item-tile color="primary" icon="av_timer" />
-            </q-item-side>
-            <q-item-main>
-              <q-item-tile label v-if="avarageTime">Avarage: {{avarageTime.hours}}h {{avarageTime.min}}min</q-item-tile>
-              <q-item-tile label v-else>Avarage: unknown</q-item-tile>
-            </q-item-main>
-          </q-item>
-        </q-list>
-        
-        <div v-else>
-          Please add activities
-        </div>
-      </q-card-main>
-    </q-card>
-
-
-    <q-card separator>
-      <q-card-title>
-        Latest submits
-      </q-card-title>
-      <q-card-main v-if="activities">
-        <q-list separator v-if="activities.length > 0">
-          <q-item v-for="item in activities" :key="item.id" @click="openLog(item)">
-            <q-item-side>
-              <q-item-tile>{{item.category}} -- </q-item-tile>
-            </q-item-side>
-            <q-item-main>
-              <q-item-tile>{{ item.date | formattedDate }}</q-item-tile>
-            </q-item-main>
-          </q-item>
-        </q-list>
-        <div v-else>
-          Empty activities
-        </div>
-      <!-- <q-btn round icon="add" color="info" @click="testLogs"></q-btn> -->
-      </q-card-main>
-
-      <q-card-main v-else>
-        there are no activities
-      </q-card-main>
-
-      <q-modal ref="minimizedModal" minimized v-model="open" 
-        :content-css="{padding: '20px'}" v-if="logInView">
-        <h4>Saturday</h4>
-        <h5>{{logInView.date}}</h5>
-        <h5>{{logInView.duration}}</h5>
-        <p>Start: {{logInView.start}}</p>
-        <p>Lunch Start: {{logInView.lunchStart}}</p>
-        <p>Lunch End: {{logInView.lunchEnd}}</p>
-        <p>End: {{logInView.end}}</p>
-        <q-btn color="faded" icon="close" round
-             @click="$refs.minimizedModal.close()"></q-btn>
-      </q-modal>
-
-      <q-fixed-position corner="bottom-right" :offset="[20, 20]">
+    <q-modal ref="minimizedModal" minimized v-model="open" 
+      :content-css="{padding: '20px'}" v-if="logInView">
+      <h4>Saturday</h4>
+      <h5>{{logInView.date | formattedDate}}</h5>
+      <h5>{{logInView.duration}}</h5>
+      <p>Start: {{logInView.start | formattedTime}}</p>
+      <p>End: {{logInView.end | formattedTime}}</p>
+      <q-btn color="faded" icon="close" round
+            @click="$refs.minimizedModal.close()"></q-btn>
+    </q-modal>
+    
+    <q-fixed-position corner="bottom-right" :offset="[20, 10]">
         <q-btn round color="positive" @click="addNewActivity" icon="add" />
       </q-fixed-position>
-    </q-card>
+
     <q-fixed-position corner="bottom-left" :offset="[20, 20]">
         <q-btn round color="positive" @click="testFirebase" icon="close" />
       </q-fixed-position>
+    
+    <q-toolbar slot="footer" color="faded">
+      <q-toolbar-title>
+        This is footer
+      </q-toolbar-title>
+    </q-toolbar>
+
   </q-layout>
 </template>
 <script>
@@ -212,7 +194,7 @@ export default {
   },
   methods: {
     testFirebase () {
-      console.log('test hideleft: ', this.hideLeft)
+      console.log('route meta: ', this.$route)
     },
     fetchData () {
       if (this.user) {
@@ -228,6 +210,7 @@ export default {
           html: 'Welcome to using our App!',
           timeout: 4000
         })
+        this.$router.replace(this.$route.path)
       }
     },
     addNewActivity () {
@@ -282,6 +265,12 @@ export default {
       const month = addZero(d.getMonth() + 1)
       const year = d.getFullYear()
       return `${day}.${month}.${year}`
+    },
+    formattedTime (value) {
+      const t = new Date(value)
+      const min = addZero(t.getMinutes())
+      const h = addZero(t.getHours())
+      return `${h}:${min}`
     }
   }
 }

@@ -1,40 +1,42 @@
 {
   "users": {
     "uid1": {
-      "name": "grev"
+      "name": "grev",
+      "email": "grevi@ma.com"
     },
     "uid2": {
-      "name": "bernard"
+      "name": "bernard",
+      "email": "brend@ma.com"
     }
   },
   "categories": {
     "id1": {
-      "name": "cat1"
+      "name": "cat1",
+      "icon": "icon-name"
     },
     "id2": {
-      "name": "cat2"
+      "name": "cat2",
+      "icon": "icon-name"
     },
     "id3": {
-      "name": "cat3"
+      "name": "cat3",
+      "icon": "icon-name"
     }
   },
   "activities": {
     "uid1": {
       "date": "23.12.2017",
       "start": "9:00",
-      "creatorId": "uid1",
       "categoryId": "id1"
     },
     "uid2": {
       "date": "23.12.2017",
       "start": "19:00",
-      "creatorId": "uid1",
       "categoryId": "id3"
     },
     "uid3": {
       "date": "23.12.2017",
       "start": "19:00",
-      "creatorId": "uid2",
       "categoryId": "id1"
     }
   }
