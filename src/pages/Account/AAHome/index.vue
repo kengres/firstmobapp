@@ -2,25 +2,21 @@
   <q-layout ref="mainLayout" class="layout-padding"
       view="lHh Lpr fFf">
     <template v-if="!loading">
-      <q-list separator v-if="activities">
+      <q-list separator v-if="todayActivities.length > 0">
         <q-list-header inset color="positive">
           Today
         </q-list-header>
-        <q-item v-if="activities.length > 0">
+        <q-item v-for="item in todayActivities" :key="item.id">
           <q-item-side>
-            <q-item-tile color="info" icon="work" />
+            <q-item-tile color="amber" icon="directions_run" />
           </q-item-side>
           <q-item-main>
-            <q-item-tile label v-if="totalTimeSpent">Total Time: {{totalTimeSpent.hours}}h {{totalTimeSpent.min}}min</q-item-tile>
+            <q-item-tile label v-if="totalTimeSpent">{{totalTimeSpent.hours}}h {{totalTimeSpent.min}}min</q-item-tile>
           </q-item-main>
-        </q-item>
-        <q-item v-if="activities.length > 0">
-          <q-item-side>
-            <q-item-tile color="orange" icon="directions_run" />
+          <q-item-side right>
+            <q-item-tile stamp>spent on</q-item-tile>
+            <q-item-tile>{{item.category}}</q-item-tile>
           </q-item-side>
-          <q-item-main>
-            <q-item-tile label v-if="avarageTime">Avarage: {{avarageTime.hours}}h {{avarageTime.min}}min</q-item-tile>
-          </q-item-main>
         </q-item>
       </q-list>
       <q-list v-else>
@@ -36,16 +32,20 @@
     </template>
 
     <q-list separator v-if="activities && activities.length > 0">
-      <q-list-header>
+      <q-list-header inset>
         Yesterday
       </q-list-header>
       <q-item v-for="item in activities" :key="item.id" @click="openLog(item)">
         <q-item-side>
-          <q-item-tile>{{item.category}} -- </q-item-tile>
+          <q-item-tile color="amber" icon="work"/>
         </q-item-side>
         <q-item-main>
-          <q-item-tile>{{ item.date | formattedDate }}</q-item-tile>
+          <q-item-tile>30h 44min</q-item-tile>
         </q-item-main>
+        <q-item-side right>
+          <q-item-tile stamp>spent on</q-item-tile>
+          <q-item-tile>{{item.category}} </q-item-tile>
+        </q-item-side>
       </q-item>
     </q-list>
 
@@ -65,7 +65,7 @@
       </q-fixed-position>
 
     <q-fixed-position corner="bottom-left" :offset="[20, 20]">
-        <q-btn round color="positive" @click="testFirebase" icon="close" />
+        <q-btn round color="positive" @click="testFiltering" icon="close" />
       </q-fixed-position>
     
     <q-toolbar slot="footer" color="faded">
@@ -145,6 +145,13 @@ export default {
     ...mapGetters(['user', 'activities', 'loading', 'hideLeft']),
     queryMsg () {
       return this.$route.query ? (this.$route.query.msg ? this.$route.query.msg : null) : null
+    },
+    todayActivities () {
+      const d = new Date()
+      const todayDate = d.toLocaleDateString()
+      return this.activities.filter(act => {
+        return act.date === todayDate
+      })
     }
     // displayLogs () {
     //   const newLogs = []
@@ -193,8 +200,8 @@ export default {
     // }
   },
   methods: {
-    testFirebase () {
-      console.log('route meta: ', this.$route)
+    testFiltering () {
+      console.log('filters: ', this.todayActivities)
     },
     fetchData () {
       if (this.user) {

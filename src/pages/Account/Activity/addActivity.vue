@@ -49,15 +49,18 @@ export default {
           }
         }
       }
+      const d = new Date(this.activityForm.date)
+      const localDate = d.toLocaleDateString()
+
       const newActivity = {
-        date: this.activityForm.date,
+        date: localDate,
         start: this.activityForm.start,
         end: this.activityForm.end,
         category: this.activityForm.category
       }
       console.log('new activity: ', newActivity)
       console.log('form: ', this.activityForm)
-      this.$store.dispatch('createActivity', data)
+      this.$store.dispatch('createActivity', newActivity)
       this.$router.replace('/')
     },
     notifyMsg (msg) {

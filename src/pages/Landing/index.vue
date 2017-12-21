@@ -12,7 +12,7 @@
           v-for="(slide, i) in slides" :key="i"
           :class="`bg-item-${i+1}`">
             <div class="slide-mask"></div>
-            <q-card :color="slide.bg" :class="`customCard text-${slide.color}`">
+            <q-card :class="`customCard text-${slide.color}`">
               <q-card-title>
                 {{slide.text}}
               </q-card-title>
@@ -43,8 +43,8 @@ export default {
       showButtons: false,
       slides: [
         { bg: 'faded', color: 'white', text: 'Welcome! Thank you for choosing Time spent App!' },
-        { bg: 'light', color: 'black', text: 'Manage your time to be more productive. Know what you have been up to lately!' },
-        { bg: 'white', color: 'dark', text: 'To get started, please login to your account, or sign up, if you don\'t already have one!' }
+        { bg: 'light', color: 'white', text: 'Manage your time to be more productive. Know what you have been up to lately!' },
+        { bg: 'white', color: 'white', text: 'To get started, please login to your account, or sign up, if you don\'t already have one!' }
       ],
       loginUrl: loginPath,
       registerUrl: registerPath
@@ -94,6 +94,7 @@ export default {
 </script>
 <style lang="scss">
   .bg-item {
+    background-color: rgba(0, 0, 0, 0.9);
     background-position: center;
     background-size: contain;
     position: relative;
@@ -101,7 +102,7 @@ export default {
   .slide-mask {
     position: absolute;
     top: 0; right: 0; bottom: 0; left: 0;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.7);
   }
   .bg-item-1 {
     background-image: url('../../assets/bg-1.jpeg');
