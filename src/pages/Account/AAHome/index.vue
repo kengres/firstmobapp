@@ -205,23 +205,23 @@ export default {
   methods: {
     testFiltering () {
       // console.log('joins: ', this.categories)
-      // const rootRef = firebase.database().ref()
-      // const apiAct = []
-      firebase.database().ref('/categories/' + this.user.id).on('child_added', snap => {
-        console.log('key: ', snap.val())
-
-        firebase.database().ref('/activities/').child(this.user.id).once('value')
-          .then(data => {
-            console.log(data.val())
-          })
-          .catch(err => {
-            console.error(err)
-          })
+      const rootRef = firebase.database().ref()
+      const actRef = rootRef.child('activities/' + this.user.id)
+      const catRef = rootRef.child('categories/' + this.user.id)
+      catRef.on('child_added', snap => {
+        // console.log(snap.key)
+        catRef.child(snap.key).child('activities').on('child_added', childSnap => {
+          // console.log(childSnap.key)
+          actRef.child(childSnap.key).once('value')
+            .then(finalSnap => console.log('final: ', finalSnap.val()))
+            .catch(error => console.log(error))
+        })
       })
     },
     testFiltering2 () {
-      firebase.database().ref('activities').child(this.user.id).child('L0vdttT7bYzlxxbonQ7').set({
-        name: 'test'
+      console.log('user id: ', this.user.id)
+      firebase.database().ref('activities').child(this.user.id).on('child_added', snap => {
+        console.log(snap.val())
       })
     },
     fetchData () {

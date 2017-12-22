@@ -3,6 +3,7 @@
 3. delete a category ?? what happens for logs with that cat
 4. prexisting category
 5. link cat in firebase
+2. make array of cat with all activities
 6. sort logs by date
 7. get categories before create
 8. form validation

@@ -28,5 +28,21 @@
       "start": "19:00",
       "category": "cat1"
     }
+  },
+  "activitiesInCategories": {
+    "cat1": {
+      "name": "cat1",
+      "icon": "icon-name",
+      "activities": {
+        "act1": {
+          "date": "23.12.2017",
+          "start": "9:00"
+        },
+        "act2": {
+          "date": "23.12.2017",
+          "start": "19:00"
+        }
+      }
+    }
   }
 }
