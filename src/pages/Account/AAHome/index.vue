@@ -208,15 +208,28 @@ export default {
       const rootRef = firebase.database().ref()
       const actRef = rootRef.child('activities/' + this.user.id)
       const catRef = rootRef.child('categories/' + this.user.id)
+      const allCategories = []
       catRef.on('child_added', snap => {
-        // console.log(snap.key)
+        const formActivities = []
         catRef.child(snap.key).child('activities').on('child_added', childSnap => {
-          // console.log(childSnap.key)
           actRef.child(childSnap.key).once('value')
-            .then(finalSnap => console.log('final: ', finalSnap.val()))
+            .then(finalSnap => {
+              formActivities.push({
+                id: finalSnap.key,
+                ...finalSnap.val()
+              })
+            })
             .catch(error => console.log(error))
         })
+        allCategories.push({
+          id: snap.key,
+          name: snap.val().name,
+          icon: snap.val().icon,
+          color: snap.val().color,
+          activities: formActivities
+        })
       })
+      console.log('Categories with their activities: ', allCategories)
     },
     testFiltering2 () {
       console.log('user id: ', this.user.id)
