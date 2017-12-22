@@ -62,9 +62,13 @@ export default {
       }
       console.log('creating this: ', newActivity)
       console.log('creator: ', getters.user)
-      firebase.database().ref('/activities/' + getters.user.id).push(newActivity)
+      const root = firebase.database().ref()
+      root.child('/activities/' + getters.user.id).push(newActivity)
         .then(response => {
-          console.log('added activity: ', response)
+          const actId = response.key
+          console.log('added activity id: ', actId)
+          console.log('new ref: ', `/categories/${newActivity.category}/activities/${actId}`)
+          root.child('/categories/' + getters.user.id + '/' + newActivity.category + '/activities/' + actId).set(true)
         })
         .catch(error => {
           console.log('error adding activity: ', error)

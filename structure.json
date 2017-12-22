@@ -1,43 +1,32 @@
 {
-  "users": {
-    "uid1": {
-      "name": "grev",
-      "email": "grevi@ma.com"
-    },
-    "uid2": {
-      "name": "bernard",
-      "email": "brend@ma.com"
-    }
-  },
   "categories": {
-    "id1": {
+    "cat1": {
       "name": "cat1",
-      "icon": "icon-name"
+      "icon": "icon-name",
+      "activities": {
+        "act1": true,
+        "act2": true
+      }
     },
-    "id2": {
+    "cat2": {
       "name": "cat2",
-      "icon": "icon-name"
-    },
-    "id3": {
-      "name": "cat3",
-      "icon": "icon-name"
+      "icon": "icon-name",
+      "activities": {
+        "act3": true,
+        "act4": true
+      }
     }
   },
   "activities": {
-    "uid1": {
+    "act1": {
       "date": "23.12.2017",
       "start": "9:00",
-      "categoryId": "id1"
+      "category": "cat1"
     },
-    "uid2": {
+    "act2": {
       "date": "23.12.2017",
       "start": "19:00",
-      "categoryId": "id3"
-    },
-    "uid3": {
-      "date": "23.12.2017",
-      "start": "19:00",
-      "categoryId": "id1"
+      "category": "cat1"
     }
   }
 }

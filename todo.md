@@ -4,3 +4,5 @@
 4. prexisting category
 5. link cat in firebase
 6. sort logs by date
+7. get categories before create
+8. form validation

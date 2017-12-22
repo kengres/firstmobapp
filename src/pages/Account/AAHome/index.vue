@@ -67,6 +67,9 @@
     <q-fixed-position corner="bottom-left" :offset="[20, 20]">
         <q-btn round color="positive" @click="testFiltering" icon="close" />
       </q-fixed-position>
+    <q-fixed-position corner="bottom-left" :offset="[90, 20]">
+        <q-btn round color="positive" @click="testFiltering2" icon="thumb_up" />
+      </q-fixed-position>
     
     <q-toolbar slot="footer" color="faded">
       <q-toolbar-title>
@@ -81,9 +84,9 @@ import avatar from 'assets/boy-avatar.jpg'
 import { addActivityPath, loginPath, addZero } from '../../../config'
 import { ActionSheet, Toast, Loading } from 'quasar'
 import { mapGetters } from 'vuex'
-// import * as firebase from 'firebase/app'
+import * as firebase from 'firebase/app'
 // import 'firebase/auth'
-// import 'firebase/database'
+import 'firebase/database'
 
 export default {
   name: 'home',
@@ -142,7 +145,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['user', 'activities', 'loading', 'hideLeft']),
+    ...mapGetters(['user', 'activities', 'loading', 'categories']),
     queryMsg () {
       return this.$route.query ? (this.$route.query.msg ? this.$route.query.msg : null) : null
     },
@@ -201,11 +204,30 @@ export default {
   },
   methods: {
     testFiltering () {
-      console.log('filters: ', this.todayActivities)
+      // console.log('joins: ', this.categories)
+      // const rootRef = firebase.database().ref()
+      // const apiAct = []
+      firebase.database().ref('/categories/' + this.user.id).on('child_added', snap => {
+        console.log('key: ', snap.val())
+
+        firebase.database().ref('/activities/').child(this.user.id).once('value')
+          .then(data => {
+            console.log(data.val())
+          })
+          .catch(err => {
+            console.error(err)
+          })
+      })
+    },
+    testFiltering2 () {
+      firebase.database().ref('activities').child(this.user.id).child('L0vdttT7bYzlxxbonQ7').set({
+        name: 'test'
+      })
     },
     fetchData () {
       if (this.user) {
         this.$store.dispatch('loadActivities')
+        this.$store.dispatch('fetchCategories')
       }
       else {
         console.log('there is no user in home????')

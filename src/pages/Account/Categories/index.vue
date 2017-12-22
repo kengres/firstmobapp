@@ -51,11 +51,20 @@ export default {
       addCategoryUrl: addCategoryPath
     }
   },
+  watch: {
+    user (value) {
+      if (value) {
+        this.$store.dispatch('fetchCategories')
+      }
+    }
+  },
   created () {
-    this.$store.dispatch('fetchCategories')
+    if (this.user) {
+      this.$store.dispatch('fetchCategories')
+    }
   },
   computed: {
-    ...mapGetters(['categories', 'loading'])
+    ...mapGetters(['user', 'categories', 'loading'])
   },
   methods: {
     addNewCategory () {

@@ -6,7 +6,7 @@
       </q-card-title>
       <q-card-separator />
       <q-card-main>
-        <q-select :options="categories" v-model="activityForm.category" float-label="Category"></q-select>
+        <q-select :options="formattedCat" v-model="activityForm.category" float-label="Category"></q-select>
         <q-datetime v-model="activityForm.date" type="date" float-label="Date" />
         <q-datetime format24h v-model="activityForm.start" type="time" float-label="Start" />
         <q-datetime format24h v-model="activityForm.end" type="time" float-label="End" />
@@ -14,11 +14,13 @@
       <q-card-separator />
       <q-card-actions>
         <q-btn color="primary" @click="createActivity">Save Log</q-btn>
+        <q-btn color="primary" @click="cateLog">categories</q-btn>
       </q-card-actions>
     </q-card>
   </q-layout>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import { Toast } from 'quasar'
 export default {
   data () {
@@ -37,7 +39,44 @@ export default {
       ]
     }
   },
+  created () {
+    if (this.user) {
+      this.fetchCateg()
+    }
+  },
+  watch: {
+    user (val) {
+      if (val) {
+        this.fetchCateg()
+      }
+    }
+  },
+  computed: {
+    ...mapGetters({
+      categoriess: 'categories',
+      user: 'user'
+    }),
+    formattedCat () {
+      const newFormat = []
+      for (const cat of this.categoriess) {
+        newFormat.push({
+          label: cat.name,
+          value: cat.id,
+          icon: cat.icon,
+          leftColor: cat.color,
+          id: cat.id
+        })
+      }
+      return newFormat
+    }
+  },
   methods: {
+    fetchCateg () {
+      this.$store.dispatch('fetchCategories')
+    },
+    cateLog () {
+      console.log(this.formattedCat)
+    },
     createActivity () {
       const data = this.activityForm
       for (const input in data) {
