@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 // modules
 import activities from './activities'
+import catActivities from './catActivities'
 import categories from './categories'
 import user from './user'
 
@@ -11,6 +12,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   modules: {
     activities,
+    catActivities,
     categories,
     user
   },

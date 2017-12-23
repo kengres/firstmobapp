@@ -44,7 +44,7 @@
         </q-item-main>
         <q-item-side right>
           <q-item-tile stamp>spent on</q-item-tile>
-          <q-item-tile>{{item.category}} </q-item-tile>
+          <q-item-tile>category</q-item-tile>
         </q-item-side>
       </q-item>
     </q-list>
@@ -109,7 +109,9 @@ export default {
     Loading.show({
       delay: 0
     })
-    this.fetchData()
+    if (this.user) {
+      this.fetchData()
+    }
     this.welcomeMessage()
   },
   watch: {
@@ -145,7 +147,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['user', 'activities', 'loading', 'categories']),
+    ...mapGetters(['user', 'activities', 'loading', 'categories', 'catActivities']),
     queryMsg () {
       return this.$route.query ? (this.$route.query.msg ? this.$route.query.msg : null) : null
     },
@@ -204,32 +206,35 @@ export default {
   },
   methods: {
     testFiltering () {
-      // console.log('joins: ', this.categories)
-      const rootRef = firebase.database().ref()
-      const actRef = rootRef.child('activities/' + this.user.id)
-      const catRef = rootRef.child('categories/' + this.user.id)
-      const allCategories = []
-      catRef.on('child_added', snap => {
-        const formActivities = []
-        catRef.child(snap.key).child('activities').on('child_added', childSnap => {
-          actRef.child(childSnap.key).once('value')
-            .then(finalSnap => {
-              formActivities.push({
-                id: finalSnap.key,
-                ...finalSnap.val()
-              })
-            })
-            .catch(error => console.log(error))
-        })
-        allCategories.push({
+      const userId = this.user.id
+      const allActivities = []
+      firebase.database().ref('activities/' + userId).on('child_added', snap => {
+        const actObj = snap.val()
+        const cat = {}
+        firebase.database().ref('categories/' + userId).child(snap.val().category).once('value')
+          .then(catSnap => {
+            console.log('cat: ', catSnap.val())
+            const dataObj = catSnap.val()
+            for (const key in dataObj) {
+              if (dataObj.hasOwnProperty(key)) {
+                const element = dataObj[key]
+                console.log(key, element)
+                cat[key] = element
+              }
+            }
+            // cat = catSnap.val()
+          })
+          .catch(error => console.log('error cat: ', error))
+        // console.log('cat: ', cat)
+        allActivities.push({
           id: snap.key,
-          name: snap.val().name,
-          icon: snap.val().icon,
-          color: snap.val().color,
-          activities: formActivities
+          date: actObj.date,
+          end: actObj.end,
+          start: actObj.start,
+          category: cat
         })
       })
-      console.log('Categories with their activities: ', allCategories)
+      console.log('all ativities: ', allActivities)
     },
     testFiltering2 () {
       console.log('user id: ', this.user.id)
@@ -241,6 +246,7 @@ export default {
       if (this.user) {
         this.$store.dispatch('loadActivities')
         this.$store.dispatch('fetchCategories')
+        this.$store.dispatch('fetchCatActivities')
       }
       else {
         console.log('there is no user in home????')

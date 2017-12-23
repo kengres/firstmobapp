@@ -63,7 +63,7 @@ export default {
       console.log('creating this: ', newActivity)
       console.log('creator: ', getters.user)
       const root = firebase.database().ref()
-      root.child('/activities/' + getters.user.id).push(newActivity)
+      root.child('activities/' + getters.user.id).push(newActivity)
         .then(response => {
           const actId = response.key
           console.log('added activity id: ', actId)

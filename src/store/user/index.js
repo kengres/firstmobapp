@@ -22,7 +22,7 @@ export default {
       firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
         .then(data => {
           console.log('data after user create: ', data)
-          firebase.database().ref('users/' + data.uid).child('/info').set({
+          firebase.database().ref('users/' + data.uid).set({
             first_name: payload.first_name,
             last_name: payload.last_name,
             email: data.email
