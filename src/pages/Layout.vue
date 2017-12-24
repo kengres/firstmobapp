@@ -28,8 +28,8 @@
           <q-icon name="face" style="font-size: 70px" />
         </div>
         <div class="col-8 labels">
-          <div class="labels__title">Anonymous</div>
-          <div class="labels__subtitle">User</div>
+          <div class="labels__title">{{user? user.first_name: 'Anonymous'}}</div>
+          <div class="labels__subtitle">{{user? user.last_name : 'User'}}</div>
         </div>
         <div class="for-icon">
           <q-icon name="settings" style="font-size: 25px" />
@@ -39,11 +39,7 @@
       <q-list no-border link inset-delimiter>
       <q-item>
       </q-item>
-      <q-side-link item :to="categoriesUrl">
-        <q-item-side icon="add_circle" />
-        <q-item-main label="Manage Categories" />
-      </q-side-link>
-      <q-item>
+      <q-item @click="notify">
         <q-item-side icon="help" />
         <q-item-main label="F.A.Q" />
       </q-item>
@@ -62,14 +58,14 @@
 </template>
 
 <script>
-import { categoriesPath, homePath, loginPath } from '../config'
-import { QSideLink } from 'quasar'
+import { homePath, loginPath } from '../config'
+import { QSideLink, Alert } from 'quasar'
 
 export default {
   name: 'index',
   data () {
     return {
-      categoriesUrl: categoriesPath,
+      homeUrl: homePath,
       pageTitle: 'Time Spent App'
     }
   },
@@ -77,6 +73,9 @@ export default {
     QSideLink
   },
   computed: {
+    user () {
+      return this.$store.getters.user
+    },
     viewTitle () {
       return this.$route.meta.title
     },
@@ -92,6 +91,13 @@ export default {
             this.$router.push(loginPath)
           })
         })
+    },
+    notify () {
+      Alert.create({
+        html: 'Coming Soon!',
+        icon: 'face',
+        color: 'positive'
+      })
     }
   }
 }

@@ -1,12 +1,17 @@
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/database'
+import { Alert } from 'quasar'
+import 'quasar-extras/animate/bounceInRight.css'
+import 'quasar-extras/animate/bounceOutRight.css'
+
 // constant inti
 // import { ACTIVITIES_KEY } from '../../config'
 
 export default {
   state: {
-    activities: null
+    activities: null,
+    acitis: null
   },
   getters: {
     activities: state => state.activities,
@@ -18,29 +23,84 @@ export default {
     }
   },
   actions: {
-    loadActivities ({ commit, getters }, payload) {
-      commit('setLoading', true)
-      firebase.database().ref('activities/' + getters.user.id).once('value')
-        .then(response => {
-          const dataObj = response.val()
-          const apiActivities = []
-          for (const key in dataObj) {
-            if (dataObj.hasOwnProperty(key)) {
-              const element = dataObj[key]
-              const id = key
-              const newActivity = {
-                ...element,
-                id
+    addActivity ({ commit, getters, dispatch }, payload) {
+      const userId = getters.user.id
+      const month = payload.date.slice(3, 5)
+      const monthRef = firebase.database().ref('activities/' + userId).child(month)
+      monthRef.once('value')
+        .then(snap => {
+          console.log('got a snap: ', snap.val())
+          if (!snap.val()) {
+            console.log('snap is null')
+            dispatch('createActivity', payload)
+          }
+          else {
+            console.log('snap not null: ', snap.val())
+            const logObj = snap.val()
+            for (const key in logObj) {
+              if (logObj.hasOwnProperty(key)) {
+                console.log(key, payload.date)
+                // const element = logObj[key]
+                if (key === payload.date) {
+                  // notify user
+                  console.log('no can do')
+                  dispatch('notify')
+                  break
+                }
+                else {
+                  dispatch('createActivity', payload)
+                }
               }
-              apiActivities.push(newActivity)
             }
           }
-          console.log('activities from firebase: ', apiActivities)
-          commit('setActivities', apiActivities)
+        })
+        .catch(error => {
+          console.log('no value found: ', error)
+        })
+    },
+    notify (payload) {
+      Alert.create({
+        html: 'You already have a log on that date. Edit it instead!',
+        enter: 'bounceInRight',
+        leave: 'bounceOutRight',
+        color: 'warning',
+        icon: 'error',
+        position: 'top-right'
+      })
+    },
+    createActivity ({ commit, getters }, payload) {
+      const userId = getters.user.id
+      const month = payload.date.slice(3, 5)
+      const monthRef = firebase.database().ref('activities/' + userId).child(month)
+      monthRef.child(payload.date).set(payload)
+        .then(resp => {
+          console.log('act created: ', resp)
+        })
+        .catch(error => {
+          console.log('act not created: ', error)
+        })
+    },
+    loadActivities ({ commit, getters }) {
+      commit('setLoading', true)
+      const userId = getters.user.id
+      const month = (new Date()).getMonth() + 1
+      const allActivities = []
+      const monthRef = firebase.database().ref('activities/' + userId).child(month)
+      monthRef.once('value')
+        .then(snap => {
+          const actObj = snap.val()
+          for (const key in actObj) {
+            if (actObj.hasOwnProperty(key)) {
+              const element = actObj[key]
+              allActivities.push(element)
+            }
+          }
+          console.log('all acti: ', allActivities)
+          commit('setActivities', allActivities)
           commit('setLoading', false)
         })
         .catch(error => {
-          console.log('error fetching activities: ', error)
+          console.log(error)
           commit('setLoading', false)
         })
     },
@@ -51,27 +111,6 @@ export default {
         })
         .catch(error => {
           console.log(error)
-        })
-    },
-    createActivity ({ commit, getters }, payload) {
-      const newActivity = {
-        date: payload.date,
-        start: payload.start,
-        end: payload.end,
-        category: payload.category
-      }
-      console.log('creating this: ', newActivity)
-      console.log('creator: ', getters.user)
-      const root = firebase.database().ref()
-      root.child('activities/' + getters.user.id).push(newActivity)
-        .then(response => {
-          const actId = response.key
-          console.log('added activity id: ', actId)
-          console.log('new ref: ', `/categories/${newActivity.category}/activities/${actId}`)
-          root.child('/categories/' + getters.user.id + '/' + newActivity.category + '/activities/' + actId).set(true)
-        })
-        .catch(error => {
-          console.log('error adding activity: ', error)
         })
     }
   }

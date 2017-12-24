@@ -1,46 +1,31 @@
-export const activitiesInCategories = [
+export const activitiesByDate = [
   {
-    id: 'cat1',
-    activities: [
+    '12-12-2017': [
       {
-        id: 'act1',
-        date: '21.12.2017',
-        start: '09:00'
+        cat1: { name: 'name', color: '', icon: '' },
+        activities: [
+          { act1: 'name', start: '', end: '', duration: '' },
+          { act2: 'name', start: '', end: '', duration: '' },
+          { act3: 'name', start: '', end: '', duration: '' }
+        ]
       },
       {
-        id: 'act2',
-        date: '23.12.2017',
-        start: '19:00'
+        cat2: 'name',
+        activities: [
+          { act1: 'name', start: '', end: '', duration: '' },
+          { act2: 'name', start: '', end: '', duration: '' },
+          { act3: 'name', start: '', end: '', duration: '' }
+        ]
       }
-    ]
-  },
-  {
-    id: 'cat2',
-    activities: [
+    ],
+    '13-12-2017': [
       {
-        id: 'act1',
-        date: '23.12.2017',
-        start: '09:00'
-      },
-      {
-        id: 'act2',
-        date: '24.12.2017',
-        start: '19:00'
-      }
-    ]
-  },
-  {
-    id: 'cat3',
-    activities: [
-      {
-        id: 'act1',
-        date: '24.12.2017',
-        start: '09:00'
-      },
-      {
-        id: 'act2',
-        date: '25.12.2017',
-        start: '19:00'
+        cat1: 'name',
+        activities: [
+          { act1: 'name', start: '', end: '', duration: '' },
+          { act2: 'name', start: '', end: '', duration: '' },
+          { act3: 'name', start: '', end: '', duration: '' }
+        ]
       }
     ]
   }

@@ -6,76 +6,74 @@
       </q-card-title>
       <q-card-separator />
       <q-card-main>
-        <q-select :options="formattedCat" v-model="activityForm.category" float-label="Category"></q-select>
         <q-datetime v-model="activityForm.date" type="date" float-label="Date" />
         <q-datetime format24h v-model="activityForm.start" type="time" float-label="Start" />
         <q-datetime format24h v-model="activityForm.end" type="time" float-label="End" />
+         
+        <template v-if="showPause">
+          <q-datetime color="lime" format24h v-model="pauseForm.start" type="time" float-label="Pause Start" />
+          <q-datetime color="lime" format24h v-model="pauseForm.end" type="time" float-label="Pause End" />
+          <q-btn small color="lime" @click="savePause">Save</q-btn>
+          <q-btn small color="lime" @click="showPause = false">cancel</q-btn>
+        </template>
+        
+
       </q-card-main>
       <q-card-separator />
-      <q-card-actions>
-        <q-btn color="primary" @click="createActivity">Save Log</q-btn>
-        <q-btn color="primary" @click="cateLog">categories</q-btn>
+      <q-card-actions v-if="!showPause">
+        <q-btn color="green" @click="createActivity">Save Log</q-btn>
       </q-card-actions>
+      <q-fixed-position corner="bottom-right" :offset="[20, 10]">
+        <p>
+          <span style="margin-right:10px">Add a pause</span>
+          <q-btn small round icon="add" color="lime" @click="showPause = true"/>
+        </p>
+      </q-fixed-position>
     </q-card>
   </q-layout>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import { Toast } from 'quasar'
+import { addZero, diffDate } from '../../../config'
 export default {
   data () {
     return {
-      activityForm: {
-        category: '',
-        date: '',
+      showPause: false,
+      pauseForm: {
         start: '',
         end: ''
       },
-      categories: [
-        { label: 'Work', value: 'work' },
-        { label: 'Sport', value: 'sport' },
-        { label: 'Health', value: 'health' },
-        { label: 'Sex', value: 'sex' }
-      ]
-    }
-  },
-  created () {
-    if (this.user) {
-      this.fetchCateg()
-    }
-  },
-  watch: {
-    user (val) {
-      if (val) {
-        this.fetchCateg()
+      activityForm: {
+        date: '',
+        start: '',
+        end: '',
+        pauses: []
       }
     }
   },
   computed: {
     ...mapGetters({
-      categoriess: 'categories',
       user: 'user'
-    }),
-    formattedCat () {
-      const newFormat = []
-      for (const cat of this.categoriess) {
-        newFormat.push({
-          label: cat.name,
-          value: cat.id,
-          icon: cat.icon,
-          leftColor: cat.color,
-          id: cat.id
-        })
-      }
-      return newFormat
-    }
+    })
   },
   methods: {
-    fetchCateg () {
-      this.$store.dispatch('fetchCategories')
+    savePause () {
+      console.log(this.pauseForm)
+      const newPause = {
+        start: this.formatTime(this.pauseForm.start),
+        end: this.formatTime(this.pauseForm.end),
+        duration: diffDate(this.pauseForm.end, this.pauseForm.start)
+      }
+      this.activityForm.pauses.push(newPause)
+      this.showPause = false
     },
-    cateLog () {
-      console.log(this.formattedCat)
+    formatTime (date) {
+      const s = date
+      const d = new Date(s)
+      const h = addZero(d.getHours())
+      const m = addZero(d.getMinutes())
+      return `${h}:${m}`
     },
     createActivity () {
       const data = this.activityForm
@@ -88,38 +86,27 @@ export default {
           }
         }
       }
-      const d = new Date(this.activityForm.date)
-      const localDate = d.toLocaleDateString()
+      console.log('form date: ', this.activityForm.date)
+      const tzoffset = (new Date()).getTimezoneOffset() * 60000
+      const d = (new Date(this.activityForm.date)).getTime()
+      const localISOTime = (((new Date(d - tzoffset)).toISOString()).slice(0, 10)).split('-').reverse().join('-')
 
       const newActivity = {
-        date: localDate,
-        start: this.activityForm.start,
-        end: this.activityForm.end,
-        category: this.activityForm.category
+        date: localISOTime,
+        start: this.formatTime(this.activityForm.start),
+        end: this.formatTime(this.activityForm.end),
+        pauses: this.activityForm.pauses,
+        duration: diffDate(this.activityForm.end, this.activityForm.start)
       }
       console.log('new activity: ', newActivity)
       console.log('form: ', this.activityForm)
-      this.$store.dispatch('createActivity', newActivity)
+      this.$store.dispatch('addActivity', newActivity)
       this.$router.replace('/')
     },
     notifyMsg (msg) {
       Toast.create.warning({
         html: msg
       })
-    },
-    formatDate (value) {
-      const date = new Date(value)
-      if (typeof value === 'string') {
-        let hours = value.match(/^(\d+)/)[1]
-        const minutes = value.match(/:(\d+)/)[1]
-        date.setHours(hours)
-        date.setMinutes(minutes)
-      }
-      else {
-        date.setHours(value.getHours())
-        date.setMinutes(value.getMinutes())
-      }
-      return date
     }
   }
 }

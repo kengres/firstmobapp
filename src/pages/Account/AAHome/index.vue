@@ -2,23 +2,45 @@
   <q-layout ref="mainLayout" class="layout-padding"
       view="lHh Lpr fFf">
     <template v-if="!loading">
-      <q-list separator v-if="todayActivities.length > 0">
-        <q-list-header inset color="positive">
-          Today
-        </q-list-header>
-        <q-item v-for="item in todayActivities" :key="item.id">
-          <q-item-side>
-            <q-item-tile color="amber" icon="directions_run" />
+      <template v-if="activities && activities.length > 0">
+        <q-list separator>
+          <q-list-header inset>
+            {{currentMonth}}
+          </q-list-header>
+          <q-item v-for="item in activities" :key="item.date">
+            <q-item-side>
+              <q-item-tile :color="item.duration < 600? 'green' : 'yellow'" icon="work" />
+            </q-item-side>
+            <q-item-main>
+              <q-item-tile label>{{item.date}}</q-item-tile>
+              <q-item-tile sublabel>{{item.start}} - {{item.end}}</q-item-tile>
+            </q-item-main>
+            <q-item-side right>
+              <q-item-tile stamp>{{item.duration | hourMinFormat}}</q-item-tile>
+              <q-item-tile stamp v-if="item.pauses && item.pauses.length > 0">
+                Pause: {{item.pauses[0].duration}}min
+              </q-item-tile>
+              <q-item-tile stamp v-else>No Pause</q-item-tile>
+            </q-item-side>
+            <q-item-side right :ref="`target${item.date}`">
+            <q-item-tile icon="more_vert">
+
+              <q-popover :ref="`popover${item.date}`" anchor="top right" self="top right">
+                <q-list separator>
+                  <q-item @click="deleteActivity(item), $refs[`popover${item.date}`][0].close()">
+                    Delete
+                  </q-item>
+                  <q-item @click="updateActivity(item), $refs[`popover${item.date}`][0].close()">
+                    Edit
+                  </q-item>
+                </q-list>
+              </q-popover>
+
+            </q-item-tile>
           </q-item-side>
-          <q-item-main>
-            <q-item-tile label v-if="totalTimeSpent">{{totalTimeSpent.hours}}h {{totalTimeSpent.min}}min</q-item-tile>
-          </q-item-main>
-          <q-item-side right>
-            <q-item-tile stamp>spent on</q-item-tile>
-            <q-item-tile>{{item.category}}</q-item-tile>
-          </q-item-side>
-        </q-item>
-      </q-list>
+          </q-item>
+        </q-list>
+      </template>
       <q-list v-else>
         <q-item>
           Please add activities.
@@ -30,24 +52,6 @@
         </q-item>
       </q-list>
     </template>
-
-    <q-list separator v-if="activities && activities.length > 0">
-      <q-list-header inset>
-        Yesterday
-      </q-list-header>
-      <q-item v-for="item in activities" :key="item.id" @click="openLog(item)">
-        <q-item-side>
-          <q-item-tile color="amber" icon="work"/>
-        </q-item-side>
-        <q-item-main>
-          <q-item-tile>30h 44min</q-item-tile>
-        </q-item-main>
-        <q-item-side right>
-          <q-item-tile stamp>spent on</q-item-tile>
-          <q-item-tile>category</q-item-tile>
-        </q-item-side>
-      </q-item>
-    </q-list>
 
     <q-modal ref="minimizedModal" minimized v-model="open" 
       :content-css="{padding: '20px'}" v-if="logInView">
@@ -64,16 +68,13 @@
         <q-btn round color="positive" @click="addNewActivity" icon="add" />
       </q-fixed-position>
 
-    <q-fixed-position corner="bottom-left" :offset="[20, 20]">
-        <q-btn round color="positive" @click="testFiltering" icon="close" />
-      </q-fixed-position>
-    <q-fixed-position corner="bottom-left" :offset="[90, 20]">
-        <q-btn round color="positive" @click="testFiltering2" icon="thumb_up" />
-      </q-fixed-position>
+    <q-fixed-position corner="bottom-left" :offset="[20, 20]" v-if="false">
+      <q-btn round color="positive" icon="close" @click="testActi"/>
+    </q-fixed-position>
     
     <q-toolbar slot="footer" color="faded">
       <q-toolbar-title>
-        This is footer
+        <p class="small">22 weekdays this month. (16 done)</p>
       </q-toolbar-title>
     </q-toolbar>
 
@@ -82,16 +83,14 @@
 <script>
 import avatar from 'assets/boy-avatar.jpg'
 import { addActivityPath, loginPath, addZero } from '../../../config'
-import { ActionSheet, Toast, Loading } from 'quasar'
+import { ActionSheet, Toast, Alert, Loading } from 'quasar'
 import { mapGetters } from 'vuex'
-import * as firebase from 'firebase/app'
-// import 'firebase/auth'
-import 'firebase/database'
 
 export default {
   name: 'home',
   data () {
     return {
+      months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       avatar: avatar,
       logInView: null,
       open: false,
@@ -151,106 +150,34 @@ export default {
     queryMsg () {
       return this.$route.query ? (this.$route.query.msg ? this.$route.query.msg : null) : null
     },
-    todayActivities () {
-      const d = new Date()
-      const todayDate = d.toLocaleDateString()
-      return this.activities.filter(act => {
-        return act.date === todayDate
-      })
+    currentMonth () {
+      return this.months[(new Date()).getMonth()]
     }
-    // displayLogs () {
-    //   const newLogs = []
-    //   for (const log of this.logs) {
-    //     const block1 = diffDate(log.lunchStart, log.start)
-    //     const block2 = diffDate(log.end, log.lunchEnd)
-    //     const totalMin = block1 + block2
-    //     const duration = `${addZero(Math.floor(totalMin / 60))}h ${addZero(totalMin % 60)}min`
-    //     const displayLog = {
-    //       duration,
-    //       date: this.getTheDate(log.date),
-    //       start: this.getTheTime(log.start),
-    //       lunchStart: this.getTheTime(log.lunchStart),
-    //       lunchEnd: this.getTheTime(log.lunchEnd),
-    //       end: this.getTheTime(log.end)
-    //     }
-    //     newLogs.push(displayLog)
-    //   }
-    //   return newLogs
-    // },
-    // totalTimeSpent () {
-    //   const logs = this.displayLogs
-    //   let totalH = 0
-    //   let totalM = 0
-    //   if (logs) {
-    //     for (const log of logs) {
-    //       const h = parseInt(log.duration.slice(0, 2))
-    //       totalH += h
-    //       const m = parseInt(log.duration.slice(4, 6))
-    //       totalM += m
-    //     }
-    //   }
-    //   const plusH = Math.floor(totalM / 60)
-    //   const newM = totalM % 60
-    //   totalH += plusH
-
-    //   return {hours: totalH, min: newM}
-    // },
-    // avarageTime () {
-    //   if (this.logs && this.totalTimeSpent) {
-    //     const l = this.logs.length
-    //     const hours = Math.floor(this.totalTimeSpent.hours / l)
-    //     const minutes = Math.floor((((this.totalTimeSpent.hours % l) * 60) + this.totalTimeSpent.min) / l)
-    //     return {hours, min: minutes}
-    //   }
-    // }
   },
   methods: {
-    testFiltering () {
-      const userId = this.user.id
-      const allActivities = []
-      firebase.database().ref('activities/' + userId).on('child_added', snap => {
-        const actObj = snap.val()
-        const cat = {}
-        firebase.database().ref('categories/' + userId).child(snap.val().category).once('value')
-          .then(catSnap => {
-            console.log('cat: ', catSnap.val())
-            const dataObj = catSnap.val()
-            for (const key in dataObj) {
-              if (dataObj.hasOwnProperty(key)) {
-                const element = dataObj[key]
-                console.log(key, element)
-                cat[key] = element
-              }
-            }
-            // cat = catSnap.val()
-          })
-          .catch(error => console.log('error cat: ', error))
-        // console.log('cat: ', cat)
-        allActivities.push({
-          id: snap.key,
-          date: actObj.date,
-          end: actObj.end,
-          start: actObj.start,
-          category: cat
-        })
-      })
-      console.log('all ativities: ', allActivities)
+    testActi () {
+      this.$store.dispatch('loadActivities')
     },
-    testFiltering2 () {
-      console.log('user id: ', this.user.id)
-      firebase.database().ref('activities').child(this.user.id).on('child_added', snap => {
-        console.log(snap.val())
+    deleteActivity () {
+      console.log('deleting ...')
+      Alert.create({
+        html: 'Coming soon!',
+        color: 'warning',
+        icon: 'face',
+        position: 'right'
+      })
+    },
+    updateActivity () {
+      console.log('updating ...')
+      Alert.create({
+        html: 'Coming soon!',
+        color: 'positive',
+        icon: 'face',
+        position: 'left'
       })
     },
     fetchData () {
-      if (this.user) {
-        this.$store.dispatch('loadActivities')
-        this.$store.dispatch('fetchCategories')
-        this.$store.dispatch('fetchCatActivities')
-      }
-      else {
-        console.log('there is no user in home????')
-      }
+      this.$store.dispatch('loadActivities')
     },
     welcomeMessage () {
       if (this.queryMsg === 'success') {
@@ -266,12 +193,6 @@ export default {
         path: addActivityPath
       })
     },
-    // getTheTime (value) {
-    //   const t = new Date(value)
-    //   const min = addZero(t.getMinutes())
-    //   const h = addZero(t.getHours())
-    //   return `${h}:${min}`
-    // },
     openActionSheet () {
       ActionSheet.create({
         title: 'First Action',
@@ -319,6 +240,38 @@ export default {
       const min = addZero(t.getMinutes())
       const h = addZero(t.getHours())
       return `${h}:${min}`
+    },
+    latestDates (value) {
+      const a = new Date(value)
+      const day = addZero(a.getDate())
+      const month = addZero(a.getMonth() + 1)
+      const year = a.getFullYear()
+      const d = a.toLocaleDateString()
+      const b = new Date()
+      const t = b.toLocaleDateString()
+      const c = new Date()
+      const oneday = (c.getDate() - 1)
+      c.setDate(oneday)
+      const y = c.toLocaleDateString()
+      switch (d) {
+        case t:
+          return 'Today'
+        case y:
+          return 'Yesterday'
+        default:
+          return `${day}.${month}.${year}`
+      }
+    },
+    hourMinFormat (value) {
+      const h = Math.floor(value / 60)
+      const m = value % 60
+      if (h === 0) {
+        return `${m}min`
+      }
+      else if (m === 0) {
+        return `${h}h`
+      }
+      return `${h}h ${m}min`
     }
   }
 }

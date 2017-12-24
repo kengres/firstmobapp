@@ -58,12 +58,12 @@ export default {
       })
     },
     autoSignIn ({commit, dispatch}, payload) {
-      console.log('autoSigning in...')
+      console.log('autoSigning in...', payload.uid)
       commit('setLoading', true)
       dispatch('getUserDetails', payload.uid)
     },
     getUserDetails ({ commit }, UID) {
-      firebase.database().ref(`users/${UID}`).child('/info').once('value')
+      firebase.database().ref(`users/${UID}`).once('value')
         .then(data => {
           const result = data.val()
           const userData = {

@@ -51,18 +51,3 @@ export const diffDate = (dateA, dateB) => {
 export const addZero = value => {
   return value < 10 ? `0${value}` : value
 }
-export const sortCatAcitivitiesByDate = catActs => {
-  const dates = []
-  if (!catActs || catActs.lenth === 0) {
-    return
-  }
-  for (const catAct of catActs) {
-    for (const activity of catAct.activities) {
-      const d = activity.date
-      if (dates.indexOf(d) === -1) {
-        dates.push(d)
-      }
-    }
-  }
-  return dates
-}
