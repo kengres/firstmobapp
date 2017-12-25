@@ -39,8 +39,6 @@ export default {
             const logObj = snap.val()
             for (const key in logObj) {
               if (logObj.hasOwnProperty(key)) {
-                console.log(key, payload.date)
-                // const element = logObj[key]
                 if (key === payload.date) {
                   // notify user
                   console.log('no can do')

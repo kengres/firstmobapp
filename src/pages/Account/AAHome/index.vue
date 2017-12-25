@@ -105,6 +105,7 @@ export default {
     }
   },
   created () {
+    console.log('home is created..', this.user)
     Loading.show({
       delay: 0
     })
@@ -177,6 +178,7 @@ export default {
       })
     },
     fetchData () {
+      console.log('fetching activities...')
       this.$store.dispatch('loadActivities')
     },
     welcomeMessage () {
