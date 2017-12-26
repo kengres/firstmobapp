@@ -1,11 +1,11 @@
 <template>
   <q-layout class="layout-padding">
-    <q-card>
+    <q-card v-if="!loading">
       <q-card-title>
         Update <span class="text-green">{{actDate}}</span>
       </q-card-title>
       <q-card-separator />
-      <q-card-main>
+      <q-card-main v-if="singleActivity">
         <q-datetime 
             v-model="displayDate" 
             type="date" 
@@ -43,7 +43,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import { Toast } from 'quasar'
+import { Toast, Loading } from 'quasar'
 import { addZero, diffDate } from '../../../config'
 export default {
   data () {
@@ -61,15 +61,26 @@ export default {
     }
   },
   created () {
-    this.$store.dispatch('loadSingleActivity', this.actDate)
+    Loading.show({
+      delay: 0
+    })
+    if (this.user) {
+      this.$store.dispatch('loadSingleActivity', this.actDate)
+    }
   },
   watch: {
+    user (value) {
+      value ? this.$store.dispatch('loadSingleActivity', this.actDate) : console.log('')
+    },
     singleActivity (value) {
       value ? this.updateForm() : console.log(value)
+    },
+    loading (value) {
+      value ? Loading.show() : Loading.hide()
     }
   },
   computed: {
-    ...mapGetters(['user', 'singleActivity', 'activities']),
+    ...mapGetters(['user', 'loading', 'singleActivity', 'activities']),
     actDate () {
       return this.$route.params.actDate
     },
@@ -161,7 +172,7 @@ export default {
       console.log('form: ', this.activityForm)
       this.$store.dispatch('updateActivity', newActivity)
       // notify of success
-      // this.$router.replace('/')
+      this.$router.replace('/')
     },
     notifyMsg (msg) {
       Toast.create.warning({

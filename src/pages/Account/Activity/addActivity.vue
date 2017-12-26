@@ -18,7 +18,7 @@
             float-label="Start" />
         <q-datetime format24h v-model="activityForm.end" type="time" float-label="End" />
         
-        <template v-for="(pause, i) in activityForm.pauses">
+        <template v-for="(pause, i) in activityPauses">
           <span :key="i">
             <q-datetime color="lime" format24h v-model="pause.start" type="time" float-label="Pause Start" />
             <q-datetime color="lime" format24h v-model="pause.end" type="time" float-label="Pause End" />
@@ -59,6 +59,7 @@ export default {
         start: '',
         end: ''
       },
+      activityPauses: [],
       activityForm: {
         date: '',
         start: '',
@@ -72,13 +73,18 @@ export default {
   },
   methods: {
     savePause () {
-      console.log(this.pauseForm)
+      console.log('pauseform: ', this.pauseForm)
       const newPause = {
         start: this.formatTime(this.pauseForm.start),
         end: this.formatTime(this.pauseForm.end),
         duration: diffDate(this.pauseForm.end, this.pauseForm.start)
       }
+      this.activityPauses.push(this.pauseForm)
       this.activityForm.pauses.push(newPause)
+      this.pauseForm = {
+        start: '',
+        end: ''
+      }
       this.showPause = false
     },
     formatTime (date) {
@@ -87,6 +93,14 @@ export default {
       const h = addZero(d.getHours())
       const m = addZero(d.getMinutes())
       return `${h}:${m}`
+    },
+    unFormatTime (time) {
+      const h = parseInt(time.split(':')[0])
+      const m = parseInt(time.split(':')[1])
+      const d = new Date()
+      d.setHours(h)
+      d.setMinutes(m)
+      return d
     },
     createActivity () {
       const data = this.activityForm

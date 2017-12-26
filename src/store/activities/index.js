@@ -87,7 +87,7 @@ export default {
       const userId = getters.user.id
       const month = (new Date()).getMonth() + 1
       const allActivities = []
-      const monthRef = firebase.database().ref('activities/' + userId).child(month)
+      const monthRef = firebase.database().ref('activities/' + userId).child(month).orderByKey()
       monthRef.once('value')
         .then(snap => {
           const actObj = snap.val()
@@ -97,6 +97,7 @@ export default {
               allActivities.push(element)
             }
           }
+          allActivities.reverse()
           console.log('all acti: ', allActivities)
           commit('setActivities', allActivities)
           commit('setLoading', false)
@@ -107,25 +108,37 @@ export default {
         })
     },
     deleteActivity ({commit, getters, dispatch}, payload) {
-      const userId = getters.user.id
-      const date = payload.date
-      const month = (new Date()).getMonth() + 1
-      firebase.database().ref('activities/' + userId + '/' + month).child(date).remove()
-        .then(data => {
-          console.log(data)
-          dispatch('loadActivities')
-        })
-        .catch(error => {
-          console.log(error)
-        })
+      return new Promise((resolve, reject) => {
+        const userId = getters.user.id
+        const date = payload.date
+        const month = (new Date()).getMonth() + 1
+        firebase.database().ref('activities/' + userId + '/' + month).child(date).remove()
+          .then(data => {
+            console.log('delete complete')
+            resolve('done')
+            dispatch('loadActivities')
+          })
+          .catch(error => {
+            reject(error)
+            console.log(error)
+          })
+      })
     },
     updateActivity ({commit, getters, dispatch}, payload) {
       const userId = getters.user.id
       const date = payload.date
       const month = (new Date()).getMonth() + 1
       firebase.database().ref('activities/' + userId + '/' + month).child(date).update(payload)
-        .then(data => {
-          console.log(data)
+        .then(() => {
+          Alert.create({
+            html: 'Update succeded!',
+            color: 'positive',
+            icon: 'check',
+            position: 'bottom-left',
+            dismissable: true,
+            enter: 'bounceInRight',
+            leave: 'bounceOutRight'
+          })
           dispatch('loadActivities')
         })
         .catch(error => {
@@ -133,6 +146,7 @@ export default {
         })
     },
     loadSingleActivity ({ commit, getters }, payload) {
+      commit('setLoading', true)
       const userId = getters.user.id
       const month = (new Date()).getMonth() + 1
       const date = payload
@@ -145,9 +159,11 @@ export default {
             dataObj.pauses = []
           }
           commit('setSingleActivity', dataObj)
+          commit('setLoading', false)
         })
         .catch(error => {
           console.log(error)
+          commit('setLoading', false)
         })
     }
   }

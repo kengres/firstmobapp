@@ -1,0 +1,13 @@
+2017    tue   thur
+  jan    5     4
+  fev    4     4
+  mar    4     5
+  avr    4     4
+  mai    5     4
+  juin   4     5
+  jul    4     4
+  aout   5     5
+  sept   4     4
+  oct    5     4
+  nov    4     5
+  dec    4     4

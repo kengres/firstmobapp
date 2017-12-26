@@ -12,7 +12,7 @@
               <q-item-tile :color="item.duration < 600? 'green' : 'yellow'" icon="work" />
             </q-item-side>
             <q-item-main>
-              <q-item-tile label>{{item.date}}</q-item-tile>
+              <q-item-tile label>{{item.date | latestDates}}</q-item-tile>
               <q-item-tile sublabel>{{item.start}} - {{item.end}}</q-item-tile>
             </q-item-main>
             <q-item-side right>
@@ -85,7 +85,7 @@
 <script>
 import avatar from 'assets/boy-avatar.jpg'
 import { addActivityPath, loginPath, addZero, singleActivityPath } from '../../../config'
-import { ActionSheet, Toast, Loading } from 'quasar'
+import { ActionSheet, Toast, Loading, Dialog } from 'quasar'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -152,7 +152,32 @@ export default {
     },
     deleteActivity (act) {
       console.log('deleting ...: ', act)
-      this.$store.dispatch('deleteActivity', act)
+      const vm = this
+      Dialog.create({
+        title: 'Warning',
+        message: 'You are about to delete a log.',
+        buttons: [
+          'Cancel',
+          {
+            label: 'Ok',
+            handler () {
+              console.log('from handler')
+              vm.$store.dispatch('deleteActivity', act)
+                .then(positive => {
+                  Toast.create.positive({
+                    html: 'Delete succeded!'
+                  })
+                })
+                .catch(error => {
+                  Toast.create.warning({
+                    html: 'Delete failed!'
+                  })
+                  console.log(error)
+                })
+            }
+          }
+        ]
+      })
     },
     updateActivity (act) {
       console.log('updating ...: ', act)
@@ -228,7 +253,8 @@ export default {
       return `${h}:${min}`
     },
     latestDates (value) {
-      const a = new Date(value)
+      const newVal = value.split('-').reverse().join('-')
+      const a = new Date(newVal)
       const day = addZero(a.getDate())
       const month = addZero(a.getMonth() + 1)
       const year = a.getFullYear()

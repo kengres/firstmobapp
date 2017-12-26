@@ -97,7 +97,7 @@ export const routes = [
         path: `${nav.singleActivityUrl}/:actDate`,
         component: SingleActivity,
         meta: {
-          title: 'Activity'
+          title: 'Edit Activity'
         }
       }
     ]
