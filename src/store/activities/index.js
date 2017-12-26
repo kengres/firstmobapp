@@ -11,7 +11,7 @@ import 'quasar-extras/animate/bounceOutRight.css'
 export default {
   state: {
     activities: null,
-    acitis: null
+    singleActivity: null
   },
   getters: {
     activities: state => state.activities,
@@ -20,6 +20,9 @@ export default {
   mutations: {
     setActivities (state, payload) {
       state.activities = payload
+    },
+    setSingleActivity (state, payload) {
+      state.singleActivity = payload
     }
   },
   actions: {
@@ -119,15 +122,29 @@ export default {
     updateActivity ({commit, getters, dispatch}, payload) {
       const userId = getters.user.id
       const date = payload.date
-      const newData = {
-        end: '20:00',
-        start: '09:00'
-      }
       const month = (new Date()).getMonth() + 1
-      firebase.database().ref('activities/' + userId + '/' + month).child(date).update(newData)
+      firebase.database().ref('activities/' + userId + '/' + month).child(date).update(payload)
         .then(data => {
           console.log(data)
           dispatch('loadActivities')
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    loadSingleActivity ({ commit, getters }, payload) {
+      const userId = getters.user.id
+      const month = (new Date()).getMonth() + 1
+      const date = payload
+      firebase.database().ref('activities/' + userId + '/' + month).child(date).once('value')
+        .then(data => {
+          console.log('single: ', data.val())
+          const dataObj = data.val()
+          if (!dataObj.pauses) {
+            console.log('no pauses!!!')
+            dataObj.pauses = []
+          }
+          commit('setSingleActivity', dataObj)
         })
         .catch(error => {
           console.log(error)
