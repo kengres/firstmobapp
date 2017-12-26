@@ -6,10 +6,25 @@
       </q-card-title>
       <q-card-separator />
       <q-card-main>
-        <q-datetime v-model="activityForm.date" type="date" float-label="Date" />
-        <q-datetime format24h v-model="activityForm.start" type="time" float-label="Start" />
+        <q-datetime 
+            v-model="activityForm.date" 
+            type="date" 
+            float-label="Date"
+            monday-first />
+        <q-datetime 
+            format24h 
+            v-model="activityForm.start" 
+            type="time" 
+            float-label="Start" />
         <q-datetime format24h v-model="activityForm.end" type="time" float-label="End" />
-         
+        
+        <template v-for="(pause, i) in activityForm.pauses">
+          <span :key="i">
+            <q-datetime color="lime" format24h v-model="pause.start" type="time" float-label="Pause Start" />
+            <q-datetime color="lime" format24h v-model="pause.end" type="time" float-label="Pause End" />
+          </span>
+        </template>
+
         <template v-if="showPause">
           <q-datetime color="lime" format24h v-model="pauseForm.start" type="time" float-label="Pause Start" />
           <q-datetime color="lime" format24h v-model="pauseForm.end" type="time" float-label="Pause End" />
