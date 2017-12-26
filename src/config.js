@@ -29,8 +29,7 @@ export const homePath = '/account'
 export const loginPath = '/login'
 export const registerPath = '/register'
 export const addActivityPath = '/add-activity'
-export const categoriesPath = '/categories'
-export const addCategoryPath = '/categories/add'
+export const singleActivityPath = '/activities'
 
 export const nav = {
   landingUrl: landingPath,
@@ -38,8 +37,7 @@ export const nav = {
   registerUrl: registerPath,
   homeUrl: homePath,
   addActivityUrl: addActivityPath,
-  categoriesUrl: categoriesPath,
-  addCategoriesUrl: addCategoryPath
+  singleActivityUrl: singleActivityPath
 
 }
 export const diffDate = (dateA, dateB) => {

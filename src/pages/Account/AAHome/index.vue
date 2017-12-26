@@ -27,11 +27,13 @@
 
               <q-popover :ref="`popover${item.date}`" anchor="top right" self="top right">
                 <q-list separator>
-                  <q-item @click="deleteActivity(item), $refs[`popover${item.date}`][0].close()">
-                    Delete
-                  </q-item>
                   <q-item @click="updateActivity(item), $refs[`popover${item.date}`][0].close()">
-                    Edit
+                    <q-icon name="edit" />
+                      <q-item-tile>Edit</q-item-tile>
+                    </q-item>
+                  <q-item @click="deleteActivity(item), $refs[`popover${item.date}`][0].close()">
+                    <q-icon name="delete" />
+                    <q-item-tile>Delete</q-item-tile>
                   </q-item>
                 </q-list>
               </q-popover>
@@ -82,8 +84,8 @@
 </template>
 <script>
 import avatar from 'assets/boy-avatar.jpg'
-import { addActivityPath, loginPath, addZero } from '../../../config'
-import { ActionSheet, Toast, Alert, Loading } from 'quasar'
+import { addActivityPath, loginPath, addZero, singleActivityPath } from '../../../config'
+import { ActionSheet, Toast, Loading } from 'quasar'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -133,21 +135,10 @@ export default {
     },
     loading (value) {
       value ? Loading.show() : Loading.hide()
-    },
-    hideLeft (value) {
-      console.log('hiding left value...', value)
-      if (value) {
-        this.$refs.mainLayout.hideCurrentSide(() => {
-          console.log('closed')
-        })
-      }
-      else {
-        console.log('the value is false: ', value)
-      }
     }
   },
   computed: {
-    ...mapGetters(['user', 'activities', 'loading', 'categories', 'catActivities']),
+    ...mapGetters(['user', 'loading', 'activities']),
     queryMsg () {
       return this.$route.query ? (this.$route.query.msg ? this.$route.query.msg : null) : null
     },
@@ -159,22 +150,15 @@ export default {
     testActi () {
       this.$store.dispatch('loadActivities')
     },
-    deleteActivity () {
-      console.log('deleting ...')
-      Alert.create({
-        html: 'Coming soon!',
-        color: 'warning',
-        icon: 'face',
-        position: 'right'
-      })
+    deleteActivity (act) {
+      console.log('deleting ...: ', act)
+      this.$store.dispatch('deleteActivity', act)
     },
-    updateActivity () {
-      console.log('updating ...')
-      Alert.create({
-        html: 'Coming soon!',
-        color: 'positive',
-        icon: 'face',
-        position: 'left'
+    updateActivity (act) {
+      console.log('updating ...: ', act)
+      // this.$store.dispatch('updateActivity', act)
+      this.$router.push({
+        path: `${singleActivityPath}/${act.date}`
       })
     },
     fetchData () {

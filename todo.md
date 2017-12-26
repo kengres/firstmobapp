@@ -1,10 +1,6 @@
 ## to do list
-1. design home page (with and without data)
-3. delete a category ?? what happens for logs with that cat
-4. prexisting category
-5. link cat in firebase
-6. sort logs by date
-7. get categories before create
 8. form validation
 9. sidebar photo and user info
-10. filter catAct by date
+13. update activity
+1. calculate duration minus the pause duration
+2. store that seen the landing in localStorage

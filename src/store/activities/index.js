@@ -66,13 +66,14 @@ export default {
         position: 'top-right'
       })
     },
-    createActivity ({ commit, getters }, payload) {
+    createActivity ({ commit, getters, dispatch }, payload) {
       const userId = getters.user.id
       const month = payload.date.slice(3, 5)
       const monthRef = firebase.database().ref('activities/' + userId).child(month)
       monthRef.child(payload.date).set(payload)
         .then(resp => {
           console.log('act created: ', resp)
+          dispatch('loadActivities')
         })
         .catch(error => {
           console.log('act not created: ', error)
@@ -102,10 +103,31 @@ export default {
           commit('setLoading', false)
         })
     },
-    fetchUserData ({commit, getters}) {
-      firebase.database().ref('/users/' + getters.user.id).once('value')
+    deleteActivity ({commit, getters, dispatch}, payload) {
+      const userId = getters.user.id
+      const date = payload.date
+      const month = (new Date()).getMonth() + 1
+      firebase.database().ref('activities/' + userId + '/' + month).child(date).remove()
         .then(data => {
           console.log(data)
+          dispatch('loadActivities')
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    updateActivity ({commit, getters, dispatch}, payload) {
+      const userId = getters.user.id
+      const date = payload.date
+      const newData = {
+        end: '20:00',
+        start: '09:00'
+      }
+      const month = (new Date()).getMonth() + 1
+      firebase.database().ref('activities/' + userId + '/' + month).child(date).update(newData)
+        .then(data => {
+          console.log(data)
+          dispatch('loadActivities')
         })
         .catch(error => {
           console.log(error)

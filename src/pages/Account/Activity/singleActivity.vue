@@ -6,7 +6,7 @@
       </q-card-title>
       <q-card-separator />
       <q-card-main>
-        <q-datetime v-model="activityForm.date" type="date" float-label="Date" />
+        <q-datetime v-model="actDate" type="date" float-label="Date" />
         <q-datetime format24h v-model="activityForm.start" type="time" float-label="Start" />
         <q-datetime format24h v-model="activityForm.end" type="time" float-label="End" />
          
@@ -17,7 +17,7 @@
           <q-btn small color="lime" @click="showPause = false">cancel</q-btn>
         </template>
         
-
+        {{actDate}}
       </q-card-main>
       <q-card-separator />
       <q-card-actions v-if="!showPause">
@@ -45,7 +45,6 @@ export default {
         end: ''
       },
       activityForm: {
-        date: '',
         start: '',
         end: '',
         pauses: []
@@ -53,7 +52,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['user'])
+    ...mapGetters(['user']),
+    actDate () {
+      const a = this.$route.params.actDate
+      const b = a.split('-').reverse().join('-')
+      const d = new Date(b)
+      d.setHours(0)
+      return d
+    }
   },
   methods: {
     savePause () {

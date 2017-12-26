@@ -9,8 +9,7 @@ import Layout from '@/Layout.vue'
 // into account
 import Home from '@/Account/AAHome'
 import AddActivity from '@/Account/Activity/addActivity'
-import Categories from '@/Account/Categories'
-import AddCategory from '@/Account/Categories/AddCategory'
+import SingleActivity from '@/Account/Activity/singleActivity'
 import Error404 from '@/Error404.vue'
 
 // nav routes
@@ -95,17 +94,10 @@ export const routes = [
         }
       },
       {
-        path: nav.categoriesUrl,
-        component: Categories,
+        path: `${nav.singleActivityUrl}/:actDate`,
+        component: SingleActivity,
         meta: {
-          title: 'Categories'
-        }
-      },
-      {
-        path: nav.addCategoriesUrl,
-        component: AddCategory,
-        meta: {
-          title: 'Add Category'
+          title: 'Activity'
         }
       }
     ]

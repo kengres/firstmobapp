@@ -27,5 +27,6 @@ cordova platform add android
 cordova requirements
 
 # build release
+first change the verion
 cordova build android --release
 ```
