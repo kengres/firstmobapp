@@ -1,57 +1,55 @@
 <template>
-  <q-layout class="layout-padding">
-    <q-card>
+  <q-layout class="layout-padding centering bg-lime-3">
+    <div class="fixed-top fixed-top__center">
+      <img src="../../assets/logo-sm.png" class="" alt="">
+    </div>
+    <q-card class="absolute-center centering__card bg-white">
       <q-card-title>
         Fill the Form Below
       </q-card-title>
       <q-card-main>
-          <q-field
-              error-label="We need a valid name"
-            >
-              <q-input v-model="userForm.first_name"
-                float-label="First Name" />
-            </q-field>
-
-            <q-field
-              error-label="We need a valid name"
-            >
-              <q-input v-model="userForm.last_name"
-                float-label="Last Name" />
-            </q-field>
+        <q-field
+            error-label="We need a valid name"
+          >
+            <q-input v-model="userForm.first_name"
+              float-label="First Name" />
+          </q-field>
 
           <q-field
-              error-label="We need a valid email"
-            >
-              <q-input v-model="userForm.email" 
-                  float-label="E-mail"
-                  type="email" />
-            </q-field>
-          <q-field
-              error-label="We need a valid email"
-            >
-              <q-input type="password" 
-                float-label="Password"
-                v-model="userForm.password"/>
-            </q-field>
-          <q-field
-              error-label="Password don't match!"
-            >
-              <q-input type="password" 
-                float-label="Confirm Password"
-                v-model="userForm.password2" />
-            </q-field>
+            error-label="We need a valid name"
+          >
+            <q-input v-model="userForm.last_name"
+              float-label="Last Name" />
+          </q-field>
 
-            <q-field>
-              <q-btn color="info" @click="saveUser">register</q-btn>
-            </q-field>
+        <q-field
+            error-label="We need a valid email"
+          >
+            <q-input v-model="userForm.email" 
+                float-label="E-mail"
+                type="email" />
+          </q-field>
+        <q-field
+            error-label="We need a valid email"
+          >
+            <q-input type="password" 
+              float-label="Password"
+              v-model="userForm.password"/>
+          </q-field>
+        <q-field
+            error-label="Password don't match!"
+          >
+            <q-input type="password" 
+              float-label="Confirm Password"
+              v-model="userForm.password2" />
+          </q-field>
 
       </q-card-main>
+      <q-card-actions>
+        <q-btn outline color="lime-9" @click="saveUser">register</q-btn>
+        <q-btn outline color="lime-9" @click="$router.replace(loginUrl)">Sign</q-btn>
+      </q-card-actions>
     </q-card>
-    <q-fixed-position corner="bottom-right" :offset="[20, 60]">
-        <q-btn @click="$router.replace(loginUrl)" color="info">
-          Sign in here
-        </q-btn>
-    </q-fixed-position>
   </q-layout>
 </template>
 <script>

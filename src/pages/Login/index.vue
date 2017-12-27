@@ -1,37 +1,37 @@
 <template>
-  <q-layout class="layout-padding">
-    <q-card>
+  <q-layout class="layout-padding centering bg-lime-4">
+    <div class="fixed-top fixed-top__center">
+      <img src="../../assets/squarelogo2.png" class="" alt="">
+    </div>
+    <q-card flat class="absolute-center centering__card bg-white">
       <q-card-title>
-        Fill the Form to login
+        <span class="text-lime-6">Fill the Form to SignIn</span>
       </q-card-title>
-      <q-card-main>
-          <q-field
-              error-label="We need a valid email"
-            >
-              <q-input v-model="loginForm.email" 
-                  float-label="E-mail"
-                  type="email" />
-            </q-field>
-          <q-field
-              error-label="We need a valid pass"
-            >
-              <q-input type="password" 
-                float-label="Password"
-                v-model="loginForm.password"/>
-            </q-field>
-
-            <q-field>
-              <q-btn color="green" @click="login">Login</q-btn>
-            </q-field>
+      <q-card-main color="lime-6">
+        <q-field
+            color="lime-6"
+            error-label="We need a valid email"
+          >
+            <q-input v-model="loginForm.email"
+                color="lime-6"
+                float-label="E-mail"
+                type="email" />
+          </q-field>
+        <q-field
+            error-label="We need a valid pass"
+          >
+            <q-input type="password" 
+              float-label="Password"
+              v-model="loginForm.password"/>
+          </q-field>
 
       </q-card-main>
+      <q-card-actions>
+        <q-btn outline color="lime-8" @click="login">Login</q-btn>
+        <q-btn outline color="lime-8" @click="$router.replace(registerUrl)">register</q-btn>
+      </q-card-actions>
     </q-card>
 
-    <q-fixed-position corner="bottom-right" :offset="[20, 250]">
-      <q-btn big color="positive" @click="$router.replace(registerUrl)">
-        register
-      </q-btn>
-    </q-fixed-position>
     
   </q-layout>
 </template>
@@ -93,4 +93,21 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+  .centering {
+    max-height: 100vh;
+    overflow: hidden;
+
+    &__card {
+      width: 90%;
+    }
+  }
+  .fixed-top {
+    padding-top: 20px;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+  }
+</style>
+
 
