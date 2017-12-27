@@ -11,39 +11,20 @@
             type="date" 
             float-label="Date"
             monday-first />
+        <q-select v-model="activityForm.category" :options="categories" float-label="Category" />
         <q-datetime 
             format24h 
             v-model="activityForm.start" 
             type="time" 
             float-label="Start" />
         <q-datetime format24h v-model="activityForm.end" type="time" float-label="End" />
-        
-        <template v-for="(pause, i) in activityPauses">
-          <span :key="i">
-            <q-datetime color="lime" format24h v-model="pause.start" type="time" float-label="Pause Start" />
-            <q-datetime color="lime" format24h v-model="pause.end" type="time" float-label="Pause End" />
-          </span>
-        </template>
-
-        <template v-if="showPause">
-          <q-datetime color="lime" format24h v-model="pauseForm.start" type="time" float-label="Pause Start" />
-          <q-datetime color="lime" format24h v-model="pauseForm.end" type="time" float-label="Pause End" />
-          <q-btn small color="lime" @click="savePause">Save</q-btn>
-          <q-btn small color="lime" @click="showPause = false">cancel</q-btn>
-        </template>
-        
 
       </q-card-main>
       <q-card-separator />
-      <q-card-actions v-if="!showPause">
-        <q-btn color="green" @click="createActivity">Save Log</q-btn>
+      <q-card-actions>
+        <q-btn round color="green" @click="createActivity" icon="check"/>
+        <q-btn round color="green" icon="close" @click="$router.go(-1)"/>
       </q-card-actions>
-      <q-fixed-position corner="bottom-right" :offset="[20, 10]">
-        <p>
-          <span style="margin-right:10px">Add a pause</span>
-          <q-btn small round icon="add" color="lime" @click="showPause = true"/>
-        </p>
-      </q-fixed-position>
     </q-card>
   </q-layout>
 </template>
@@ -54,39 +35,23 @@ import { addZero, diffDate } from '../../../config'
 export default {
   data () {
     return {
-      showPause: false,
-      pauseForm: {
+      activityForm: {
+        category: '',
+        date: '',
         start: '',
         end: ''
       },
-      activityPauses: [],
-      activityForm: {
-        date: '',
-        start: '',
-        end: '',
-        pauses: []
-      }
+      categories: [
+        { label: 'Work', value: 'work' },
+        { label: 'Health', value: 'health' },
+        { label: 'Sleep', value: 'sleep' }
+      ]
     }
   },
   computed: {
     ...mapGetters(['user'])
   },
   methods: {
-    savePause () {
-      console.log('pauseform: ', this.pauseForm)
-      const newPause = {
-        start: this.formatTime(this.pauseForm.start),
-        end: this.formatTime(this.pauseForm.end),
-        duration: diffDate(this.pauseForm.end, this.pauseForm.start)
-      }
-      this.activityPauses.push(this.pauseForm)
-      this.activityForm.pauses.push(newPause)
-      this.pauseForm = {
-        start: '',
-        end: ''
-      }
-      this.showPause = false
-    },
     formatTime (date) {
       const s = date
       const d = new Date(s)
@@ -127,8 +92,8 @@ export default {
       }
       console.log('new activity: ', newActivity)
       console.log('form: ', this.activityForm)
-      this.$store.dispatch('addActivity', newActivity)
-      this.$router.replace('/')
+      // this.$store.dispatch('addActivity', newActivity)
+      // this.$router.replace('/')
     },
     notifyMsg (msg) {
       Toast.create.warning({

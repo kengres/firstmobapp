@@ -10,6 +10,9 @@ import Layout from '@/Layout.vue'
 import Home from '@/Account/AAHome'
 import AddActivity from '@/Account/Activity/addActivity'
 import SingleActivity from '@/Account/Activity/singleActivity'
+import Categories from '@/Account/Categories'
+import AddCategory from '@/Account/Categories/AddCategory'
+import Profile from '@/Account/Profile'
 import Error404 from '@/Error404.vue'
 
 // nav routes
@@ -98,6 +101,27 @@ export const routes = [
         component: SingleActivity,
         meta: {
           title: 'Edit Activity'
+        }
+      },
+      {
+        path: nav.categoriesUrl,
+        component: Categories,
+        meta: {
+          title: 'Categories'
+        }
+      },
+      {
+        path: nav.addCategoryUrl,
+        component: AddCategory,
+        meta: {
+          title: 'Add Category'
+        }
+      },
+      {
+        path: nav.profileUrl,
+        component: Profile,
+        meta: {
+          title: 'Profile'
         }
       }
     ]

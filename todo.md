@@ -8,4 +8,5 @@
 8. pauses duration See #1.
 9. delete a pause
 10. search box
-11. day filter
+12. search fx
+13. theming

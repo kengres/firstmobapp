@@ -30,6 +30,9 @@ export const loginPath = '/login'
 export const registerPath = '/register'
 export const addActivityPath = '/add-activity'
 export const singleActivityPath = '/activities'
+export const categoriesPath = '/categories'
+export const addCategoryPath = '/add-category'
+export const profilePath = '/profile'
 
 export const nav = {
   landingUrl: landingPath,
@@ -37,7 +40,10 @@ export const nav = {
   registerUrl: registerPath,
   homeUrl: homePath,
   addActivityUrl: addActivityPath,
-  singleActivityUrl: singleActivityPath
+  singleActivityUrl: singleActivityPath,
+  categoriesUrl: categoriesPath,
+  addCategoryUrl: addCategoryPath,
+  profileUrl: profilePath
 
 }
 export const diffDate = (dateA, dateB) => {
