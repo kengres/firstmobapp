@@ -26,39 +26,6 @@ export default {
     }
   },
   actions: {
-    addActivity ({ commit, getters, dispatch }, payload) {
-      const userId = getters.user.id
-      const month = payload.date.slice(3, 5)
-      const monthRef = firebase.database().ref('activities/' + userId).child(month)
-      monthRef.once('value')
-        .then(snap => {
-          console.log('got a snap: ', snap.val())
-          if (!snap.val()) {
-            console.log('snap is null')
-            dispatch('createActivity', payload)
-          }
-          else {
-            console.log('snap not null: ', snap.val())
-            const logObj = snap.val()
-            for (const key in logObj) {
-              if (logObj.hasOwnProperty(key)) {
-                if (key === payload.date) {
-                  // notify user
-                  console.log('no can do')
-                  dispatch('notify')
-                  break
-                }
-                else {
-                  dispatch('createActivity', payload)
-                }
-              }
-            }
-          }
-        })
-        .catch(error => {
-          console.log('no value found: ', error)
-        })
-    },
     notify (payload) {
       Alert.create({
         html: 'You already have a log on that date. Edit it instead!',
@@ -73,7 +40,7 @@ export default {
       const userId = getters.user.id
       const month = payload.date.slice(3, 5)
       const monthRef = firebase.database().ref('activities/' + userId).child(month)
-      monthRef.child(payload.date).set(payload)
+      monthRef.child(payload.date).push(payload)
         .then(resp => {
           console.log('act created: ', resp)
           dispatch('loadActivities')
@@ -87,25 +54,33 @@ export default {
       const userId = getters.user.id
       const month = (new Date()).getMonth() + 1
       const allActivities = []
-      const monthRef = firebase.database().ref('activities/' + userId).child(month).orderByKey()
-      monthRef.once('value')
-        .then(snap => {
-          const actObj = snap.val()
-          for (const key in actObj) {
-            if (actObj.hasOwnProperty(key)) {
-              const element = actObj[key]
-              allActivities.push(element)
-            }
+      const catRef = firebase.database().ref('categories/' + userId)
+      firebase.database().ref('activities/' + userId).child(month).on('child_added', snap => {
+        const dateActivities = []
+        console.log('snap: ', snap.key, snap.val())
+        const dataObj = snap.val()
+        // construct all activities in on a particular date
+        for (const key in dataObj) {
+          if (dataObj.hasOwnProperty(key)) {
+            const element = dataObj[key]
+            const { category, ...rest } = element
+            catRef.child(element.category).once('value')
+              .then(resp => {
+                const newEl = { category: resp.val(), ...rest }
+                dateActivities.push(newEl)
+              })
+              .catch(error => console.log('error cat: ', error))
           }
-          allActivities.reverse()
-          console.log('all acti: ', allActivities)
-          commit('setActivities', allActivities)
-          commit('setLoading', false)
-        })
-        .catch(error => {
-          console.log(error)
-          commit('setLoading', false)
-        })
+        }
+        const dateAct = {
+          date: snap.key,
+          dateActivities
+        }
+        allActivities.push(dateAct)
+        console.log('activ: ', allActivities)
+        commit('setActivities', allActivities)
+        commit('setLoading', false)
+      })
     },
     deleteActivity ({commit, getters, dispatch}, payload) {
       return new Promise((resolve, reject) => {

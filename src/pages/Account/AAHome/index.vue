@@ -1,86 +1,63 @@
-<template>
-  <q-layout ref="mainLayout" class="layout-padding"
-      view="lHh Lpr fFf">
-    <template v-if="!loading">
-      <template v-if="activities && activities.length > 0">
-        <q-list separator>
-          <q-list-header inset>
-            {{currentMonth}}
-          </q-list-header>
-          <q-item v-for="item in activities" :key="item.date">
-            <q-item-side>
-              <q-item-tile :color="item.duration < 600? 'green' : 'yellow'" icon="work" />
-            </q-item-side>
-            <q-item-main>
-              <q-item-tile label>{{item.date | latestDates}}</q-item-tile>
-              <q-item-tile sublabel>{{item.start}} - {{item.end}}</q-item-tile>
-            </q-item-main>
-            <q-item-side right>
-              <q-item-tile stamp>{{item.duration | hourMinFormat}}</q-item-tile>
-              <q-item-tile stamp v-if="item.pauses && item.pauses.length > 0">
-                Pause: {{item.pauses[0].duration}}min
-              </q-item-tile>
-              <q-item-tile stamp v-else>No Pause</q-item-tile>
-            </q-item-side>
-            <q-item-side right :ref="`target${item.date}`">
-            <q-item-tile icon="more_vert">
+<template lang="pug">
+  q-layout(ref="mainLayout" class="layout-padding" view="lHh Lpr fFf")
+    template(v-if="!loading")
+      template(v-if="activities && activities.length > 0")
+        q-list(separator v-for="item in reverseAct" :key="item.date")
+          q-list-header(inset) {{item.date | latestDates}}
+          q-item(v-for="(act, i) in item.dateActivities" :key="i")
+            q-item-side
+              q-item-tile(:color="act.category.color" :icon="act.category.icon")
+            q-item-main
+              q-item-tile(label) {{act.category.name | toTitleCase}}
+              q-item-tile(sublabel) For {{act.duration | hourMinFormat}}
+            q-item-side(right)
+              q-item-tile(stamp) {{act.start}} - {{act.end}}
+              //- q-item-tile(stamp) {{act.duration | hourMinFormat}}
+            q-item-side(right :ref="`target${i}`")
+              q-item-tile(icon="more_vert")
 
-              <q-popover :ref="`popover${item.date}`" anchor="top right" self="top right">
-                <q-list separator>
-                  <q-item @click="updateActivity(item), $refs[`popover${item.date}`][0].close()">
-                    <q-icon name="edit" />
-                      <q-item-tile>Edit</q-item-tile>
-                    </q-item>
-                  <q-item @click="deleteActivity(item), $refs[`popover${item.date}`][0].close()">
-                    <q-icon name="delete" />
-                    <q-item-tile>Delete</q-item-tile>
-                  </q-item>
-                </q-list>
-              </q-popover>
+                q-popover(:ref="`popover${i}`" anchor="top right" self="top right")
+                  q-list(separator)
+                    q-item(@click="updateActivity(act), $refs[`popover${i}`][0].close()")
+                      q-icon(name="edit")
+                      q-item-tile Edit
+                    q-item(@click="deleteActivity(act), $refs[`popover${i}`][0].close()")
+                      q-icon(name="delete")
+                      q-item-tile Delete
 
-            </q-item-tile>
-          </q-item-side>
-          </q-item>
-        </q-list>
-      </template>
-      <q-list v-else>
-        <q-item>
-          Please add activities.
-        </q-item>
-        <q-item>
-          <q-item-main>
-            <q-item-tile>To do so, click at the add button below.</q-item-tile>
-          </q-item-main>
-        </q-item>
-      </q-list>
-    </template>
+      //- <q-list v-else>
+      //-   <q-item>
+      //-     Please add activities.
+      //-   </q-item>
+      //-   <q-item>
+      //-     <q-item-main>
+      //-       <q-item-tile>To do so, click at the add button below.</q-item-tile>
+      //-     </q-item-main>
+      //-   </q-item>
+      //- </q-list>
 
-    <q-modal ref="minimizedModal" minimized v-model="open" 
-      :content-css="{padding: '20px'}" v-if="logInView">
-      <h4>Saturday</h4>
-      <h5>{{logInView.date | formattedDate}}</h5>
-      <h5>{{logInView.duration}}</h5>
-      <p>Start: {{logInView.start | formattedTime}}</p>
-      <p>End: {{logInView.end | formattedTime}}</p>
-      <q-btn color="faded" icon="close" round
-            @click="$refs.minimizedModal.close()"></q-btn>
-    </q-modal>
+    //- <q-modal ref="minimizedModal" minimized v-model="open" 
+    //-   :content-css="{padding: '20px'}" v-if="logInView">
+    //-   <h4>Saturday</h4>
+    //-   <h5>{{logInView.date | formattedDate}}</h5>
+    //-   <h5>{{logInView.duration}}</h5>
+    //-   <p>Start: {{logInView.start | formattedTime}}</p>
+    //-   <p>End: {{logInView.end | formattedTime}}</p>
+    //-   <q-btn color="faded" icon="close" round
+    //-         @click="$refs.minimizedModal.close()"></q-btn>
+    //- </q-modal>
     
-    <q-fixed-position corner="bottom-right" :offset="[20, 10]">
-        <q-btn round color="positive" @click="addNewActivity" icon="add" />
-      </q-fixed-position>
+    q-fixed-position(corner="bottom-right" :offset="[20, 10]")
+      q-btn(round color="positive" @click="addNewActivity" icon="add")
 
-    <q-fixed-position corner="bottom-left" :offset="[20, 20]" v-if="false">
-      <q-btn round color="positive" icon="close" @click="testActi"/>
-    </q-fixed-position>
+    q-fixed-position(corner="bottom-left" :offset="[20, 20]")
+      q-btn(round color="positive" icon="check" @click="testActi")
     
-    <q-toolbar slot="footer" color="faded">
-      <q-toolbar-title>
-        <p class="small">22 weekdays this month. (16 done)</p>
-      </q-toolbar-title>
-    </q-toolbar>
-
-  </q-layout>
+    //- <q-toolbar slot="footer" color="faded">
+    //-   <q-toolbar-title>
+    //-     <p class="small">22 weekdays this month. (16 done)</p>
+    //-   </q-toolbar-title>
+    //- </q-toolbar>
 </template>
 <script>
 import avatar from 'assets/boy-avatar.jpg'
@@ -145,6 +122,9 @@ export default {
     },
     currentMonth () {
       return this.months[(new Date()).getMonth()]
+    },
+    reverseAct () {
+      return this.activities ? (this.activities).reverse() : null
     }
   },
   methods: {
@@ -153,7 +133,7 @@ export default {
     },
     deleteActivity (act) {
       console.log('deleting ...: ', act)
-      const vm = this
+      // const vm = this
       Dialog.create({
         title: 'Warning',
         message: 'You are about to delete a log.',
@@ -163,18 +143,18 @@ export default {
             label: 'Ok',
             handler () {
               console.log('from handler')
-              vm.$store.dispatch('deleteActivity', act)
-                .then(positive => {
-                  Toast.create.positive({
-                    html: 'Delete succeded!'
-                  })
-                })
-                .catch(error => {
-                  Toast.create.warning({
-                    html: 'Delete failed!'
-                  })
-                  console.log(error)
-                })
+              // vm.$store.dispatch('deleteActivity', act)
+              //   .then(positive => {
+              //     Toast.create.positive({
+              //       html: 'Delete succeded!'
+              //     })
+              //   })
+              //   .catch(error => {
+              //     Toast.create.warning({
+              //       html: 'Delete failed!'
+              //     })
+              //     console.log(error)
+              //   })
             }
           }
         ]
@@ -285,6 +265,12 @@ export default {
         return `${h}h`
       }
       return `${h}h ${m}min`
+    },
+    toTitleCase (val) {
+      const a = (val.toLowerCase()).split('')
+      a[0] = a[0].toUpperCase()
+      const b = a.join('')
+      return b
     }
   }
 }

@@ -1,9 +1,12 @@
 import * as firebase from 'firebase/app'
 import 'firebase/database'
+import { Alert } from 'quasar'
+import 'quasar-extras/animate/bounceInRight.css'
+import 'quasar-extras/animate/bounceOutRight.css'
 
 export default {
   state: {
-    categories: []
+    categories: null
   },
   getters: {
     categories: state => state.categories
@@ -23,7 +26,7 @@ export default {
         icon: payload.icon,
         color: payload.color
       }
-      firebase.database().ref('/categories/' + getters.user.id).push(newCategory)
+      firebase.database().ref('categories/' + getters.user.id + '/' + payload.name).set(newCategory)
         .then(data => {
           console.log('added category: ', data)
         })
@@ -32,27 +35,42 @@ export default {
         })
     },
     fetchCategories ({ commit, getters }) {
-      commit('setLoading', true)
-      firebase.database().ref('/categories/' + getters.user.id).once('value')
-        .then(resp => {
-          console.log('received categories: ', resp.val())
-          const dataObj = resp.val()
-          const apiCategories = []
-          for (const key in dataObj) {
-            if (dataObj.hasOwnProperty(key)) {
-              apiCategories.push({
-                ...dataObj[key],
-                id: key
-              })
-            }
-          }
-          console.log('committing: ', apiCategories)
-          commit('setCategories', apiCategories)
-          commit('setLoading', false)
+      // commit('setLoading', true)
+      const allCat = []
+      firebase.database().ref('categories/' + getters.user.id).on('child_added', snap => {
+        console.log('received categories: ', snap.val())
+        allCat.push(snap.val())
+        commit('setCategories', allCat)
+      })
+    },
+    updateCategory ({ commit, getters }, payload) {
+      firebase.database().ref('categories/' + getters.user.id + '/' + payload.name).set(payload)
+        .then((a) => {
+          console.log('updated: ', a)
+          Alert.create({
+            html: 'Update succeded!',
+            color: 'positive',
+            icon: 'check',
+            position: 'top-left',
+            dismissable: true,
+            enter: 'bounceInRight',
+            leave: 'bounceOutRight'
+          })
         })
-        .catch(error => {
-          console.error('error fetching categories: ', error)
-          commit('setLoading', false)
+    },
+    deleteCategory ({ commit, getters }, payload) {
+      firebase.database().ref('categories/' + getters.user.id + '/' + payload.name).remove()
+        .then((a) => {
+          console.log('removed: ', a)
+          Alert.create({
+            html: 'Delete succeded!',
+            color: 'positive',
+            icon: 'check',
+            position: 'top-left',
+            dismissable: true,
+            enter: 'bounceInRight',
+            leave: 'bounceOutRight'
+          })
         })
     }
   }

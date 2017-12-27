@@ -11,7 +11,7 @@
             type="date" 
             float-label="Date"
             monday-first />
-        <q-select v-model="activityForm.category" :options="categories" float-label="Category" />
+        <q-select v-model="activityForm.category" :options="categoriez" float-label="Category" />
         <q-datetime 
             format24h 
             v-model="activityForm.start" 
@@ -41,15 +41,38 @@ export default {
         start: '',
         end: ''
       },
-      categories: [
+      categoriess: [
         { label: 'Work', value: 'work' },
         { label: 'Health', value: 'health' },
         { label: 'Sleep', value: 'sleep' }
       ]
     }
   },
+  created () {
+    if (this.user) {
+      this.$store.dispatch('fetchCategories')
+    }
+  },
   computed: {
-    ...mapGetters(['user'])
+    ...mapGetters(['user', 'categories']),
+    categoriez () {
+      try {
+        const a = []
+        for (const cat of this.categories) {
+          a.push({
+            label: cat.name,
+            value: cat.name,
+            icon: cat.icon,
+            color: cat.color
+          })
+        }
+        console.log('cat: ', a)
+        return a
+      }
+      catch (error) {
+        return this.categoriess
+      }
+    }
   },
   methods: {
     formatTime (date) {
@@ -87,13 +110,13 @@ export default {
         date: localISOTime,
         start: this.formatTime(this.activityForm.start),
         end: this.formatTime(this.activityForm.end),
-        pauses: this.activityForm.pauses,
-        duration: diffDate(this.activityForm.end, this.activityForm.start)
+        duration: diffDate(this.activityForm.end, this.activityForm.start),
+        category: this.activityForm.category
       }
       console.log('new activity: ', newActivity)
       console.log('form: ', this.activityForm)
-      // this.$store.dispatch('addActivity', newActivity)
-      // this.$router.replace('/')
+      this.$store.dispatch('createActivity', newActivity)
+      this.$router.replace('/')
     },
     notifyMsg (msg) {
       Toast.create.warning({
