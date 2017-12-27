@@ -16,6 +16,10 @@
         {{ viewTitle }}
       </q-toolbar-title>
     </q-toolbar>
+    
+    <q-toolbar slot="header" color="green-8" v-if="isHome">
+      <q-search inverted v-model="search" color="green" />
+    </q-toolbar>
 
     <div slot="left">
       <!--
@@ -59,18 +63,21 @@
 
 <script>
 import { homePath, loginPath } from '../config'
-import { QSideLink, Alert } from 'quasar'
+import { QSideLink, QSearch, QTabs, Alert } from 'quasar'
 
 export default {
   name: 'index',
   data () {
     return {
       homeUrl: homePath,
-      pageTitle: 'Time Spent App'
+      pageTitle: 'Time Spent App',
+      search: ''
     }
   },
   components: {
-    QSideLink
+    QSideLink,
+    QSearch,
+    QTabs
   },
   computed: {
     user () {

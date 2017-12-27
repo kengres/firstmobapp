@@ -1,9 +1,6 @@
 <template>
   <q-layout ref="mainLayout" class="layout-padding"
       view="lHh Lpr fFf">
-      <q-toolbar slot="header" color="primary">
-        <q-search inverted v-model="search" color="none" />
-      </q-toolbar>
     <template v-if="!loading">
       <template v-if="activities && activities.length > 0">
         <q-list separator>
