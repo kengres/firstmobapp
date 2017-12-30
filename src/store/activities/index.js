@@ -55,32 +55,44 @@ export default {
       const month = (new Date()).getMonth() + 1
       const allActivities = []
       const catRef = firebase.database().ref('categories/' + userId)
-      firebase.database().ref('activities/' + userId).child(month).on('child_added', snap => {
-        const dateActivities = []
-        console.log('snap: ', snap.key, snap.val())
-        const dataObj = snap.val()
-        // construct all activities in on a particular date
-        for (const key in dataObj) {
-          if (dataObj.hasOwnProperty(key)) {
-            const element = dataObj[key]
-            const { category, ...rest } = element
-            catRef.child(element.category).once('value')
-              .then(resp => {
-                const newEl = { category: resp.val(), ...rest }
-                dateActivities.push(newEl)
-              })
-              .catch(error => console.log('error cat: ', error))
+      const actRef = firebase.database().ref('activities/' + userId)
+      console.log('loading acti: ', actRef)
+      actRef.once('value')
+        .then(snap => {
+          if (!snap.val()) {
+            console.log('acti empty')
+            commit('setActivities', allActivities)
+            commit('setLoading', false)
           }
-        }
-        const dateAct = {
-          date: snap.key,
-          dateActivities
-        }
-        allActivities.push(dateAct)
-        console.log('activ: ', allActivities)
-        commit('setActivities', allActivities)
-        commit('setLoading', false)
-      })
+          else {
+            actRef.child(month).on('child_added', snap => {
+              const dateActivities = []
+              console.log('snap: ', snap.key, snap.val())
+              const dataObj = snap.val()
+              // construct all activities in on a particular date
+              for (const key in dataObj) {
+                if (dataObj.hasOwnProperty(key)) {
+                  const element = dataObj[key]
+                  const { category, ...rest } = element
+                  catRef.child(element.category).once('value')
+                    .then(resp => {
+                      const newEl = { category: resp.val(), ...rest }
+                      dateActivities.push(newEl)
+                    })
+                    .catch(error => console.log('error cat: ', error))
+                }
+              }
+              const dateAct = {
+                date: snap.key,
+                dateActivities
+              }
+              allActivities.push(dateAct)
+              console.log('activ: ', allActivities)
+              commit('setActivities', allActivities)
+              commit('setLoading', false)
+            })
+          }
+        })
     },
     deleteActivity ({commit, getters, dispatch}, payload) {
       return new Promise((resolve, reject) => {

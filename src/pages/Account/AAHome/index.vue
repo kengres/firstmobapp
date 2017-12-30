@@ -25,16 +25,11 @@
                       q-icon(name="delete")
                       q-item-tile Delete
 
-      //- <q-list v-else>
-      //-   <q-item>
-      //-     Please add activities.
-      //-   </q-item>
-      //-   <q-item>
-      //-     <q-item-main>
-      //-       <q-item-tile>To do so, click at the add button below.</q-item-tile>
-      //-     </q-item-main>
-      //-   </q-item>
-      //- </q-list>
+      q-list(v-else)
+        q-item Please add activities.
+        q-item
+          q-item-main
+            q-item-tile To do so, click at the add button below.
 
     //- <q-modal ref="minimizedModal" minimized v-model="open" 
     //-   :content-css="{padding: '20px'}" v-if="logInView">
