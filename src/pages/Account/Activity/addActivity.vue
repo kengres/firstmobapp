@@ -1,32 +1,26 @@
-<template>
-  <q-layout class="layout-padding">
-    <q-card>
-      <q-card-title>
-        Adding a New Log
-      </q-card-title>
-      <q-card-separator />
-      <q-card-main>
-        <q-datetime 
+<template lang="pug">
+  q-layout.layout-padding
+    q-card
+      q-card-title Adding a New Log
+      q-card-separator
+      q-card-main
+        q-datetime(
             v-model="activityForm.date" 
-            type="date" 
+            type="date"
             float-label="Date"
-            monday-first />
-        <q-select v-model="activityForm.category" :options="categoriez" float-label="Category" />
-        <q-datetime 
+            monday-first)
+        q-select(v-model="activityForm.category" :options="categoriez" float-label="Category")
+        q-datetime( 
             format24h 
             v-model="activityForm.start" 
             type="time" 
-            float-label="Start" />
-        <q-datetime format24h v-model="activityForm.end" type="time" float-label="End" />
+            float-label="Start")
+        q-datetime(format24h v-model="activityForm.end" type="time" float-label="End")
 
-      </q-card-main>
-      <q-card-separator />
-      <q-card-actions>
-        <q-btn round color="green" @click="createActivity" icon="check"/>
-        <q-btn round color="green" icon="close" @click="$router.go(-1)"/>
-      </q-card-actions>
-    </q-card>
-  </q-layout>
+      q-card-separator
+      q-card-actions
+        q-btn(round color="green" @click="createActivity" icon="check")
+        q-btn(round color="green" icon="close" @click="$router.go(-1)")
 </template>
 <script>
 import { mapGetters } from 'vuex'
@@ -104,7 +98,7 @@ export default {
       console.log('form date: ', this.activityForm.date)
       const tzoffset = (new Date()).getTimezoneOffset() * 60000
       const d = (new Date(this.activityForm.date)).getTime()
-      const localISOTime = (((new Date(d - tzoffset)).toISOString()).slice(0, 10)).split('-').reverse().join('-')
+      const localISOTime = ((new Date(d - tzoffset)).toISOString()).slice(0, 10)
 
       const newActivity = {
         date: localISOTime,
@@ -115,8 +109,8 @@ export default {
       }
       console.log('new activity: ', newActivity)
       console.log('form: ', this.activityForm)
-      this.$store.dispatch('createActivity', newActivity)
-      this.$router.replace('/')
+      // this.$store.dispatch('createActivity', newActivity)
+      // this.$router.replace('/')
     },
     notifyMsg (msg) {
       Toast.create.warning({

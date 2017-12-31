@@ -157,9 +157,9 @@ export default {
     },
     updateActivity (act) {
       console.log('updating ...: ', act)
-      // this.$store.dispatch('updateActivity', act)
+      console.log('updating ...: ', singleActivityPath)
       this.$router.push({
-        path: `${singleActivityPath}/${act.date}`
+        path: `${singleActivityPath}/${act.id}?date=${act.date}`
       })
     },
     fetchData () {

@@ -97,7 +97,7 @@ export const routes = [
         }
       },
       {
-        path: `${nav.singleActivityUrl}/:actDate`,
+        path: `${nav.singleActivityUrl}/:id`,
         component: SingleActivity,
         meta: {
           title: 'Edit Activity'
