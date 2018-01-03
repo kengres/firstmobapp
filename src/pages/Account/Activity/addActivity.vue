@@ -10,12 +10,7 @@
             float-label="Date"
             monday-first)
         q-select(v-model="activityForm.category" :options="categoriez" float-label="Category")
-        q-datetime( 
-            format24h 
-            v-model="activityForm.start" 
-            type="time" 
-            float-label="Start")
-        q-datetime(format24h v-model="activityForm.end" type="time" float-label="End")
+        q-datetime-range(format24h v-model="activityForm.range" type="time" float-label="Range")
 
       q-card-separator
       q-card-actions
@@ -32,8 +27,10 @@ export default {
       activityForm: {
         category: '',
         date: '',
-        start: '',
-        end: ''
+        range: {
+          from: '',
+          to: ''
+        }
       },
       categoriess: [
         { label: 'Work', value: 'work' },

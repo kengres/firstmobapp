@@ -3,5 +3,11 @@
 node_modules/
 dist/
 npm-debug.log*
-cordova
+cordova/node_modules
+cordova/platforms
+cordova/plugins
+cordova/www
+cordova/hooks
+cordova/my-release-key.keystore
+cordova/.npm*
 package-lock.json

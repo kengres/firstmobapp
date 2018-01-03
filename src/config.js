@@ -1,7 +1,10 @@
 export const APP_NAME = 'timespent'
 // firebase configuration
+export const isProd = () => {
+  return process.env.NODE_ENV === 'production'
+}
 export let firebaseConfig
-if (process.env.NODE_ENV === 'production') {
+if (isProd) {
   firebaseConfig = {
     apiKey: 'AIzaSyCNrNZbm97DWP4kFi_SQgp13hiz2xVrgqk',
     authDomain: 'time-spent-app.firebaseapp.com',

@@ -11,7 +11,9 @@ require(`quasar/dist/quasar.${__THEME}.css`)
 // require(`quasar/dist/quasar.ie.${__THEME}.css`)
 
 import Vue from 'vue'
+import VueCordova from 'vue-cordova'
 import Vuelidate from 'vuelidate'
+import { isProd } from 'js_config'
 // import quasar and single components
 import Quasar,
 {
@@ -24,6 +26,7 @@ import Quasar,
   QCardTitle,
   QCarousel,
   QDatetime,
+  QDatetimeRange,
   QFab,
   QFixedPosition,
   QField,
@@ -60,6 +63,7 @@ Vue.use(Quasar, {
     QCardTitle,
     QCarousel,
     QDatetime,
+    QDatetimeRange,
     QFab,
     QFixedPosition,
     QField,
@@ -80,6 +84,7 @@ Vue.use(Quasar, {
     QToolbarTitle
   }
 }) // Install Quasar Framework
+Vue.use(VueCordova) // Vue cordova
 Vue.use(Vuelidate) // validate
 Vue.use(Auth)
 
@@ -110,6 +115,22 @@ Quasar.start(() => {
         .catch(error => {
           console.log('app user error: ', error)
         })
+      // for dev only
+      if (!isProd()) {
+        window.setTimeout(() => {
+          const e = document.createEvent('Events')
+          e.initEvent('deviceready', true, false)
+          document.dispatchEvent(e)
+        }, 50)
+      }
+      Vue.cordova.on('deviceready', () => {
+        console.log('device is ready!!!!!!!!!: ', Vue.cordova)
+        alert('device is ready!!!!!!!!!: ', Vue.cordova)
+        window.sqlitePlugin.echoTest(() => {
+          console.log('ECHO test OK')
+          alert('echo test ok')
+        })
+      })
     }
   })
 })
