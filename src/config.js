@@ -22,6 +22,9 @@ else {
     storageBucket: 'time-spent-dev.appspot.com'
   }
 }
+export const letNotify = (msg) => {
+  isProd() ? alert(msg) : console.log(msg)
+}
 // firebase node keys
 export const ACTIVITIES_KEY = `${APP_NAME}-activities`
 export const USER_KEY = `${APP_NAME}-user`
@@ -52,7 +55,7 @@ export const nav = {
 export const diffDate = (dateA, dateB) => {
   const start = new Date(dateA)
   const end = new Date(dateB)
-  return (start.getTime() - end.getTime()) / 60000 // in min
+  return Math.abs((start.getTime() - end.getTime()) / 60000) // in min
 }
 
 export const addZero = value => {

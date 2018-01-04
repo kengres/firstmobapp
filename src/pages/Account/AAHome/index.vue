@@ -24,7 +24,11 @@
                     q-item(@click="deleteActivity(act), $refs[`popover${i}`][0].close()")
                       q-icon(name="delete")
                       q-item-tile Delete
-
+      q-list(v-else-if="dbrows && dbrows.length > 0")
+        q-item(v-for="(item, i) in dbrows" :key="i")
+          q-item-main
+            q-item-tile {{item.name}}
+            q-item-tile {{item.score}}
       q-list(v-else)
         q-item Please add activities.
         q-item
@@ -56,8 +60,8 @@
 </template>
 <script>
 import avatar from 'assets/boy-avatar.jpg'
-import { addActivityPath, loginPath, addZero, singleActivityPath } from '../../../config'
-import { ActionSheet, Toast, Loading, Dialog } from 'quasar'
+import { addActivityPath, loginPath, addZero, singleActivityPath, letNotify, isProd } from 'js_config'
+import { ActionSheet, Toast, Dialog } from 'quasar'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -69,6 +73,7 @@ export default {
       search: '',
       logInView: null,
       open: false,
+      dbrows: null,
       totalTimeSpent: {
         hours: 30,
         min: 44
@@ -81,9 +86,9 @@ export default {
   },
   created () {
     console.log('home is created..', this.user)
-    Loading.show({
-      delay: 0
-    })
+    // Loading.show({
+    //   delay: 0
+    // })
     if (this.user) {
       this.fetchData()
     }
@@ -105,10 +110,10 @@ export default {
       else {
         this.fetchData()
       }
-    },
-    loading (value) {
-      value ? Loading.show() : Loading.hide()
     }
+    // loading (value) {
+    //   value ? Loading.show() : Loading.hide()
+    // }
   },
   computed: {
     ...mapGetters(['user', 'loading', 'activities']),
@@ -124,7 +129,29 @@ export default {
   },
   methods: {
     testActi () {
-      this.$store.dispatch('loadActivities')
+      let db = null
+      if (isProd()) {
+        db = window.sqlitePlugin.openDatabase({name: 'mydemodb.db', location: 'default'})
+      }
+      else {
+        db = window.openDatabase('mydemodb', '0.1', 'My test demo db', 2 * 1024 * 1024)
+      }
+      db.transaction((tx) => {
+        tx.executeSql('SELECT * FROM demoTable', [], (tx, rs) => {
+          // letNotify('Record count: ' + rs.rows.length)
+          this.dbrows = rs.rows
+          const toAlert = JSON.stringify(rs.rows)
+          alert(toAlert)
+          for (const row of rs.rows) {
+            for (const item in row) {
+              letNotify(`${item}:  ${row[item]}`)
+            }
+          }
+        }, function (tx, error) {
+          letNotify('SELECT error: ' + error.message)
+        })
+      })
+      // letNotify('test db...')
     },
     deleteActivity (act) {
       console.log('deleting ...: ', act)

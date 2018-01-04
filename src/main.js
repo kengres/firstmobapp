@@ -124,12 +124,7 @@ Quasar.start(() => {
         }, 50)
       }
       Vue.cordova.on('deviceready', () => {
-        console.log('device is ready!!!!!!!!!: ', Vue.cordova)
-        alert('device is ready!!!!!!!!!: ', Vue.cordova)
-        window.sqlitePlugin.echoTest(() => {
-          console.log('ECHO test OK')
-          alert('echo test ok')
-        })
+        this.$store.dispatch('createUserDB', { isProd: isProd() })
       })
     }
   })

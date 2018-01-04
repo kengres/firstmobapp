@@ -20,7 +20,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { Toast } from 'quasar'
-import { addZero, diffDate } from '../../../config'
+import { addZero, diffDate, isProd } from 'js_config'
 export default {
   data () {
     return {
@@ -96,17 +96,18 @@ export default {
       const tzoffset = (new Date()).getTimezoneOffset() * 60000
       const d = (new Date(this.activityForm.date)).getTime()
       const localISOTime = ((new Date(d - tzoffset)).toISOString()).slice(0, 10)
-
+      const endTime = this.activityForm.range.to
+      const startTime = this.activityForm.range.from
       const newActivity = {
         date: localISOTime,
-        start: this.formatTime(this.activityForm.start),
-        end: this.formatTime(this.activityForm.end),
-        duration: diffDate(this.activityForm.end, this.activityForm.start),
+        start: this.formatTime(startTime),
+        end: this.formatTime(endTime),
+        duration: diffDate(startTime, endTime),
         category: this.activityForm.category
       }
       console.log('new activity: ', newActivity)
       console.log('form: ', this.activityForm)
-      // this.$store.dispatch('createActivity', newActivity)
+      this.$store.dispatch('saveActivity', { act: newActivity, isProd: isProd() })
       // this.$router.replace('/')
     },
     notifyMsg (msg) {
