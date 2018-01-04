@@ -27,8 +27,8 @@
       q-list(v-else-if="dbrows && dbrows.length > 0")
         q-item(v-for="(item, i) in dbrows" :key="i")
           q-item-main
-            q-item-tile {{item.name}}
-            q-item-tile {{item.score}}
+            q-item-tile name
+            q-item-tile duration
       q-list(v-else)
         q-item Please add activities.
         q-item
@@ -60,7 +60,7 @@
 </template>
 <script>
 import avatar from 'assets/boy-avatar.jpg'
-import { addActivityPath, loginPath, addZero, singleActivityPath, letNotify, isProd } from 'js_config'
+import { addActivityPath, loginPath, addZero, singleActivityPath, isProd } from 'js_config'
 import { ActionSheet, Toast, Dialog } from 'quasar'
 import { mapGetters } from 'vuex'
 
@@ -129,29 +129,29 @@ export default {
   },
   methods: {
     testActi () {
-      let db = null
       if (isProd()) {
-        db = window.sqlitePlugin.openDatabase({name: 'mydemodb.db', location: 'default'})
-      }
-      else {
-        db = window.openDatabase('mydemodb', '0.1', 'My test demo db', 2 * 1024 * 1024)
-      }
-      db.transaction((tx) => {
-        tx.executeSql('SELECT * FROM demoTable', [], (tx, rs) => {
-          // letNotify('Record count: ' + rs.rows.length)
-          this.dbrows = rs.rows
+        const db = window.sqlitePlugin.openDatabase({name: 'userData.db', location: 'default'})
+        db.executeSql('SELECT * FROM activitiesTable', [], (rs) => {
+          alert('Record count: ' + rs.rows.length)
           const toAlert = JSON.stringify(rs.rows)
           alert(toAlert)
-          for (const row of rs.rows) {
-            for (const item in row) {
-              letNotify(`${item}:  ${row[item]}`)
-            }
-          }
-        }, function (tx, error) {
-          letNotify('SELECT error: ' + error.message)
+          this.dbrows = rs.rows
+        }, function (error) {
+          console.log('SELECT SQL statement ERROR: ' + JSON.stringify(error.message))
         })
-      })
-      // letNotify('test db...')
+      }
+      else {
+        const db = window.openDatabase('userData', '0.1', 'user data db', 2 * 1024 * 1024)
+        db.transaction((tx) => {
+          tx.executeSql('SELECT * FROM activitiesTable', [], (tx, rs) => {
+            // letNotify('Record count: ' + rs.rows.length)
+            this.dbrows = rs.rows
+            console.log(rs.rows)
+          }, function (tx, error) {
+            console.log('SELECT error: ' + error.message)
+          })
+        })
+      }
     },
     deleteActivity (act) {
       console.log('deleting ...: ', act)
