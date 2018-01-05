@@ -13,7 +13,6 @@ require(`quasar/dist/quasar.${__THEME}.css`)
 import Vue from 'vue'
 import VueCordova from 'vue-cordova'
 import Vuelidate from 'vuelidate'
-import { isProd } from 'js_config'
 // import quasar and single components
 import Quasar,
 {
@@ -115,17 +114,6 @@ Quasar.start(() => {
         .catch(error => {
           console.log('app user error: ', error)
         })
-      // for dev only
-      if (!isProd()) {
-        window.setTimeout(() => {
-          const e = document.createEvent('Events')
-          e.initEvent('deviceready', true, false)
-          document.dispatchEvent(e)
-        }, 50)
-      }
-      Vue.cordova.on('deviceready', () => {
-        this.$store.dispatch('createUserDB', { isProd: isProd() })
-      })
     }
   })
 })

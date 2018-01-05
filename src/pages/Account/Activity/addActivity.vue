@@ -20,7 +20,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { Toast } from 'quasar'
-import { addZero, diffDate, isProd } from 'js_config'
+import { addZero, diffDate } from 'js_config'
 export default {
   data () {
     return {
@@ -107,7 +107,7 @@ export default {
       }
       console.log('new activity: ', newActivity)
       console.log('form: ', this.activityForm)
-      this.$store.dispatch('saveActivity', { act: newActivity, isProd: isProd() })
+      // this.$store.dispatch('saveActivity', { act: newActivity, isProd: isProd() })
       // this.$router.replace('/')
     },
     notifyMsg (msg) {

@@ -6,7 +6,6 @@ import activities from './activities'
 import catActivities from './catActivities'
 import categories from './categories'
 import user from './user'
-import sql from './sql'
 
 Vue.use(Vuex)
 
@@ -15,8 +14,7 @@ const store = new Vuex.Store({
     activities,
     catActivities,
     categories,
-    user,
-    sql
+    user
   },
   state: {
     loading: false,

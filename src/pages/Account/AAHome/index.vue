@@ -54,7 +54,7 @@
 </template>
 <script>
 import avatar from 'assets/boy-avatar.jpg'
-import { addActivityPath, loginPath, addZero, singleActivityPath, isProd } from 'js_config'
+import { addActivityPath, loginPath, addZero, singleActivityPath } from 'js_config'
 import { ActionSheet, Toast, Dialog } from 'quasar'
 import { mapGetters } from 'vuex'
 
@@ -123,37 +123,7 @@ export default {
   },
   methods: {
     testActi () {
-      if (isProd()) {
-        alert('it is production')
-        const db = window.sqlitePlugin.openDatabase({name: 'userData.db', location: 'default'})
-        db.executeSql('SELECT * FROM activitiesTable', [], (rs) => {
-          alert('Record count: ' + rs.rows.length)
-          this.dbrows = rs.rows
-          alert(JSON.stringify(rs.rows))
-          alert(JSON.stringify(rs.rows))
-          alert(JSON.stringify(rs))
-          for (const row of rs.rows) {
-            alert(row.item.date)
-          }
-        }, function (error) {
-          console.log('SELECT SQL statement ERROR: ' + JSON.stringify(error.message))
-        })
-      }
-      else {
-        const db = window.openDatabase('userData', '0.1', 'user data db', 2 * 1024 * 1024)
-        db.transaction((tx) => {
-          tx.executeSql('SELECT * FROM activitiesTable', [], (tx, rs) => {
-            console.log(rs.rows)
-            this.dbrows = rs.rows
-            for (const row of rs.rows) {
-              // alert(JSON.stringify(row))
-              console.log(row)
-            }
-          }, function (tx, error) {
-            console.log('SELECT error: ' + error.message)
-          })
-        })
-      }
+      console.log('testing activities...')
     },
     deleteActivity (act) {
       console.log('deleting ...: ', act)
