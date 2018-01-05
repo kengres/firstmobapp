@@ -1,39 +1,33 @@
 <template lang="pug">
   q-layout(ref="mainLayout" class="layout-padding" view="lHh Lpr fFf")
-    template(v-if="!loading")
-      template(v-if="activities && activities.length > 0")
-        q-list(separator v-for="item in reverseAct" :key="item.date")
-          q-list-header(inset) {{item.date | latestDates}}
-          q-item(v-for="(act, i) in item.dateActivities" :key="i")
-            q-item-side
-              q-item-tile(:color="act.category.color" :icon="act.category.icon")
-            q-item-main
-              q-item-tile(label) {{act.category.name | toTitleCase}}
-              q-item-tile(sublabel) For {{act.duration | hourMinFormat}}
-            q-item-side(right)
-              q-item-tile(stamp) {{act.start}} - {{act.end}}
-              //- q-item-tile(stamp) {{act.duration | hourMinFormat}}
-            q-item-side(right :ref="`target${i}`")
-              q-item-tile(icon="more_vert")
-
-                q-popover(:ref="`popover${i}`" anchor="top right" self="top right")
-                  q-list(separator)
-                    q-item(@click="updateActivity(act), $refs[`popover${i}`][0].close()")
-                      q-icon(name="edit")
-                      q-item-tile Edit
-                    q-item(@click="deleteActivity(act), $refs[`popover${i}`][0].close()")
-                      q-icon(name="delete")
-                      q-item-tile Delete
-      q-list(v-else-if="dbrows && dbrows.length > 0")
+    template(v-if="dbrows && dbrows.length > 0")
+      q-list(separator)
+        q-list-header(inset) 20.12.2017
         q-item(v-for="(item, i) in dbrows" :key="i")
+          q-item-side
+            q-item-tile(color="green" icon="work")
           q-item-main
-            q-item-tile name
-            q-item-tile duration
-      q-list(v-else)
-        q-item Please add activities.
-        q-item
-          q-item-main
-            q-item-tile To do so, click at the add button below.
+            q-item-tile(label) {{item.category | toTitleCase}}
+            q-item-tile(sublabel) {{item.date | formattedDate}}
+          q-item-side(right)
+            q-item-tile(stamp) {{item.start}} - {{item.end}}
+            q-item-tile(stamp) {{item.duration | hourMinFormat}}
+          q-item-side(right :ref="`target${i}`")
+            q-item-tile(icon="more_vert")
+
+              q-popover(:ref="`popover${i}`" anchor="top right" self="top right")
+                q-list(separator)
+                  q-item(@click="updateActivity(item), $refs[`popover${i}`][0].close()")
+                    q-icon(name="edit")
+                    q-item-tile Edit
+                  q-item(@click="deleteActivity(item), $refs[`popover${i}`][0].close()")
+                    q-icon(name="delete")
+                    q-item-tile Delete
+    q-list(v-else)
+      q-item Please add activities.
+      q-item
+        q-item-main
+          q-item-tile To do so, click at the add button below.
 
     //- <q-modal ref="minimizedModal" minimized v-model="open" 
     //-   :content-css="{padding: '20px'}" v-if="logInView">
@@ -133,9 +127,10 @@ export default {
         const db = window.sqlitePlugin.openDatabase({name: 'userData.db', location: 'default'})
         db.executeSql('SELECT * FROM activitiesTable', [], (rs) => {
           alert('Record count: ' + rs.rows.length)
-          const toAlert = JSON.stringify(rs.rows)
-          alert(toAlert)
           this.dbrows = rs.rows
+          for (const row of rs.rows) {
+            alert(row.date)
+          }
         }, function (error) {
           console.log('SELECT SQL statement ERROR: ' + JSON.stringify(error.message))
         })
@@ -146,7 +141,10 @@ export default {
           tx.executeSql('SELECT * FROM activitiesTable', [], (tx, rs) => {
             // letNotify('Record count: ' + rs.rows.length)
             this.dbrows = rs.rows
-            console.log(rs.rows)
+            for (const row of rs.rows) {
+              // alert(JSON.stringify(row))
+              console.log(row)
+            }
           }, function (tx, error) {
             console.log('SELECT error: ' + error.message)
           })
