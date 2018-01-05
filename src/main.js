@@ -123,9 +123,6 @@ Quasar.start(() => {
           document.dispatchEvent(e)
         }, 50)
       }
-      else {
-        navigator.notification.alert('nav alert plugin')
-      }
       Vue.cordova.on('deviceready', () => {
         this.$store.dispatch('createUserDB', { isProd: isProd() })
       })
