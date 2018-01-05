@@ -42,7 +42,7 @@ export const routes = [
     path: nav.loginUrl,
     component: Login,
     beforeEnter: (to, from, next) => {
-      console.log('entering login...')
+      // console.log('entering login...')
       Vue.auth.getUser()
         .then(user => {
           router.push({
@@ -66,7 +66,7 @@ export const routes = [
     component: Layout,
     beforeEnter: (to, from, next) => {
       // dont chech if from landing
-      console.log(from, to)
+      // console.log(from, to)
       Vue.auth.getUser()
         .then(user => {
           next()
@@ -86,7 +86,7 @@ export const routes = [
         path: nav.homeUrl,
         component: Home,
         meta: {
-          title: 'Time Spent App'
+          title: 'Work Time Manager'
         }
       },
       {

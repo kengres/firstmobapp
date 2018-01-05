@@ -1,5 +1,5 @@
 <template lang="pug">
-  q-layout(ref="mainLayout" class="layout-padding" view="lHh Lpr fFf")
+  div
     template(v-if="dbrows && dbrows.length > 0")
       q-list(separator)
         q-list-header(inset) 20.12.2017
