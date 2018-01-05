@@ -1,24 +1,12 @@
 {
-  "categories": {
-    "work": {
-      "icon": "work",
-      "color": "green"
-    },
-    "sport": {
-      "icon": "directions_run",
-      "color": "lime-8"
-    }
-  },
-  "activities": {
-    "23.12.2017": {
+  "shifts": {
+    "id1": {
+      "year": "2017",
+      "month": "12",
       "date": "23.12.2017",
-      "start": "9:00",
-      "category": "work"
-    },
-    "24.12.2017": {
-      "date": "24.12.2017",
-      "start": "19:00",
-      "category": "cat1"
+      "from": "isotime",
+      "to": "isolocaltime?",
+      "pause": "75"
     }
   }
 }

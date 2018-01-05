@@ -61,3 +61,10 @@ export const diffDate = (dateA, dateB) => {
 export const addZero = value => {
   return value < 10 ? `0${value}` : value
 }
+
+export const toLocalIsoTime = (date) => {
+  const tzoffset = (new Date()).getTimezoneOffset() * 60000
+  const d = (new Date(date)).getTime()
+  const localISOTime = ((new Date(d - tzoffset)).toISOString()).slice(0, 10)
+  return localISOTime
+}

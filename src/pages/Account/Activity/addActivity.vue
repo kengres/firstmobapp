@@ -1,68 +1,58 @@
 <template lang="pug">
-  q-layout.layout-padding
-    q-card
-      q-card-title Adding a New Log
-      q-card-separator
-      q-card-main
-        q-datetime(
-            v-model="activityForm.date" 
-            type="date"
-            float-label="Date"
-            monday-first)
-        q-select(v-model="activityForm.category" :options="categoriez" float-label="Category")
-        q-datetime-range(format24h v-model="activityForm.range" type="time" float-label="Range")
-
-      q-card-separator
-      q-card-actions
-        q-btn(round color="green" @click="createActivity" icon="check")
-        q-btn(round color="green" icon="close" @click="$router.go(-1)")
+  div
+    q-list
+      q-list-header
+        h5 Create a Shift
+      q-item
+        q-item-side(icon="access_time")
+        q-item-main
+          q-item-tile Start and End
+      q-item
+        q-item-side
+        q-item-main
+          q-datetime-range(
+              v-model="activityForm.range" 
+              type="datetime"
+              monday-first)
+      q-item
+        q-item-side(icon="pause_circle_filled")
+        q-item-main
+          q-item-tile Pause
+      q-item
+        q-item-side
+        q-item-main
+          q-select(v-model="activityForm.pause" :options="dynamicPauses")
+      //- q-item-separator
+      q-item
+        q-item-side
+        q-item-main
+          q-btn(color="green" @click="createActivity") save
 </template>
 <script>
-import { mapGetters } from 'vuex'
 import { Toast } from 'quasar'
 import { addZero, diffDate } from 'js_config'
 export default {
   data () {
     return {
       activityForm: {
-        category: '',
-        date: '',
         range: {
           from: '',
           to: ''
-        }
-      },
-      categoriess: [
-        { label: 'Work', value: 'work' },
-        { label: 'Health', value: 'health' },
-        { label: 'Sleep', value: 'sleep' }
-      ]
-    }
-  },
-  created () {
-    if (this.user) {
-      this.$store.dispatch('fetchCategories')
+        },
+        pause: ''
+      }
     }
   },
   computed: {
-    ...mapGetters(['user', 'categories']),
-    categoriez () {
-      try {
-        const a = []
-        for (const cat of this.categories) {
-          a.push({
-            label: cat.name,
-            value: cat.name,
-            icon: cat.icon,
-            color: cat.color
-          })
-        }
-        console.log('cat: ', a)
-        return a
+    dynamicPauses () {
+      const p = []
+      for (let i = 10; i <= 100; i += 10) {
+        p.push({
+          label: `${i} min`,
+          value: `${i}`
+        })
       }
-      catch (error) {
-        return this.categoriess
-      }
+      return p
     }
   },
   methods: {
@@ -92,23 +82,17 @@ export default {
           }
         }
       }
-      console.log('form date: ', this.activityForm.date)
-      const tzoffset = (new Date()).getTimezoneOffset() * 60000
-      const d = (new Date(this.activityForm.date)).getTime()
-      const localISOTime = ((new Date(d - tzoffset)).toISOString()).slice(0, 10)
-      const endTime = this.activityForm.range.to
-      const startTime = this.activityForm.range.from
+      console.log('form: ', this.activityForm)
+      const range = this.activityForm.range
       const newActivity = {
-        date: localISOTime,
-        start: this.formatTime(startTime),
-        end: this.formatTime(endTime),
-        duration: diffDate(startTime, endTime),
-        category: this.activityForm.category
+        date: this.activityForm.range.from.slice(0, 10),
+        start: this.activityForm.range.from,
+        end: this.activityForm.range.to,
+        pause: this.activityForm.pause,
+        duration: diffDate(range.from, range.to) - this.activityForm.pause
       }
       console.log('new activity: ', newActivity)
-      console.log('form: ', this.activityForm)
-      // this.$store.dispatch('saveActivity', { act: newActivity, isProd: isProd() })
-      // this.$router.replace('/')
+      this.$store.dispatch('createActivity', newActivity)
     },
     notifyMsg (msg) {
       Toast.create.warning({

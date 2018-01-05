@@ -41,7 +41,7 @@
     //- </q-modal>
     
     q-fixed-position(corner="bottom-right" :offset="[20, 10]")
-      q-btn(round color="positive" @click="addNewActivity" icon="add")
+      q-btn(round color="positive" @click="addNewOpen = true" icon="add")
 
     q-fixed-position(corner="bottom-left" :offset="[20, 20]")
       q-btn(round color="positive" icon="check" @click="testActi")
@@ -51,10 +51,13 @@
     //-     <p class="small">22 weekdays this month. (16 done)</p>
     //-   </q-toolbar-title>
     //- </q-toolbar>
+    q-modal(ref="minimizedModal" v-model="addNewOpen" position="left")
+      add-activity
 </template>
 <script>
 import avatar from 'assets/boy-avatar.jpg'
-import { addActivityPath, loginPath, addZero, singleActivityPath } from 'js_config'
+import AddActivity from '../Activity/addActivity'
+import { loginPath, addZero, singleActivityPath } from 'js_config'
 import { ActionSheet, Toast, Dialog } from 'quasar'
 import { mapGetters } from 'vuex'
 
@@ -64,6 +67,7 @@ export default {
     return {
       months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       avatar: avatar,
+      addNewOpen: false,
       search: '',
       logInView: null,
       open: false,
@@ -77,6 +81,9 @@ export default {
         min: 23
       }
     }
+  },
+  components: {
+    AddActivity
   },
   created () {
     console.log('home is created..', this.user)
@@ -173,11 +180,6 @@ export default {
         })
         this.$router.replace(this.$route.path)
       }
-    },
-    addNewActivity () {
-      this.$router.push({
-        path: addActivityPath
-      })
     },
     openActionSheet () {
       ActionSheet.create({

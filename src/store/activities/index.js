@@ -36,13 +36,12 @@ export default {
         position: 'top-right'
       })
     },
-    createActivity ({ commit, getters, dispatch }, payload) {
+    createActivity ({ commit, getters }, payload) {
       const userId = getters.user.id
       const dateRef = firebase.database().ref('activities/' + userId)
       dateRef.push(payload)
         .then(resp => {
           console.log('act created: ', resp)
-          // dispatch('loadActivities')
         })
         .catch(error => {
           console.log('act not created: ', error)
