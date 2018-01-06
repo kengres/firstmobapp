@@ -10,3 +10,4 @@
 10. landing view picturess only centered h2 and footer colored bg
 11. theming
 12. custom pause duration input
+### write data offline

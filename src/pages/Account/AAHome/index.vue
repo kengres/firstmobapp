@@ -207,8 +207,10 @@ export default {
           html: 'Welcome to using our App!',
           timeout: 4000
         })
-        this.$router.replace(this.$route.path)
       }
+      setTimeout(() => {
+        this.$router.replace(this.$route.path)
+      }, 1000)
     },
     openActionSheet () {
       ActionSheet.create({

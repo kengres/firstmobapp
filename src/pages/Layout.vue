@@ -1,52 +1,43 @@
 <template lang="pug">
   q-layout(ref="layout", view="lhH lpr fff" :header-class="{'no-shadow': isHome}")
     q-toolbar(slot="header" color="green-8")
-      q-btn(flat v-if="isHome")
+      q-btn(flat v-show="isHome")
         q-icon(name="access_time")
 
-      q-btn(flat @click="$router.go(-1)" v-if="!isHome")
+      q-btn(flat @click="$router.go(-1)" v-show="!isHome")
         q-icon(name="arrow_back")
 
       q-toolbar-title {{ viewTitle }}
-      q-btn(flat v-if="false")
-        q-icon(name="person")
-      q-btn(flat v-if="false")
-        q-icon(name="add_alert")
       //- for the profile
-      q-btn(flat v-if="isHome" @click="$router.push({path: profileUrl})")
+      q-btn(flat v-show="isHome" @click="$router.push({path: profileUrl})")
         q-icon(name="person")
 
-      q-btn(flat ref="target1" v-if="isHome")
+      q-btn(flat ref="target1" v-show="isHome")
         q-icon(name="more_vert")
 
         q-popover(ref="popover1" anchor="top right" self="top right")
           q-list(separator link)
-            q-item(@click="addCategory(), $refs.popover1.close()") Settings
-            q-item(@click="addCategory(), $refs.popover1.close()") About
-            q-item(@click="addCategory(), $refs.popover1.close()") Rate
+            q-item(@click="$refs.popover1.close()") Settings
+            q-item(@click="$refs.popover1.close()") About
+            q-item(@click="$refs.popover1.close()") Rate
             q-item(@click="logout(), $refs.popover1.close()") Logout
 
-      q-btn(flat ref="target2" v-if="isAddActivity")
+      q-btn(flat ref="target2" v-show="isProfile && !isEditMode")
         q-icon(name="more_vert")
     
-        q-popover(ref="popover2")
+        q-popover(ref="popover2" anchor="top right" self="top right")
           q-list(separator link)
-            q-item(@click="addCategory(), $refs.popover2.close()") Add Category
-            q-item(@click="$router.push({path: categoriesUrl}), $refs.popover2.close()") View Categories
+            q-item(@click="editProfile(), $refs.popover2.close()") Edit Profile
         
-    //- q-tabs(slot="navigation" color="green-8" class="shadow-2" v-if="isHome")
-    //-   q-route-tab(slot="title" :to="categoriesUrl" icon="event_note" name="tab1")
-    //-   q-route-tab(slot="title" to="/account" icon="home")
-    //-   q-route-tab(slot="title" :to="profileUrl" icon="person")
 
     router-view
     
 </template>
 
 <script>
-import { homePath, loginPath, addActivityPath, categoriesPath, profilePath } from 'js_config'
+import { homePath, loginPath, categoriesPath, profilePath } from 'js_config'
 import { QSideLink, QSearch, QTabs, QRouteTab, Alert } from 'quasar'
-
+import { mapGetters } from 'vuex'
 export default {
   name: 'index',
   data () {
@@ -65,17 +56,15 @@ export default {
     QTabs
   },
   computed: {
-    user () {
-      return this.$store.getters.user
-    },
+    ...mapGetters(['user', 'isEditMode']),
     viewTitle () {
       return this.$route.meta.title
     },
     isHome () {
       return this.$route.path === homePath
     },
-    isAddActivity () {
-      return this.$route.path === addActivityPath
+    isProfile () {
+      return this.$route.path === profilePath
     }
   },
   methods: {
@@ -87,6 +76,10 @@ export default {
     },
     addCategory () {
       console.log('add cat...')
+    },
+    editProfile () {
+      console.log('edit profile...')
+      this.$store.dispatch('setEditMode', true)
     },
     notify () {
       Alert.create({

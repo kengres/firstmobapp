@@ -1,48 +1,26 @@
 <template lang="pug">
-  q-card(v-if="user")
-    q-card-media
-      .profile
-        img.profile_image(src="../../../assets/boy-avatar.jpg")
-    q-card-title Name: {{user.last_name | toTitleCase}} {{user.first_name | toTitleCase}}
-    q-card-main
-      p Email: 
-        span.text-faded kengres@mail.com
-      p {{ user }}
-  q-card.fixed-center(v-else)
-    q-card-title Loading...
+  div
+    profile-view(v-if="!isEditMode")
+    profile-edit(v-else)
+    
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import ProfileView from './isview'
+import ProfileEdit from './isedit'
 export default {
   computed: {
-    ...mapGetters(['user'])
-  },
-  filters: {
-    toTitleCase (val) {
-      if (val) {
-        const a = (val.toLowerCase()).split('')
-        a[0] = a[0].toUpperCase()
-        const b = a.join('')
-        return b
-      }
+    isEditMode () {
+      return this.$store.getters.isEditMode
     }
+  },
+  components: {
+    ProfileView,
+    ProfileEdit
+  },
+  beforeRouteLeave (to, from, next) {
+    console.log('before destroying...')
+    this.$store.dispatch('setEditMode', false)
+    next()
   }
 }
 </script>
-<style lang="scss" scoped>
-  .profile {
-    margin: 0 auto;
-    min-height: 50px;
-    width: 60vw;
-    min-width: 50px;
-    max-width: 500px;
-
-    &_image {
-      width: 100%;
-      max-width: 100%;
-      height: auto;
-      border-radius: 50%;
-    }
-  }
-</style>
-
