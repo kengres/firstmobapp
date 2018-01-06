@@ -1,4 +1,6 @@
 <template lang="pug">
-  div
-    h5 All shifts
+  q-list
+    q-list-header
+      h5 All shifts
+      h6 Comming soon...
 </template>
