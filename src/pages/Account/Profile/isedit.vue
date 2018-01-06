@@ -2,11 +2,11 @@
   q-card(v-if="user")
     q-card-media
       .profile
-        img.profile_image(src="../../../assets/boy-avatar.jpg" v-if="imageSrc")
+        img.profile_image(:src="user.photoUrl" v-if="user.photoUrl")
         .profile_noimage.bg-green(v-else)
           span.absolute-center.text-white {{ user.first_name | firstLetter }} {{ user.last_name | firstLetter}}
       .text-center
-        q-btn(flat @click="changeAvatar; avatarModalOpen = true") change avatar
+        q-btn(flat @click="avatarModalOpen = true") change avatar
     q-card-main
       q-field()
         q-input(v-model="userForm.first_name" float-label="First Name")
@@ -22,18 +22,21 @@
       q-btn.on-right(outline color="green" icon-right="check") save
       q-btn.on-right(outline color="warning" icon-right="close" @click="cancelEdit") cancel
     
-    q-modal(minimized ref="avatarModal" v-model="avatarModalOpen" position="bottom"
-            :content-css="{padding: '50px 20px', width: '100vw'}")
-      p test
+    q-modal(ref="avatarModal" v-model="avatarModalOpen" position="bottom"
+            :content-css="{padding: '20px', width: '100vw'}")
+      input(type="file" @change="handleChange")
+      q-btn.float-right(round icon="cloud" color="green" @click="uploadAvatar")
   q-card.fixed-center(v-else)
     q-card-title Loading...
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import { QUploader } from 'quasar'
 export default {
   data () {
     return {
       avatarModalOpen: false,
+      avatar: '',
       imageSrc: false,
       userForm: {
         first_name: '',
@@ -42,6 +45,9 @@ export default {
         email: ''
       }
     }
+  },
+  components: {
+    QUploader
   },
   created () {
     this.updateForm()
@@ -60,8 +66,18 @@ export default {
     cancelEdit () {
       this.$store.dispatch('setEditMode', false)
     },
-    changeAvatar () {
-      console.log('changing avatar...')
+    handleChange (e) {
+      const file = e.target.files[0]
+      this.avatar = file
+      console.log('file changed...', file)
+    },
+    uploadAvatar () {
+      if (!this.avatar) {
+        console.log('no file choose...')
+        return
+      }
+      console.log(this.avatar)
+      this.$store.dispatch('uploadAvatar', this.avatar)
     }
   },
   filters: {

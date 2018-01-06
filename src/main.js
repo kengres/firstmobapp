@@ -113,7 +113,7 @@ Quasar.start(() => {
             email: user.email,
             created_at: user.metadata.creationTime,
             lastSignIn: user.metadata.lastSignInTime,
-            photoUrl: user.photoUrl,
+            photoUrl: user.photoURL,
             phoneNumber: user.phoneNumber,
             id: user.uid
           }

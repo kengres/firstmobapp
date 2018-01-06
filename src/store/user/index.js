@@ -1,6 +1,7 @@
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/database'
+import 'firebase/storage'
 
 export default {
   state: {
@@ -82,6 +83,25 @@ export default {
         .catch(error => {
           console.log(error)
           commit('setLoading', false)
+        })
+    },
+    uploadAvatar ({ commit, getters }, file) {
+      const user = firebase.auth().currentUser
+      console.log('current user: ', user)
+      const userId = getters.user.id
+      const name = file.name
+      const fileName = `avatar${name.slice(name.lastIndexOf('.'))}`
+      const fileRef = firebase.storage().ref(`userAvatars/${userId}/${fileName}`)
+      fileRef.put(file)
+        .then(fileData => {
+          const avatarUrl = fileData.downloadURL
+          user.updateProfile({
+            photoURL: avatarUrl
+          })
+            .then(() => console.log('update success: '))
+            .catch(error => console.log('update error: ', error))
+          console.log(fileData)
+          console.log(avatarUrl)
         })
     }
   }

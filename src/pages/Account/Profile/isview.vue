@@ -2,7 +2,7 @@
   q-card(v-if="user")
     q-card-media
       .profile
-        img.profile_image(src="../../../assets/boy-avatar.jpg" v-if="imageSrc")
+        img.profile_image(:src="user.photoUrl" v-if="user.photoUrl")
         .profile_noimage.bg-green(v-else)
           span.absolute-center.text-white {{ user.first_name | firstLetter }} {{ user.last_name | firstLetter}}
     
@@ -10,7 +10,7 @@
     q-card-main
       p Email: 
         span.text-faded {{user.email}}
-      //- p {{ user }}
+      p {{ user }}
     q-card-separator
     //- q-card-actions
     //-   q-btn.on-right(outline icon-right="edit" big) edit
