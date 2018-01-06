@@ -54,7 +54,7 @@
       //-   </q-toolbar-title>
       //- </q-toolbar>
       q-modal(ref="minimizedModal" v-model="addNewOpen" position="left")
-        add-activity
+        add-activity(@created="addNewOpen = false")
 
       q-modal(ref="minimizedModal" v-model="editOpen" position="left" 
               v-if="loadedActivity" @close="annulateAct")

@@ -39,13 +39,26 @@ export default {
     createActivity ({ commit, getters }, payload) {
       const userId = getters.user.id
       const dateRef = firebase.database().ref('activities/' + userId)
-      dateRef.push(payload)
-        .then(resp => {
-          console.log('act created: ', resp)
-        })
-        .catch(error => {
-          console.log('act not created: ', error)
-        })
+      return new Promise((resolve, reject) => {
+        dateRef.push(payload)
+          .then(resp => {
+            resolve('done')
+            Alert.create({
+              html: 'Log successfully created!',
+              color: 'lime-4',
+              icon: 'check',
+              position: 'top-right',
+              dismissable: true,
+              enter: 'bounceInRight',
+              leave: 'bounceOutRight'
+            })
+            console.log('act created: ', resp)
+          })
+          .catch(error => {
+            reject(error)
+            console.log('act not created: ', error)
+          })
+      })
     },
     loadActivities ({ commit, getters }) {
       const userId = getters.user.id
@@ -70,6 +83,15 @@ export default {
           .then(data => {
             console.log('delete complete')
             resolve('done')
+            Alert.create({
+              html: 'Delete succeded!',
+              color: 'warning',
+              icon: 'check',
+              position: 'top-right',
+              dismissable: true,
+              enter: 'bounceInRight',
+              leave: 'bounceOutRight'
+            })
             dispatch('loadActivities')
           })
           .catch(error => {
@@ -89,9 +111,9 @@ export default {
             resolve('done')
             Alert.create({
               html: 'Update succeded!',
-              color: 'positive',
+              color: 'lime',
               icon: 'check',
-              position: 'bottom-left',
+              position: 'top-left',
               dismissable: true,
               enter: 'bounceInRight',
               leave: 'bounceOutRight'

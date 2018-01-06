@@ -78,6 +78,10 @@ export default {
       }
       console.log('new activity: ', newActivity)
       this.$store.dispatch('createActivity', newActivity)
+        .then(resp => {
+          this.$emit('created')
+        })
+        .catch(error => console.log('error: ', error))
     },
     notifyMsg (msg) {
       Toast.create.warning({
