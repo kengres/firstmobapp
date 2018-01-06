@@ -2,8 +2,8 @@ import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/database'
 import { Alert } from 'quasar'
-import 'quasar-extras/animate/bounceInRight.css'
-import 'quasar-extras/animate/bounceOutRight.css'
+// import 'quasar-extras/animate/bounceInRight.css'
+// import 'quasar-extras/animate/bounceOutRight.css'
 
 // constant inti
 // import { ACTIVITIES_KEY } from '../../config'

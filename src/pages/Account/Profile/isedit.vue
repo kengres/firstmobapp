@@ -19,7 +19,7 @@
     
     q-card-separator
     q-card-actions
-      q-btn.on-right(outline color="green" icon-right="check") save
+      q-btn.on-right(outline color="green" icon-right="check" @click="updateUser") save
       q-btn.on-right(outline color="warning" icon-right="close" @click="cancelEdit") cancel
     
     q-modal(ref="avatarModal" v-model="avatarModalOpen" position="bottom"
@@ -31,7 +31,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import { QUploader } from 'quasar'
+import { QUploader, Toast } from 'quasar'
 export default {
   data () {
     return {
@@ -40,7 +40,6 @@ export default {
       userForm: {
         first_name: '',
         last_name: '',
-        userName: '',
         email: ''
       }
     }
@@ -51,19 +50,57 @@ export default {
   created () {
     this.updateForm()
   },
+  watch: {
+    profileUpdated (value) {
+      if (value === 'success') {
+        this.$store.dispatch('setEditMode', false)
+      }
+    }
+  },
   computed: {
-    ...mapGetters(['user', 'avatarModalOpen', 'userPhotoUrl'])
+    ...mapGetters(['user', 'avatarModalOpen', 'userPhotoUrl', 'profileUpdated'])
   },
   methods: {
     updateForm () {
       console.log('update form... ', this.user)
       this.userForm.first_name = this.user.first_name
       this.userForm.last_name = this.user.last_name
-      this.userForm.userName = this.user.userName ? this.user.userName : ''
+      // this.userForm.userName = this.user.userName ? this.user.userName : ''
       this.userForm.email = this.user.email
     },
     cancelEdit () {
       this.$store.dispatch('setEditMode', false)
+    },
+    updateUser () {
+      console.log(this.userForm)
+      const data = this.userForm
+      for (const input in data) {
+        if (data.hasOwnProperty(input)) {
+          const element = data[input]
+          if (element === '') {
+            this.notifyMsg('No empty fields allowed!')
+            return
+          }
+        }
+      }
+      let canSave = false
+      const changedValues = []
+      for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+          const element = data[key]
+          const userEl = this.user[key]
+          if (element !== userEl) {
+            canSave = true
+            changedValues.push(key)
+          }
+          console.log(element, userEl)
+        }
+      }
+      console.log('can save: ', canSave)
+      console.log('changed values: ', changedValues)
+      if (canSave) {
+        this.$store.dispatch('updateUserProfile', {data: this.userForm, values: changedValues})
+      }
     },
     openModalAvatar () {
       this.$store.dispatch('setAvatarModalOpen', true)
@@ -80,6 +117,11 @@ export default {
       }
       console.log(this.avatar)
       this.$store.dispatch('uploadAvatar', this.avatar)
+    },
+    notifyMsg (msg) {
+      Toast.create.warning({
+        html: msg
+      })
     }
   },
   filters: {

@@ -1,5 +1,5 @@
 <template lang="pug">
-  q-layout(ref="layout", view="lhH lpr fff" :header-class="{'no-shadow': isHome}")
+  q-layout(ref="layout", view="hHh lpr fFf" :header-class="{'no-shadow': isHome}")
     q-toolbar(slot="header" color="green-8")
       q-btn(flat v-show="isHome")
         q-icon(name="access_time")

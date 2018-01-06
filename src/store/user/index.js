@@ -2,6 +2,7 @@ import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/database'
 import 'firebase/storage'
+import { Alert } from 'quasar'
 
 export default {
   state: {
@@ -111,6 +112,60 @@ export default {
             .catch(error => console.log('update error: ', error))
           console.log(fileData)
           console.log(avatarUrl)
+        })
+    },
+    updateUserProfile ({ commit, getters, dispatch }, payload) {
+      const userId = getters.user.id
+      const user = firebase.auth().currentUser
+      console.log(user, userId)
+      console.log('payload: ', payload)
+      if (payload.values.indexOf('email') !== -1) {
+        user.updateEmail(payload.data.email)
+          .then(() => {
+            dispatch('updateUserData', payload)
+          })
+      }
+      else {
+        dispatch('updateUserData', payload)
+      }
+    },
+    updateUserData ({ commit, getters }, payload) {
+      const userId = getters.user.id
+      const userRef = firebase.database().ref(`users/${userId}`)
+      let updateInfo = {}
+      if (payload.values.indexOf('email') !== -1) {
+        updateInfo.email = payload.data.email
+      }
+      else if (payload.values.indexOf('first_name') !== -1) {
+        updateInfo.first_name = payload.data.first_name
+      }
+      else if (payload.values.indexOf('last_name') !== -1) {
+        updateInfo.last_name = payload.data.last_name
+      }
+      userRef.update(updateInfo)
+        .then(() => {
+          Alert.create({
+            html: 'Update succeded!',
+            color: 'lime',
+            icon: 'check',
+            position: 'top-left',
+            dismissable: true,
+            enter: 'bounceInRight',
+            leave: 'bounceOutRight'
+          })
+          commit('profileUpdate', 'success')
+        })
+        .catch(error => {
+          console.log(error)
+          Alert.create({
+            html: 'Update Failed!',
+            color: 'warning',
+            icon: 'info',
+            position: 'top-left',
+            dismissable: true,
+            enter: 'bounceInRight',
+            leave: 'bounceOutRight'
+          })
         })
     }
   }
