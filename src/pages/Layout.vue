@@ -25,9 +25,9 @@
       //- q-btn(flat ref="target2" v-show="isProfile && !isEditMode")
       //-   q-icon(name="more_vert")
     
-  //-       q-popover(ref="popover2" anchor="top right" self="top right")
-  //-         q-list(separator link)
-  //-           q-item(@click="editProfile(), $refs.popover2.close()") Edit Profile
+      //-   q-popover(ref="popover2" anchor="top right" self="top right")
+      //-     q-list(separator link)
+      //-       q-item(@click="editProfile(), $refs.popover2.close()") Edit Profile
         
   div
     router-view

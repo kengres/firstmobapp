@@ -4,6 +4,13 @@
       q-btn(flat @click="$router.go(-1)")
         q-icon(name="arrow_back")
       q-toolbar-title {{ $route.meta.title }}
+      
+      q-btn(flat ref="target2" v-show="!isEditMode")
+        q-icon(name="more_vert")
+    
+        q-popover(ref="popover2" anchor="top right" self="top right")
+          q-list(separator link)
+            q-item(@click="editProfile(), $refs.popover2.close()") Edit Profile
     profile-view(v-if="!isEditMode")
     profile-edit(v-else)
     
@@ -20,6 +27,12 @@ export default {
   components: {
     ProfileView,
     ProfileEdit
+  },
+  methods: {
+    editProfile () {
+      console.log('edit profile...')
+      this.$store.dispatch('setEditMode', true)
+    }
   },
   beforeRouteLeave (to, from, next) {
     console.log('before destroying...')
