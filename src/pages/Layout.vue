@@ -1,5 +1,5 @@
 <template lang="pug">
-  q-layout(ref="layout", view="lhh lpr fff", :left-class="{'bg-grey-2': true}")
+  q-layout(ref="layout", view="lhH lpr fff" :header-class="{'no-shadow': isHome}")
     q-toolbar(slot="header" color="green-8")
       q-btn(flat v-if="isHome")
         q-icon(name="access_time")
@@ -12,6 +12,10 @@
         q-icon(name="person")
       q-btn(flat v-if="false")
         q-icon(name="add_alert")
+      //- for the profile
+      q-btn(flat v-if="isHome" @click="$router.push({path: profileUrl})")
+        q-icon(name="person")
+
       q-btn(flat ref="target1" v-if="isHome")
         q-icon(name="more_vert")
 
@@ -40,7 +44,7 @@
 </template>
 
 <script>
-import { homePath, loginPath, addActivityPath, categoriesPath, profilePath } from '../config'
+import { homePath, loginPath, addActivityPath, categoriesPath, profilePath } from 'js_config'
 import { QSideLink, QSearch, QTabs, QRouteTab, Alert } from 'quasar'
 
 export default {

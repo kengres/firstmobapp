@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    q-tabs.shadow-2(slot="navigation" color="green-8"
+    q-tabs.fixed.full-width.shadow-2(slot="navigation" color="green-8"
           v-model="selectedTab")
       q-tab(slot="title" name="tab-shifts" icon="format_list_bulleted")
       q-tab(slot="title" name="tab-home" icon="home")
@@ -301,7 +301,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  .layout-padding {
-    max-height: 100vh;
+  .q-tabs.fixed {
+    z-index: 100;
   }
 </style>

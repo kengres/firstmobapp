@@ -1,6 +1,5 @@
 ## to do list
 1. closable alerts
-2. statistics (tabs)
 3. month filert, year
 4. about page
 5. view single shift onclick
