@@ -1,12 +1,13 @@
 ## to do list
+1. closable alerts
+2. statistics (tabs)
+3. month filert, year
+4. about page
+5. view single shift onclick
+6. sorting onchild added (or on value instead)
+7. store that seen the landing in localStorage
 8. form validation
-9. sidebar photo and user info
-1. calculate duration minus the pause duration
-2. store that seen the landing in localStorage
-3. cancel button on create activity (route with reloc)
-4. landing view picturess only centered h2 and footer colored bg
-8. pauses duration See #1.
-9. delete a pause
-10. search box
-12. search fx
-13. theming
+9. user profile
+10. landing view picturess only centered h2 and footer colored bg
+11. theming
+12. custom pause duration input
