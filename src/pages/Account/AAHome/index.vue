@@ -1,63 +1,72 @@
 <template lang="pug">
   div
-    template(v-if="dbrows && dbrows.length > 0")
-      q-list(separator)
-        q-list-header(inset) 20.12.2017
-        q-item(v-for="(item, i) in dbrows" :key="i")
-          q-item-side
-            q-item-tile(color="green" icon="work")
+    template(v-if="!loading")
+      template(v-if="displayedActivities && displayedActivities.length > 0")
+        q-list(separator)
+          q-list-header(inset)
+            h5 {{currentMonth}}
+          q-item(v-for="item in displayedActivities" :key="item.id")
+            q-item-side
+              q-item-tile(color="green" icon="work")
+            q-item-main
+              q-item-tile(label) {{item.date | formattedDate}}
+              //- q-item-tile(sublabel) {{item.duration | hourMinFormat}}
+            q-item-side(right)
+              q-item-tile(stamp) {{item.start | formattedTime}} - {{item.end | formattedTime}}
+              q-item-tile(stamp) {{item.duration | hourMinFormat}}
+            q-item-side(right :ref="`target${item.id}`")
+              q-item-tile(icon="more_vert")
+
+                q-popover(:ref="`popover${item.id}`" anchor="top right" self="top right")
+                  q-list(separator)
+                    q-item(@click="editActivity(item), $refs[`popover${item.id}`][0].close()")
+                      q-icon(name="edit")
+                      q-item-tile Edit
+                    q-item(@click="deleteActivity(item), $refs[`popover${item.id}`][0].close()")
+                      q-icon(name="delete")
+                      q-item-tile Delete
+      q-list(v-else)
+        q-item Please add activities.
+        q-item
           q-item-main
-            q-item-tile(label) {{item.category | toTitleCase}}
-            q-item-tile(sublabel) {{item.date | formattedDate}}
-          q-item-side(right)
-            q-item-tile(stamp) {{item.start}} - {{item.end}}
-            q-item-tile(stamp) {{item.duration | hourMinFormat}}
-          q-item-side(right :ref="`target${i}`")
-            q-item-tile(icon="more_vert")
+            q-item-tile To do so, click at the add button below.
 
-              q-popover(:ref="`popover${i}`" anchor="top right" self="top right")
-                q-list(separator)
-                  q-item(@click="updateActivity(item), $refs[`popover${i}`][0].close()")
-                    q-icon(name="edit")
-                    q-item-tile Edit
-                  q-item(@click="deleteActivity(item), $refs[`popover${i}`][0].close()")
-                    q-icon(name="delete")
-                    q-item-tile Delete
-    q-list(v-else)
-      q-item Please add activities.
-      q-item
-        q-item-main
-          q-item-tile To do so, click at the add button below.
+      //- <q-modal ref="minimizedModal" minimized v-model="open" 
+      //-   :content-css="{padding: '20px'}" v-if="logInView">
+      //-   <h4>Saturday</h4>
+      //-   <h5>{{logInView.date | formattedDate}}</h5>
+      //-   <h5>{{logInView.duration}}</h5>
+      //-   <p>Start: {{logInView.start | formattedTime}}</p>
+      //-   <p>End: {{logInView.end | formattedTime}}</p>
+      //-   <q-btn color="faded" icon="close" round
+      //-         @click="$refs.minimizedModal.close()"></q-btn>
+      //- </q-modal>
+      
+      q-fixed-position(corner="bottom-right" :offset="[20, 10]")
+        q-btn(round color="positive" @click="addNewOpen = true" icon="add")
 
-    //- <q-modal ref="minimizedModal" minimized v-model="open" 
-    //-   :content-css="{padding: '20px'}" v-if="logInView">
-    //-   <h4>Saturday</h4>
-    //-   <h5>{{logInView.date | formattedDate}}</h5>
-    //-   <h5>{{logInView.duration}}</h5>
-    //-   <p>Start: {{logInView.start | formattedTime}}</p>
-    //-   <p>End: {{logInView.end | formattedTime}}</p>
-    //-   <q-btn color="faded" icon="close" round
-    //-         @click="$refs.minimizedModal.close()"></q-btn>
-    //- </q-modal>
-    
-    q-fixed-position(corner="bottom-right" :offset="[20, 10]")
-      q-btn(round color="positive" @click="addNewOpen = true" icon="add")
+      q-fixed-position(corner="bottom-left" :offset="[20, 20]" v-if="!isProduction")
+        q-btn(round color="positive" icon="check" @click="testActi")
+      
+      //- <q-toolbar slot="footer" color="faded">
+      //-   <q-toolbar-title>
+      //-     <p class="small">22 weekdays this month. (16 done)</p>
+      //-   </q-toolbar-title>
+      //- </q-toolbar>
+      q-modal(ref="minimizedModal" v-model="addNewOpen" position="left")
+        add-activity
 
-    q-fixed-position(corner="bottom-left" :offset="[20, 20]")
-      q-btn(round color="positive" icon="check" @click="testActi")
-    
-    //- <q-toolbar slot="footer" color="faded">
-    //-   <q-toolbar-title>
-    //-     <p class="small">22 weekdays this month. (16 done)</p>
-    //-   </q-toolbar-title>
-    //- </q-toolbar>
-    q-modal(ref="minimizedModal" v-model="addNewOpen" position="left")
-      add-activity
+      q-modal(ref="minimizedModal" v-model="editOpen" position="left" 
+              v-if="loadedActivity" @close="annulateAct")
+        single-activity(:activity="loadedActivity" @updated="editOpen = false")
+    template(v-else)
+      div.fixed-center Loading ...
+
 </template>
 <script>
-import avatar from 'assets/boy-avatar.jpg'
 import AddActivity from '../Activity/addActivity'
-import { loginPath, addZero, singleActivityPath } from 'js_config'
+import SingleActivity from '../Activity/singleActivity'
+import { loginPath, addZero, isProd } from 'js_config'
 import { ActionSheet, Toast, Dialog } from 'quasar'
 import { mapGetters } from 'vuex'
 
@@ -66,24 +75,16 @@ export default {
   data () {
     return {
       months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-      avatar: avatar,
       addNewOpen: false,
       search: '',
       logInView: null,
-      open: false,
-      dbrows: null,
-      totalTimeSpent: {
-        hours: 30,
-        min: 44
-      },
-      avarageTime: {
-        hours: 10,
-        min: 23
-      }
+      editOpen: false,
+      loadedActivity: null
     }
   },
   components: {
-    AddActivity
+    AddActivity,
+    SingleActivity
   },
   created () {
     console.log('home is created..', this.user)
@@ -117,7 +118,7 @@ export default {
     // }
   },
   computed: {
-    ...mapGetters(['user', 'loading', 'activities']),
+    ...mapGetters(['user', 'loading', 'activities', 'singleActivity']),
     queryMsg () {
       return this.$route.query ? (this.$route.query.msg ? this.$route.query.msg : null) : null
     },
@@ -126,15 +127,22 @@ export default {
     },
     reverseAct () {
       return this.activities ? (this.activities).reverse() : null
+    },
+    displayedActivities () {
+      return this.activities
+    },
+    isProduction () {
+      return isProd()
     }
   },
   methods: {
     testActi () {
       console.log('testing activities...')
+      this.$store.dispatch('loadActivities')
     },
     deleteActivity (act) {
       console.log('deleting ...: ', act)
-      // const vm = this
+      const vm = this
       Dialog.create({
         title: 'Warning',
         message: 'You are about to delete a log.',
@@ -144,29 +152,30 @@ export default {
             label: 'Ok',
             handler () {
               console.log('from handler')
-              // vm.$store.dispatch('deleteActivity', act)
-              //   .then(positive => {
-              //     Toast.create.positive({
-              //       html: 'Delete succeded!'
-              //     })
-              //   })
-              //   .catch(error => {
-              //     Toast.create.warning({
-              //       html: 'Delete failed!'
-              //     })
-              //     console.log(error)
-              //   })
+              vm.$store.dispatch('deleteActivity', act)
+                .then(positive => {
+                  Toast.create.positive({
+                    html: 'Delete succeded!'
+                  })
+                })
+                .catch(error => {
+                  Toast.create.warning({
+                    html: 'Delete failed!'
+                  })
+                  console.log(error)
+                })
             }
           }
         ]
       })
     },
-    updateActivity (act) {
+    editActivity (act) {
       console.log('updating ...: ', act)
-      console.log('updating ...: ', singleActivityPath)
-      this.$router.push({
-        path: `${singleActivityPath}/${act.id}?date=${act.date}`
-      })
+      this.loadedActivity = act
+      this.editOpen = true
+    },
+    annulateAct () {
+      this.loadedActivity = null
     },
     fetchData () {
       console.log('fetching activities...')

@@ -49,20 +49,24 @@ export default {
     },
     loadActivities ({ commit, getters }) {
       const userId = getters.user.id
-      const date = '2017-12-'
-      const actRef = firebase.database().ref(`activities/${userId}`).orderByKey().startAt(date)
-      actRef.once('value')
-        .then(snap => {
-          console.log('acti du 28: ', snap.val())
+      const date = '2018-01-'
+      const actRef = firebase.database().ref(`activities/${userId}`).orderByChild('date').startAt(date)
+      const allActivities = []
+      actRef.on('child_added', snap => {
+        allActivities.unshift({
+          id: snap.key,
+          ...snap.val()
         })
-        .catch(error => console.log(error))
+        console.log('all activities: ', allActivities)
+        commit('setActivities', allActivities)
+      })
     },
     deleteActivity ({commit, getters, dispatch}, payload) {
       return new Promise((resolve, reject) => {
         const userId = getters.user.id
-        const date = payload.date
-        const month = (new Date()).getMonth() + 1
-        firebase.database().ref('activities/' + userId + '/' + month).child(date).remove()
+        const actId = payload.id
+        const actRef = firebase.database().ref(`activities/${userId}`)
+        actRef.child(actId).remove()
           .then(data => {
             console.log('delete complete')
             resolve('done')
@@ -76,24 +80,29 @@ export default {
     },
     updateActivity ({commit, getters, dispatch}, payload) {
       const userId = getters.user.id
-      const date = payload.date
-      const month = (new Date()).getMonth() + 1
-      firebase.database().ref('activities/' + userId + '/' + month).child(date).update(payload)
-        .then(() => {
-          Alert.create({
-            html: 'Update succeded!',
-            color: 'positive',
-            icon: 'check',
-            position: 'bottom-left',
-            dismissable: true,
-            enter: 'bounceInRight',
-            leave: 'bounceOutRight'
+      const actId = payload.id
+      const {id, ...rest} = payload
+      const actRef = firebase.database().ref(`activities/${userId}`)
+      return new Promise((resolve, reject) => {
+        actRef.child(actId).update(rest)
+          .then(() => {
+            resolve('done')
+            Alert.create({
+              html: 'Update succeded!',
+              color: 'positive',
+              icon: 'check',
+              position: 'bottom-left',
+              dismissable: true,
+              enter: 'bounceInRight',
+              leave: 'bounceOutRight'
+            })
+            dispatch('loadActivities')
           })
-          dispatch('loadActivities')
-        })
-        .catch(error => {
-          console.log(error)
-        })
+          .catch(error => {
+            console.log(error)
+            reject(error)
+          })
+      })
     },
     loadSingleActivity ({ commit, getters }, payload) {
       commit('setLoading', true)

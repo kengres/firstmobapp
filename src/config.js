@@ -4,7 +4,7 @@ export const isProd = () => {
   return process.env.NODE_ENV === 'production'
 }
 export let firebaseConfig
-if (isProd) {
+if (isProd()) {
   firebaseConfig = {
     apiKey: 'AIzaSyCNrNZbm97DWP4kFi_SQgp13hiz2xVrgqk',
     authDomain: 'time-spent-app.firebaseapp.com',

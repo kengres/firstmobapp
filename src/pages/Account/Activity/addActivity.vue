@@ -30,7 +30,7 @@
 </template>
 <script>
 import { Toast } from 'quasar'
-import { addZero, diffDate } from 'js_config'
+import { diffDate } from 'js_config'
 export default {
   data () {
     return {
@@ -56,21 +56,6 @@ export default {
     }
   },
   methods: {
-    formatTime (date) {
-      const s = date
-      const d = new Date(s)
-      const h = addZero(d.getHours())
-      const m = addZero(d.getMinutes())
-      return `${h}:${m}`
-    },
-    unFormatTime (time) {
-      const h = parseInt(time.split(':')[0])
-      const m = parseInt(time.split(':')[1])
-      const d = new Date()
-      d.setHours(h)
-      d.setMinutes(m)
-      return d
-    },
     createActivity () {
       const data = this.activityForm
       for (const input in data) {

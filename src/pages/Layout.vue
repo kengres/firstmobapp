@@ -15,11 +15,12 @@
       q-btn(flat ref="target1" v-if="isHome")
         q-icon(name="more_vert")
 
-        q-popover(ref="popover1")
+        q-popover(ref="popover1" anchor="top right" self="top right")
           q-list(separator link)
             q-item(@click="addCategory(), $refs.popover1.close()") Settings
             q-item(@click="addCategory(), $refs.popover1.close()") About
             q-item(@click="addCategory(), $refs.popover1.close()") Rate
+            q-item(@click="logout(), $refs.popover1.close()") Logout
 
       q-btn(flat ref="target2" v-if="isAddActivity")
         q-icon(name="more_vert")
@@ -76,10 +77,8 @@ export default {
   methods: {
     logout () {
       this.$auth.logUserOut()
-        .then(resp => {
-          this.$refs.layout.hideCurrentSide(() => {
-            this.$router.push(loginPath)
-          })
+        .then(() => {
+          this.$router.push(loginPath)
         })
     },
     addCategory () {
