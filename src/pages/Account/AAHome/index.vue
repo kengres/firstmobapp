@@ -1,30 +1,43 @@
 <template lang="pug">
   div
-    template(v-if="!loading")
-      template(v-if="displayedActivities && displayedActivities.length > 0")
-        q-list(separator)
-          q-list-header(inset)
-            h5 {{currentMonth}}
-          q-item(v-for="item in displayedActivities" :key="item.id")
-            q-item-side
-              q-item-tile(color="green" icon="work")
-            q-item-main
-              q-item-tile(label) {{item.date | formattedDate}}
-              //- q-item-tile(sublabel) {{item.duration | hourMinFormat}}
-            q-item-side(right)
-              q-item-tile(stamp) {{item.start | formattedTime}} - {{item.end | formattedTime}}
-              q-item-tile(stamp) {{item.duration | hourMinFormat}}
-            q-item-side(right :ref="`target${item.id}`")
-              q-item-tile(icon="more_vert")
+    q-tabs.shadow-2(slot="navigation" color="green-8"
+          v-model="selectedTab")
+      q-tab(slot="title" name="tab-shifts" icon="format_list_bulleted")
+      q-tab(slot="title" name="tab-home" icon="home")
+      q-tab(slot="title" name="tab-statistics" icon="pie_chart")
 
-                q-popover(:ref="`popover${item.id}`" anchor="top right" self="top right")
-                  q-list(separator)
-                    q-item(@click="editActivity(item), $refs[`popover${item.id}`][0].close()")
-                      q-icon(name="edit")
-                      q-item-tile Edit
-                    q-item(@click="deleteActivity(item), $refs[`popover${item.id}`][0].close()")
-                      q-icon(name="delete")
-                      q-item-tile Delete
+    template(v-if="!loading")
+      template(v-if="selectedTab === 'tab-home'")
+        template(v-if="displayedActivities && displayedActivities.length > 0")
+          q-list(separator)
+            q-list-header(inset)
+              h5 {{currentMonth}}
+            q-item(v-for="item in displayedActivities" :key="item.id")
+              q-item-side
+                q-item-tile(color="green" icon="work")
+              q-item-main
+                q-item-tile(label) {{item.date | formattedDate}}
+                //- q-item-tile(sublabel) {{item.duration | hourMinFormat}}
+              q-item-side(right)
+                q-item-tile(stamp) {{item.start | formattedTime}} - {{item.end | formattedTime}}
+                q-item-tile(stamp) {{item.duration | hourMinFormat}}
+              q-item-side(right :ref="`target${item.id}`")
+                q-item-tile(icon="more_vert")
+
+                  q-popover(:ref="`popover${item.id}`" anchor="top right" self="top right")
+                    q-list(separator)
+                      q-item(@click="editActivity(item), $refs[`popover${item.id}`][0].close()")
+                        q-icon(name="edit")
+                        q-item-tile Edit
+                      q-item(@click="deleteActivity(item), $refs[`popover${item.id}`][0].close()")
+                        q-icon(name="delete")
+                        q-item-tile Delete
+      template(v-else-if="selectedTab === 'tab-statistics'")
+        home-statistics
+
+      template(v-else-if="selectedTab === 'tab-shifts'")
+        home-shifts
+
       q-list(v-else)
         q-item Please add activities.
         q-item
@@ -66,8 +79,10 @@
 <script>
 import AddActivity from '../Activity/addActivity'
 import SingleActivity from '../Activity/singleActivity'
+import HomeStatistics from './Statistics'
+import HomeShifts from './Shifts'
 import { loginPath, addZero, isProd } from 'js_config'
-import { ActionSheet, Toast, Dialog } from 'quasar'
+import { ActionSheet, Toast, Dialog, QTabs, QTab } from 'quasar'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -79,12 +94,17 @@ export default {
       search: '',
       logInView: null,
       editOpen: false,
-      loadedActivity: null
+      loadedActivity: null,
+      selectedTab: 'tab-home'
     }
   },
   components: {
     AddActivity,
-    SingleActivity
+    SingleActivity,
+    HomeStatistics,
+    HomeShifts,
+    QTabs,
+    QTab
   },
   created () {
     console.log('home is created..', this.user)
