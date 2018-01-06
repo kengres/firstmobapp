@@ -15,9 +15,6 @@ export default {
     }
   },
   actions: {
-    setUser ({ commit }, payload) {
-      commit('setUser', payload)
-    },
     signUserUp ({ commit, dispatch }, payload) {
       firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
         .then(data => {
@@ -58,20 +55,28 @@ export default {
       })
     },
     autoSignIn ({commit, dispatch}, payload) {
-      console.log('autoSigning in...', payload.uid)
+      console.log('autoSigning in...', payload.id)
       commit('setLoading', true)
-      dispatch('getUserDetails', payload.uid)
+      dispatch('getUserDetails', payload)
     },
-    getUserDetails ({ commit }, UID) {
-      firebase.database().ref(`users/${UID}`).once('value')
+    getUserDetails ({ commit }, payload) {
+      let userDetails = {}
+      firebase.database().ref(`users/${payload.id}`).once('value')
         .then(data => {
           const result = data.val()
-          const userData = {
-            ...result,
-            id: UID
+          if (result) {
+            userDetails = {
+              ...result,
+              ...payload
+            }
           }
-          console.log('got user details: ', userData)
-          commit('setUser', userData)
+          else {
+            userDetails = {
+              ...payload
+            }
+          }
+          console.log('got user details: ', userDetails)
+          commit('setUser', userDetails)
           commit('setLoading', false)
         })
         .catch(error => {

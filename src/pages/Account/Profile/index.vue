@@ -7,7 +7,7 @@
     q-card-main
       p Email: 
         span.text-faded kengres@mail.com
-      //- p {{ user }}
+      p {{ user }}
   q-card.fixed-center(v-else)
     q-card-title Loading...
 </template>
@@ -19,10 +19,12 @@ export default {
   },
   filters: {
     toTitleCase (val) {
-      const a = (val.toLowerCase()).split('')
-      a[0] = a[0].toUpperCase()
-      const b = a.join('')
-      return b
+      if (val) {
+        const a = (val.toLowerCase()).split('')
+        a[0] = a[0].toUpperCase()
+        const b = a.join('')
+        return b
+      }
     }
   }
 }

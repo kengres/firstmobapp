@@ -108,8 +108,16 @@ Quasar.start(() => {
       this.$auth.getUser()
         .then(user => {
           console.log('app getting user...: ', user)
-          this.$store.dispatch('autoSignIn', user)
-          // this.$store.dispatch('fetchUserData')
+          const userDetails = {
+            userName: user.displayName,
+            email: user.email,
+            created_at: user.metadata.creationTime,
+            lastSignIn: user.metadata.lastSignInTime,
+            photoUrl: user.photoUrl,
+            phoneNumber: user.phoneNumber,
+            id: user.uid
+          }
+          this.$store.dispatch('autoSignIn', userDetails)
         })
         .catch(error => {
           console.log('app user error: ', error)
