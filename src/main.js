@@ -111,7 +111,7 @@ Quasar.start(() => {
           const userDetails = {
             userName: user.displayName,
             email: user.email,
-            created_at: user.metadata.creationTime,
+            created_at: user.metadata.a,
             lastSignIn: user.metadata.lastSignInTime,
             photoUrl: user.photoURL,
             phoneNumber: user.phoneNumber,

@@ -1,19 +1,19 @@
 <template lang="pug">
   q-card(v-if="user")
-    q-card-media
+    q-card-media.bg-green-8
       .profile
-        img.profile_image(:src="user.photoUrl" v-if="user.photoUrl")
+        img.profile_image(:src="userPhotoUrl" v-if="userPhotoUrl")
         .profile_noimage.bg-green(v-else)
           span.absolute-center.text-white {{ user.first_name | firstLetter }} {{ user.last_name | firstLetter}}
-      .text-center
-        q-btn(flat @click="avatarModalOpen = true") change avatar
+      .text-center.text-white
+        q-btn(flat @click="openModalAvatar") change avatar
     q-card-main
       q-field()
         q-input(v-model="userForm.first_name" float-label="First Name")
       q-field()
         q-input(v-model="userForm.last_name" float-label="Last Name")
-      q-field()
-        q-input(v-model="userForm.userName" float-label="UserName")
+      //- q-field()
+      //-   q-input(v-model="userForm.userName" float-label="UserName")
       q-field()
         q-input(v-model="userForm.email" float-label="Email")
     
@@ -35,7 +35,6 @@ import { QUploader } from 'quasar'
 export default {
   data () {
     return {
-      avatarModalOpen: false,
       avatar: '',
       imageSrc: false,
       userForm: {
@@ -53,7 +52,7 @@ export default {
     this.updateForm()
   },
   computed: {
-    ...mapGetters(['user'])
+    ...mapGetters(['user', 'avatarModalOpen', 'userPhotoUrl'])
   },
   methods: {
     updateForm () {
@@ -65,6 +64,9 @@ export default {
     },
     cancelEdit () {
       this.$store.dispatch('setEditMode', false)
+    },
+    openModalAvatar () {
+      this.$store.dispatch('setAvatarModalOpen', true)
     },
     handleChange (e) {
       const file = e.target.files[0]
@@ -100,6 +102,7 @@ export default {
 </script>
 <style lang="scss" scoped>
   .profile {
+    padding: 10px 0;
     margin: 0 auto;
     min-height: 50px;
     width: 60vw;

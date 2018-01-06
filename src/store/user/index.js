@@ -5,14 +5,19 @@ import 'firebase/storage'
 
 export default {
   state: {
-    user: null
+    user: null,
+    userPhotoUrl: null
   },
   getters: {
-    user: state => state.user
+    user: state => state.user,
+    userPhotoUrl: state => state.userPhotoUrl
   },
   mutations: {
     setUser (state, payload) {
       state.user = payload
+    },
+    previewAvatar (state, url) {
+      state.userPhotoUrl = url
     }
   },
   actions: {
@@ -78,6 +83,7 @@ export default {
           }
           console.log('got user details: ', userDetails)
           commit('setUser', userDetails)
+          commit('previewAvatar', userDetails.photoUrl)
           commit('setLoading', false)
         })
         .catch(error => {
@@ -85,7 +91,7 @@ export default {
           commit('setLoading', false)
         })
     },
-    uploadAvatar ({ commit, getters }, file) {
+    uploadAvatar ({ commit, getters, dispatch }, file) {
       const user = firebase.auth().currentUser
       console.log('current user: ', user)
       const userId = getters.user.id
@@ -98,7 +104,10 @@ export default {
           user.updateProfile({
             photoURL: avatarUrl
           })
-            .then(() => console.log('update success: '))
+            .then(() => {
+              dispatch('setAvatarModalOpen', false)
+              commit('previewAvatar', avatarUrl)
+            })
             .catch(error => console.log('update error: ', error))
           console.log(fileData)
           console.log(avatarUrl)

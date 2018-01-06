@@ -1,16 +1,20 @@
 <template lang="pug">
   q-card(v-if="user")
-    q-card-media
+    q-card-media.bg-green-8
       .profile
         img.profile_image(:src="user.photoUrl" v-if="user.photoUrl")
         .profile_noimage.bg-green(v-else)
           span.absolute-center.text-white {{ user.first_name | firstLetter }} {{ user.last_name | firstLetter}}
     
-    q-card-title Name: {{user.last_name | toTitleCase}} {{user.first_name | toTitleCase}}
+    q-card-title Name: 
+      span.text-green-8 {{user.last_name | toTitleCase}} {{user.first_name | toTitleCase}}
     q-card-main
       p Email: 
-        span.text-faded {{user.email}}
-      p {{ user }}
+        span.text-faded.text-green-8 {{user.email}}
+      p Registered: 
+        span.text-faded.text-green-8 {{user.created_at | friendlyDate}} - 
+          span(style="font-size: 12px") {{user.created_at | friendlyTime}}
+      //- p {{ user }}
     q-card-separator
     //- q-card-actions
     //-   q-btn.on-right(outline icon-right="edit" big) edit
@@ -19,6 +23,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import { addZero } from 'js_config'
 export default {
   data () {
     return {
@@ -47,12 +52,32 @@ export default {
         const a = (val.toLowerCase()).split('')
         return a[0].toUpperCase()
       }
+    },
+    friendlyDate (val) {
+      if (val) {
+        const d = new Date(parseInt(val))
+        const day = addZero(d.getDate())
+        const month = addZero(d.getMonth() + 1)
+        const year = d.getFullYear()
+        return `${day}.${month}.${year}`
+      }
+      return 'unknown'
+    },
+    friendlyTime (val) {
+      if (val) {
+        const d = new Date(parseInt(val))
+        const hour = addZero(d.getHours())
+        const min = addZero(d.getMinutes())
+        return `${hour}:${min}`
+      }
+      return 'unknown'
     }
   }
 }
 </script>
 <style lang="scss" scoped>
   .profile {
+    padding: 10px 0;
     margin: 0 auto;
     min-height: 50px;
     width: 60vw;
