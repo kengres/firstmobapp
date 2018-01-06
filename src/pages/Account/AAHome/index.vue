@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div.homelayout
     q-tabs.fixed.full-width.shadow-2(slot="navigation" color="green-8"
           v-model="selectedTab")
       q-tab(slot="title" name="tab-shifts" icon="format_list_bulleted")
@@ -303,6 +303,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+  .q-list {
+    padding-top: 50px;
+  }
   .q-tabs.fixed {
     z-index: 100;
   }
