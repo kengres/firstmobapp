@@ -1,35 +1,35 @@
 <template lang="pug">
-  q-layout(ref="layout", view="lHr LpR fFf" :header-class="{'no-shadow': isHome}")
-    q-toolbar(slot="header" color="green-8")
-      q-btn(flat v-show="isHome")
-        q-icon(name="access_time")
+  //- q-layout(ref="layout" :header-class="{'no-shadows': isHome}")
+  //-   q-toolbar(slot="header" color="green-8")
+  //-     q-btn(flat v-show="isHome")
+  //-       q-icon(name="access_time")
 
-      q-btn(flat @click="$router.go(-1)" v-show="!isHome")
-        q-icon(name="arrow_back")
+  //-     q-btn(flat @click="$router.go(-1)" v-show="!isHome")
+  //-       q-icon(name="arrow_back")
 
-      q-toolbar-title {{ viewTitle }}
-      //- for the profile
-      q-btn(flat v-show="isHome" @click="$router.push({path: profileUrl})")
-        q-icon(name="person")
+  //-     q-toolbar-title {{ viewTitle }}
+  //-     //- for the profile
+  //-     q-btn(flat v-show="isHome" @click="$router.push({path: profileUrl})")
+  //-       q-icon(name="person")
 
-      q-btn(flat ref="target1" v-show="isHome")
-        q-icon(name="more_vert")
+      //- q-btn(flat ref="target1" v-show="isHome")
+      //-   q-icon(name="more_vert")
 
-        q-popover(ref="popover1" anchor="top right" self="top right")
-          q-list(separator link)
-            q-item(@click="$refs.popover1.close()") Settings
-            q-item(@click="$refs.popover1.close()") About
-            q-item(@click="$refs.popover1.close()") Rate
-            q-item(@click="logout(), $refs.popover1.close()") Logout
+      //-   q-popover(ref="popover1" anchor="top right" self="top right")
+      //-     q-list(separator link)
+      //-       q-item(@click="$refs.popover1.close()") Settings
+      //-       q-item(@click="$refs.popover1.close()") About
+      //-       q-item(@click="$refs.popover1.close()") Rate
+      //-       q-item(@click="logout(), $refs.popover1.close()") Logout
 
-      q-btn(flat ref="target2" v-show="isProfile && !isEditMode")
-        q-icon(name="more_vert")
+      //- q-btn(flat ref="target2" v-show="isProfile && !isEditMode")
+      //-   q-icon(name="more_vert")
     
-        q-popover(ref="popover2" anchor="top right" self="top right")
-          q-list(separator link)
-            q-item(@click="editProfile(), $refs.popover2.close()") Edit Profile
+  //-       q-popover(ref="popover2" anchor="top right" self="top right")
+  //-         q-list(separator link)
+  //-           q-item(@click="editProfile(), $refs.popover2.close()") Edit Profile
         
-
+  div
     router-view
     
 </template>

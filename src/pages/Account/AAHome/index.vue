@@ -1,6 +1,21 @@
 <template lang="pug">
-  div.homelayout
-    q-tabs.fixed.full-width.shadow-2(slot="navigation" color="green-8"
+  q-layout(ref="homeLayout" view="hHh lpr lfr")
+    q-toolbar(slot="header" color="green-8")
+      q-btn(flat)
+        q-icon(name="access_time")
+      q-toolbar-title {{ $route.meta.title }}
+      q-btn(flat @click="$router.push({path: profileUrl})")
+        q-icon(name="person")
+      q-btn(flat ref="target1")
+        q-icon(name="more_vert")
+        q-popover(ref="popover1" anchor="top right" self="top right")
+          q-list(separator link)
+            q-item(@click="$refs.popover1.close()") Settings
+            q-item(@click="$refs.popover1.close()") About
+            q-item(@click="$refs.popover1.close()") Rate
+            q-item(@click="logout(), $refs.popover1.close()") Logout
+
+    q-tabs.shadow-2(slot="navigation" color="green-8"
           v-model="selectedTab")
       q-tab(slot="title" name="tab-shifts" icon="format_list_bulleted")
       q-tab(slot="title" name="tab-home" icon="home")
@@ -81,7 +96,7 @@ import AddActivity from '../Activity/addActivity'
 import SingleActivity from '../Activity/singleActivity'
 import HomeStatistics from './Statistics'
 import HomeShifts from './Shifts'
-import { loginPath, addZero, isProd } from 'js_config'
+import { loginPath, addZero, isProd, profilePath } from 'js_config'
 import { ActionSheet, Toast, Dialog, QTabs, QTab } from 'quasar'
 import { mapGetters } from 'vuex'
 
@@ -95,7 +110,8 @@ export default {
       logInView: null,
       editOpen: false,
       loadedActivity: null,
-      selectedTab: 'tab-home'
+      selectedTab: 'tab-home',
+      profileUrl: profilePath
     }
   },
   components: {
@@ -156,6 +172,12 @@ export default {
     }
   },
   methods: {
+    logout () {
+      this.$auth.logUserOut()
+        .then(() => {
+          this.$router.push(loginPath)
+        })
+    },
     testActi () {
       console.log('testing activities...')
       this.$store.dispatch('loadActivities')
@@ -303,9 +325,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  .q-list {
-    padding-top: 50px;
-  }
   .q-tabs.fixed {
     z-index: 100;
   }

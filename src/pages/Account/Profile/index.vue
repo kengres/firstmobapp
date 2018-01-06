@@ -1,5 +1,9 @@
 <template lang="pug">
-  div
+  q-layout(ref="homeLayout" view="hHh lpr lfr")
+    q-toolbar(slot="header" color="green-8")
+      q-btn(flat @click="$router.go(-1)")
+        q-icon(name="arrow_back")
+      q-toolbar-title {{ $route.meta.title }}
     profile-view(v-if="!isEditMode")
     profile-edit(v-else)
     
