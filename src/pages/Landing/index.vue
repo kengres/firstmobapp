@@ -1,5 +1,5 @@
 <template>
-  <q-layout class="layout-padding">
+  <q-layout>
     <q-modal
         ref="carModal"
         maximized>

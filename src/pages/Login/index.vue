@@ -1,6 +1,6 @@
 <template>
   <q-layout class="layout-padding centering bg-lime-4">
-    <div class="fixed-top fixed-top__center">
+    <div class="fixed-tops fixed-top__center">
       <img src="../../assets/squarelogo2.png" class="" alt="">
     </div>
     <q-card flat class="absolute-center centering__card bg-white">
@@ -93,7 +93,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   .centering {
     max-height: 100vh;
     overflow: hidden;
@@ -102,8 +102,8 @@ export default {
       width: 90%;
     }
   }
-  .fixed-top {
-    padding-top: 20px;
+  .fixed-tops {
+    // padding-top: 20px;
     width: 100%;
     margin: 0 auto;
     text-align: center;
