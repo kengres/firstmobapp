@@ -14,17 +14,22 @@
             .carousel_actionBtn(v-if="showButtons")
               .carousel_actionBtn--inner.row.now-wrap.justify-between
                 q-btn(outline color="white" big 
-                    @click="$router.push({path: loginUrl})") SignIn
+                    @click="landingSeen(); $router.push({path: loginUrl})") SignIn
                 q-btn(outline color="white" big 
-                    @click="$router.push({path: registerUrl})") SignUp
+                    @click="landingSeen(); $router.push({path: registerUrl})") SignUp
         
       
 </template>
 <script>
 import { loginPath, registerPath } from 'js_config'
+import { LocalStorage } from 'quasar'
 import SlideOne from './slide1'
 import SlideTwo from './slide2'
 import SlideThree from './slide3'
+
+const key = 'WRKTMSPNT:LNDNGSN:WKRNMSPNT'
+const value = 'Yes'
+
 export default {
   data () {
     return {
@@ -62,6 +67,11 @@ export default {
     if (this.user) {
       this.pushToAccount()
     }
+    else if (this.seenLanding) {
+      this.$router.push({
+        path: this.loginUrl
+      })
+    }
   },
   watch: {
     user (value) {
@@ -78,6 +88,9 @@ export default {
   computed: {
     user () {
       return this.$store.getters.user
+    },
+    seenLanding () {
+      return LocalStorage.get.item(key)
     }
   },
   methods: {
@@ -102,8 +115,9 @@ export default {
       this.$router.push({
         path: '/account'})
     },
-    alert () {
-      console.log('alert...')
+    landingSeen () {
+      console.log('landing seen...')
+      LocalStorage.set(key, value)
     }
   }
 }
