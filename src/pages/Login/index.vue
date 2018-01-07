@@ -1,39 +1,30 @@
-<template>
-  <q-layout class="layout-padding centering bg-lime-4">
-    <div class="fixed-tops fixed-top__center">
-      <img src="../../assets/squarelogo2.png" class="" alt="">
-    </div>
-    <q-card flat class="absolute-center centering__card bg-white">
-      <q-card-title>
-        <span class="text-lime-6">Fill the Form to SignIn</span>
-      </q-card-title>
-      <q-card-main color="lime-6">
-        <q-field
+<template lang="pug">
+  q-layout(view="hhh lpr lfr")
+    q-toolbar(slot="header" color="lime-6")
+      q-toolbar-title SignIn
+    q-card(flat)
+      q-card-title
+        span.text-lime-6 Fill the Form to SignIn
+      q-card-main(color="lime-6")
+        q-field(
             color="lime-6"
-            error-label="We need a valid email"
-          >
-            <q-input v-model="loginForm.email"
+            error-label="We need a valid email")
+          q-input(v-model="loginForm.email"
                 color="lime-6"
                 float-label="E-mail"
-                type="email" />
-          </q-field>
-        <q-field
-            error-label="We need a valid pass"
-          >
-            <q-input type="password" 
+                type="email")
+        q-field(error-label="We need a valid pass" color="lime-6")
+          q-input(type="password" 
               float-label="Password"
-              v-model="loginForm.password"/>
-          </q-field>
+              color="lime-6"
+              v-model="loginForm.password")
+      q-card-actions
+        q-btn.on-right(flat big color="lime-8" @click="login") Login
 
-      </q-card-main>
-      <q-card-actions>
-        <q-btn outline color="lime-8" @click="login">Login</q-btn>
-        <q-btn outline color="lime-8" @click="$router.replace(registerUrl)">register</q-btn>
-      </q-card-actions>
-    </q-card>
-
-    
-  </q-layout>
+    q-toolbar(slot="footer" color="green-5")
+      q-toolbar-title create an account
+      q-btn(round color="green-6" icon="keyboard_arrow_right"
+            @click="$router.replace(registerUrl)")
 </template>
 <script>
 import { registerPath, homePath } from '../../config'
@@ -94,20 +85,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  .centering {
-    max-height: 100vh;
-    overflow: hidden;
-
-    &__card {
-      width: 90%;
-    }
-  }
-  .fixed-tops {
-    // padding-top: 20px;
-    width: 100%;
-    margin: 0 auto;
-    text-align: center;
-  }
+  
 </style>
 
 

@@ -1,6 +1,6 @@
 <template lang="pug">
   q-card(v-if="user")
-    q-card-media.bg-green-8
+    q-card-media.bg-lime-8
       .profile
         img.profile_image(:src="userPhotoUrl" v-if="userPhotoUrl")
         .profile_noimage.bg-green(v-else)

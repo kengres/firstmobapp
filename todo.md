@@ -13,4 +13,5 @@
 12. custom pause duration input
 13. write data offline
 14. cancel button on update act, create
-15. sync router back button
+15. access to files and camera
+16. swipe right and left
