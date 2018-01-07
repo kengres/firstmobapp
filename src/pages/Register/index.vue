@@ -1,56 +1,38 @@
-<template>
-  <q-layout class="layout-padding centering bg-lime-3">
-    <div class="fixed-top fixed-top__center">
-      <img src="../../assets/logo-sm.png" class="" alt="">
-    </div>
-    <q-card class="absolute-center centering__card bg-white">
-      <q-card-title>
-        Fill the Form Below
-      </q-card-title>
-      <q-card-main>
-        <q-field
-            error-label="We need a valid name"
-          >
-            <q-input v-model="userForm.first_name"
-              float-label="First Name" />
-          </q-field>
-
-          <q-field
-            error-label="We need a valid name"
-          >
-            <q-input v-model="userForm.last_name"
-              float-label="Last Name" />
-          </q-field>
-
-        <q-field
-            error-label="We need a valid email"
-          >
-            <q-input v-model="userForm.email" 
+<template lang="pug">
+  q-layout(view="hHh lpr lFr")
+    .mask
+    q-toolbar(slot="header" :color="color + '-8'")
+      q-btn( flat icon="account_circle")
+      q-toolbar-title Create Account
+    q-card.absolute-center
+      q-card-title Fill the Form Below
+      q-card-main
+        q-field(error-label="We need a valid name")
+          q-input(v-model="userForm.first_name" :color="color"
+              float-label="First Name")
+        q-field(error-label="We need a valid name")
+          q-input(v-model="userForm.last_name" :color="color"
+              float-label="Last Name")
+        q-field(error-label="We need a valid email")
+          q-input(v-model="userForm.email" :color="color"
                 float-label="E-mail"
-                type="email" />
-          </q-field>
-        <q-field
-            error-label="We need a valid email"
-          >
-            <q-input type="password" 
+                type="email")
+        q-field(error-label="We need a valid email")
+          q-input(type="password" :color="color"
               float-label="Password"
-              v-model="userForm.password"/>
-          </q-field>
-        <q-field
-            error-label="Password don't match!"
-          >
-            <q-input type="password" 
+              v-model="userForm.password")
+        q-field(error-label="Password don't match!")
+          q-input(type="password" :color="color"
               float-label="Confirm Password"
-              v-model="userForm.password2" />
-          </q-field>
+              v-model="userForm.password2")
 
-      </q-card-main>
-      <q-card-actions>
-        <q-btn outline color="lime-9" @click="saveUser">register</q-btn>
-        <q-btn outline color="lime-9" @click="$router.replace(loginUrl)">Sign</q-btn>
-      </q-card-actions>
-    </q-card>
-  </q-layout>
+      q-card-actions
+        q-btn(big :color="color + -6" @click="saveUser") register
+    
+    q-toolbar(slot="footer" :color="color + -6" @click="$router.replace(loginUrl)")
+      q-toolbar-title Login to your account
+      q-btn(round :color="color + -8" icon="keyboard_arrow_right"
+            @click="$router.replace(loginUrl)")
 </template>
 <script>
 import { loginPath, homePath } from '../../config'
@@ -58,6 +40,7 @@ import { Toast } from 'quasar'
 export default {
   data () {
     return {
+      color: 'green',
       loginUrl: loginPath,
       userForm: {
         first_name: '',
@@ -94,7 +77,7 @@ export default {
         if (data.hasOwnProperty(formInput)) {
           const element = data[formInput]
           if (element === '') {
-            this.notifyError(`${formInput} must not be empty!`)
+            this.notifyError(`${formInput} is required!`)
             return
           }
         }
@@ -112,9 +95,26 @@ export default {
       this.$store.dispatch('signUserUp', data)
     },
     notifyError (msg) {
-      Toast.create(msg)
+      Toast.create.negative(msg)
     }
   }
 }
 </script>
 
+<style lang="scss" scoped>
+  .layout {
+    background: white url('../../assets/bg-3.jpeg') no-repeat fixed center;
+    position: relative;
+  }
+  .mask {
+    position: absolute;
+    right: 0; left: 0; top: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  .q-card {
+    background-color: rgba(255, 255, 255, 0.938);
+    width: 90%;
+    margin-right: auto;
+    margin-left: auto;
+  }
+</style>

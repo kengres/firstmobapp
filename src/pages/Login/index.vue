@@ -1,8 +1,10 @@
 <template lang="pug">
-  q-layout(view="hhh lpr lfr")
+  q-layout(view="hHh lpr lFr")
+    .mask
     q-toolbar(slot="header" color="lime-6")
+      q-btn( flat icon="person")
       q-toolbar-title SignIn
-    q-card(flat)
+    q-card.absolute-center(flat)
       q-card-title
         span.text-lime-6 Fill the Form to SignIn
       q-card-main(color="lime-6")
@@ -21,8 +23,8 @@
       q-card-actions
         q-btn.on-right(flat big color="lime-8" @click="login") Login
 
-    q-toolbar(slot="footer" color="green-5")
-      q-toolbar-title create an account
+    q-toolbar(slot="footer" color="green-5" @click="$router.replace(registerUrl)")
+      q-toolbar-title Or create an account
       q-btn(round color="green-6" icon="keyboard_arrow_right"
             @click="$router.replace(registerUrl)")
 </template>
@@ -85,7 +87,21 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  
+  .layout {
+    background: white url('../../assets/bg-3.jpeg') no-repeat fixed center;
+    position: relative;
+  }
+  .mask {
+    position: absolute;
+    right: 0; left: 0; top: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  .q-card {
+    background-color: rgba(255, 255, 255, 0.938);
+    width: 90%;
+    margin-right: auto;
+    margin-left: auto;
+  }
 </style>
 
 
