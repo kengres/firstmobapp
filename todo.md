@@ -1,5 +1,6 @@
 ## to do list
-1. closable alerts
+1. autoclosable alerts
+2. login and register single route
 3. month filert, year
 4. about page
 5. view single shift onclick
@@ -10,4 +11,6 @@
 10. landing view picturess only centered h2 and footer colored bg
 11. theming
 12. custom pause duration input
-### write data offline
+13. write data offline
+14. cancel button on update act, create
+15. sync router back button
