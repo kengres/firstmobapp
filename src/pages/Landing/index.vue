@@ -1,39 +1,20 @@
-<template>
-  <q-layout>
-    <q-modal
-        ref="carModal"
-        maximized>
-      <q-carousel 
-        class="text-white full-height"
-        dots
-        @slide="handleSlide">
-        <div slot="slide"
-          class="centered"
-          v-for="(slide, i) in slides" :key="i"
-          :class="`bg-item-${i+1}`">
-            <div class="slide-mask"></div>
-            <q-card :class="`customCard text-${slide.color}`">
-              <q-card-title>
-                {{slide.text}}
-              </q-card-title>
-            </q-card>
-        </div>
+<template lang="pug">
+  q-layout
+    q-modal(ref="carModal" maximized)
+      q-carousel.text-white.full-height(dots @slide="handleSlide")
+        div.centered(slot="slide" v-for="(slide, i) in slides" :key="i"
+          :class="`bg-item-${i+1}`")
+          .slide-mask
+          q-card(:class="`customCard text-${slide.color}`")
+            q-card-title {{slide.text}}
+              
+    q-fixed-position(corner="bottom-left" :offset="[70, 50]" v-show="showButtons")
+      q-btn.text-dark(color="white" raised big @click="$router.push({path: loginUrl})") SignIn
 
-        <q-fixed-position corner="bottom-left" :offset="[70, 50]" v-show="showButtons">
-          <q-btn color="white" raised class="text-dark" big @click="$router.push({path: loginUrl})" >
-            SignIn
-          </q-btn>
-        </q-fixed-position>
-
-        <q-fixed-position corner="bottom-right" :offset="[70, 50]" v-show="showButtons">
-          <q-btn color="white" raised class="text-dark" big @click="$router.push({path: registerUrl})" >
-            SignUp
-          </q-btn>
-        </q-fixed-position>
-
-      </q-carousel>
-    </q-modal>
-  </q-layout>
+    q-fixed-position(corner="bottom-right" :offset="[70, 50]" v-show="showButtons")
+      q-btn.text-dark(color="white" raised big @click="$router.push({path: registerUrl})") SignUp
+        
+      
 </template>
 <script>
 import { loginPath, registerPath } from '../../config'

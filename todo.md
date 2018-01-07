@@ -1,6 +1,5 @@
 ## to do list
 1. autoclosable alerts
-2. login and register single route
 3. month filert, year
 4. about page
 5. view single shift onclick
