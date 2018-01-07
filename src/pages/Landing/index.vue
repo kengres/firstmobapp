@@ -1,35 +1,61 @@
 <template lang="pug">
   q-layout
     q-modal(ref="carModal" maximized)
-      q-carousel.text-white.full-height(dots @slide="handleSlide")
-        div.centered(slot="slide" v-for="(slide, i) in slides" :key="i"
-          :class="`bg-item-${i+1}`")
-          .slide-mask
-          q-card(:class="`customCard text-${slide.color}`")
-            q-card-title {{slide.text}}
-              
-    q-fixed-position(corner="bottom-left" :offset="[70, 50]" v-show="showButtons")
-      q-btn.text-dark(color="white" raised big @click="$router.push({path: loginUrl})") SignIn
-
-    q-fixed-position(corner="bottom-right" :offset="[70, 50]" v-show="showButtons")
-      q-btn.text-dark(color="white" raised big @click="$router.push({path: registerUrl})") SignUp
+      q-carousel.full-height(dots @slide="handleSlide"
+        :class="{'bg-slide2' : isSlide2, 'bg-slide3' : isSlide3 }")
+        .carousel_slide(slot="slide" v-for="(slide, i) in slides" :key="i")
+          .carousel_slide--inner
+            .text-center.carousel_title
+              h5 {{ slide.title }}
+              p {{ slide.subtitle }}
+            .component
+              .component_inner
+                component(:is="slide.comp")
+            .carousel_actionBtn(v-if="showButtons")
+              .carousel_actionBtn--inner.row.now-wrap.justify-between
+                q-btn(outline color="white" big 
+                    @click="$router.push({path: loginUrl})") SignIn
+                q-btn(outline color="white" big 
+                    @click="$router.push({path: registerUrl})") SignUp
         
       
 </template>
 <script>
-import { loginPath, registerPath } from '../../config'
+import { loginPath, registerPath } from 'js_config'
+import SlideOne from './slide1'
+import SlideTwo from './slide2'
+import SlideThree from './slide3'
 export default {
   data () {
     return {
       showButtons: false,
+      isSlide2: false,
+      isSlide3: false,
       slides: [
-        { bg: 'faded', color: 'white', text: 'Welcome! Thank you for choosing Time spent App!' },
-        { bg: 'light', color: 'white', text: 'Manage your time to be more productive. Know what you have been up to lately!' },
-        { bg: 'white', color: 'white', text: 'To get started, please login to your account, or sign up, if you don\'t already have one!' }
+        {
+          title: 'Welcome to Work Time Spent App',
+          subtitle: 'Simple. Light. Easy to use.',
+          comp: 'SlideOne'
+        },
+        {
+          title: 'Manage your time to be more productive.',
+          subtitle: 'Know what you have been up to lately!',
+          comp: 'SlideTwo'
+        },
+        {
+          title: 'To get started, please login.',
+          subtitle: 'Or create an account.',
+          comp: 'SlideThree'
+        }
       ],
       loginUrl: loginPath,
       registerUrl: registerPath
     }
+  },
+  components: {
+    SlideOne,
+    SlideTwo,
+    SlideThree
   },
   created () {
     console.log('landing is created, get user please...', this.user)
@@ -56,11 +82,20 @@ export default {
   },
   methods: {
     handleSlide (i, dir) {
-      if (i === 2) {
+      // console.log('just swipe: ', i)
+      if (i === 1) {
+        this.isSlide2 = true
+        this.isSlide3 = false
+        this.showButtons = false
+      }
+      else if (i === 2) {
+        this.isSlide2 = false
+        this.isSlide3 = true
         this.showButtons = true
       }
       else {
         this.showButtons = false
+        this.isSlide2 = this.isSlide3 = false
       }
     },
     pushToAccount () {
@@ -73,37 +108,61 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-  .bg-item {
-    background-color: rgba(0, 0, 0, 0.9);
-    background-position: center;
-    background-size: contain;
-    position: relative;
+<style lang="scss" scoped>
+  .q-carousel {
+    background-color: rgb(173, 82, 29);
+    transition: background-color .3s ease-in-out;
+
+    &.bg-slide2 {
+      background-color: rgb(223, 174, 16);
+    }
+    &.bg-slide3 {
+      background-color: #11a124;
+    }
   }
-  .slide-mask {
+  .carousel {
+    &_slide {
+      padding: 0;
+
+      &--inner {
+        width: 100%;
+        height: 100%;
+        padding: 0 1em;
+        position: relative;
+      }
+    }
+    &_title {
+      position: absolute;
+      color: rgba(255, 255, 255, 0.836);
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      padding-top: 20px;
+    }
+    &_actionBtn {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+
+      &--inner {
+        width: 50%;
+        min-width: 200px;
+        margin: 0 auto;
+      }
+    }
+  }
+  .component {
     position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-  }
-  .bg-item-1 {
-    background-image: url('../../assets/bg-1.jpeg');
-    @extend .bg-item;
-  }
-  .bg-item-2 {
-    background-image: url('../../assets/bg-2.jpeg');
-    @extend .bg-item;
-  }
-  .bg-item-3 {
-    background-image: url('../../assets/bg-3.jpeg');
-    @extend .bg-item;
-  }
-  .customCard {
-    width: 60vw;
-    max-width: 90vw;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -70%);
     min-width: 200px;
-    text-align: center;
-    opacity: 0.9;
-    z-index: 5;
+    width: 90%;
+    max-width: 100vw;
+    height: 200px;
+    // background-color: rgb(41, 212, 93);
   }
 </style>
 
