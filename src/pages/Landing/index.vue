@@ -38,7 +38,7 @@ export default {
       isSlide3: false,
       slides: [
         {
-          title: 'Welcome to Work Time Spent App',
+          title: 'Welcome to Work Time Manager App',
           subtitle: 'Simple. Light. Easy to use.',
           comp: 'SlideOne'
         },
