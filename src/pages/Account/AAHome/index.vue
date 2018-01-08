@@ -76,11 +76,10 @@
       q-fixed-position(corner="bottom-left" :offset="[20, 20]" v-if="!isProduction")
         q-btn(round color="positive" icon="check" @click="testActi")
       
-      //- <q-toolbar slot="footer" color="faded">
-      //-   <q-toolbar-title>
-      //-     <p class="small">22 weekdays this month. (16 done)</p>
-      //-   </q-toolbar-title>
-      //- </q-toolbar>
+      //- footers
+      q-toolbar(slot="footer" color="green-10" v-if="selectedTab === 'tab-shifts'")
+        shifts-footer
+      
       q-modal(ref="minimizedModal" v-model="addNewOpen" position="left")
         add-activity(@created="addNewOpen = false")
 
@@ -96,6 +95,8 @@ import AddActivity from '../Activity/addActivity'
 import SingleActivity from '../Activity/singleActivity'
 import HomeStatistics from './Statistics'
 import HomeShifts from './Shifts'
+import ShiftsFooter from './Shifts/footer'
+
 import { loginPath, addZero, isProd, profilePath } from 'js_config'
 import { ActionSheet, Toast, Dialog, QTabs, QTab } from 'quasar'
 import { mapGetters } from 'vuex'
@@ -119,6 +120,7 @@ export default {
     SingleActivity,
     HomeStatistics,
     HomeShifts,
+    ShiftsFooter,
     QTabs,
     QTab
   },
