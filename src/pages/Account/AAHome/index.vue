@@ -11,7 +11,8 @@
         q-popover(ref="popover1" anchor="top right" self="top right")
           q-list(separator link)
             q-item(@click="$refs.popover1.close()") Settings
-            q-item(@click="$refs.popover1.close()") About
+            q-item(
+              @click="$router.push({path: aboutUrl}); $refs.popover1.close()") About
             q-item(@click="$refs.popover1.close()") Rate
             q-item(@click="logout(), $refs.popover1.close()") Logout
 
@@ -97,7 +98,7 @@ import HomeStatistics from './Statistics'
 import HomeShifts from './Shifts'
 import ShiftsFooter from './Shifts/footer'
 
-import { loginPath, addZero, isProd, profilePath } from 'js_config'
+import { loginPath, addZero, isProd, profilePath, aboutPath } from 'js_config'
 import { ActionSheet, Toast, Dialog, QTabs, QTab } from 'quasar'
 import { mapGetters } from 'vuex'
 
@@ -112,7 +113,8 @@ export default {
       editOpen: false,
       loadedActivity: null,
       selectedTab: 'tab-home',
-      profileUrl: profilePath
+      profileUrl: profilePath,
+      aboutUrl: aboutPath
     }
   },
   components: {

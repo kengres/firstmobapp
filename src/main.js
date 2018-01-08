@@ -16,6 +16,7 @@ import Vuelidate from 'vuelidate'
 // import quasar and single components
 import Quasar,
 {
+  GoBack,
   QBtn,
   QCard,
   QCardActions,
@@ -81,6 +82,9 @@ Vue.use(Quasar, {
     QModal,
     QToolbar,
     QToolbarTitle
+  },
+  directives: {
+    GoBack
   }
 }) // Install Quasar Framework
 Vue.use(VueCordova) // Vue cordova

@@ -16,7 +16,6 @@
     
 </template>
 <script>
-import { GoBack } from 'quasar'
 import { homePath } from 'js_config'
 import ProfileView from './isview'
 import ProfileEdit from './isedit'
@@ -43,9 +42,6 @@ export default {
     console.log('before destroying...')
     this.$store.dispatch('setEditMode', false)
     next()
-  },
-  directives: {
-    GoBack
   }
 }
 </script>

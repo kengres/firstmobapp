@@ -36,8 +36,7 @@ export const loginPath = '/login'
 export const registerPath = '/register'
 export const addActivityPath = '/add-activity'
 export const singleActivityPath = '/activities'
-export const categoriesPath = '/categories'
-export const addCategoryPath = '/add-category'
+export const aboutPath = '/about'
 export const profilePath = '/profile'
 
 export const nav = {
@@ -47,8 +46,7 @@ export const nav = {
   homeUrl: homePath,
   addActivityUrl: addActivityPath,
   singleActivityUrl: singleActivityPath,
-  categoriesUrl: categoriesPath,
-  addCategoryUrl: addCategoryPath,
+  aboutUrl: aboutPath,
   profileUrl: profilePath
 
 }
