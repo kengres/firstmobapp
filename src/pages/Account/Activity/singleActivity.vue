@@ -11,6 +11,7 @@
         q-item-side
         q-item-main
           q-datetime-range(
+              format24h
               v-model="activityForm.range" 
               type="datetime"
               monday-first)

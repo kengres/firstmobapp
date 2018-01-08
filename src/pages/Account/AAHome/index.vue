@@ -31,7 +31,7 @@
             q-item(v-for="item in displayedActivities" :key="item.id")
               q-item-side
                 q-item-tile(color="green" icon="work")
-              q-item-main
+              q-item-main(@click="viewSingleShift(item)")
                 q-item-tile(label) {{item.date | formattedDate}}
                 //- q-item-tile(sublabel) {{item.duration | hourMinFormat}}
               q-item-side(right)
@@ -63,16 +63,32 @@
         home-shifts
 
 
-      //- <q-modal ref="minimizedModal" minimized v-model="open" 
-      //-   :content-css="{padding: '20px'}" v-if="logInView">
-      //-   <h4>Saturday</h4>
-      //-   <h5>{{logInView.date | formattedDate}}</h5>
-      //-   <h5>{{logInView.duration}}</h5>
-      //-   <p>Start: {{logInView.start | formattedTime}}</p>
-      //-   <p>End: {{logInView.end | formattedTime}}</p>
-      //-   <q-btn color="faded" icon="close" round
-      //-         @click="$refs.minimizedModal.close()"></q-btn>
-      //- </q-modal>
+      q-modal(ref="singleLogModal" minimized v-model="singleOpen" 
+        :content-css="{padding: '20px'}" v-if="shiftInView")
+
+        .bg-green.relative-position
+          q-btn.absolute-top-right(small color="red-10" icon="close" round
+          @click="$refs.singleLogModal.close()")
+        q-list(no-border)
+          q-list-header
+            h5 {{ shiftInView.date | formattedDate }}
+          q-item
+            q-item-side Start:
+            q-item-main
+              q-item-tile {{ shiftInView.start | formattedTime }}
+          q-item
+            q-item-side End:
+            q-item-main
+              q-item-tile {{ shiftInView.end | formattedTime }}
+          q-item
+            q-item-side Pause:
+            q-item-main
+              q-item-tile {{ shiftInView.pause | hourMinFormat }}
+          q-item
+            q-item-side Duration:
+            q-item-main
+              q-item-tile {{ shiftInView.duration | hourMinFormat }}
+        
       
       q-fixed-position(corner="bottom-right" :offset="[20, 10]")
         q-btn(round color="positive" @click="addNewOpen = true" icon="add")
@@ -84,10 +100,10 @@
       q-toolbar(slot="footer" color="green-10" v-if="selectedTab === 'tab-shifts'")
         shifts-footer
       
-      q-modal(ref="minimizedModal" v-model="addNewOpen" position="left")
+      q-modal(ref="addNewModal" v-model="addNewOpen" position="left")
         add-activity(@created="addNewOpen = false")
 
-      q-modal(ref="minimizedModal" v-model="editOpen" position="left" 
+      q-modal(ref="editLogModal" v-model="editOpen" position="left" 
               v-if="loadedActivity" @close="annulateAct")
         single-activity(:activity="loadedActivity" @updated="editOpen = false")
     template(v-else)
@@ -112,12 +128,13 @@ export default {
       months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       addNewOpen: false,
       search: '',
-      logInView: null,
+      shiftInView: null,
       editOpen: false,
       loadedActivity: null,
       selectedTab: 'tab-home',
       profileUrl: profilePath,
-      aboutUrl: aboutPath
+      aboutUrl: aboutPath,
+      singleOpen: false
     }
   },
   components: {
@@ -185,6 +202,16 @@ export default {
     testActi () {
       console.log('testing acti...')
       this.$store.dispatch('loadActivities')
+    },
+    viewSingleShift (shift) {
+      console.log('clicked shift...', shift)
+      if (shift) {
+        this.shiftInView = shift
+        this.singleOpen = true
+      }
+      else {
+        this.singleOpen = false
+      }
     },
     deleteActivity (act) {
       console.log('deleting ...: ', act)
@@ -260,16 +287,6 @@ export default {
           handler: () => console.log('cancel')
         }
       })
-    },
-    openLog (log) {
-      console.log('clicked log: ', log)
-      if (log) {
-        this.logInView = log
-        this.open = true
-      }
-      else {
-        this.open = false
-      }
     }
   },
   filters: {
