@@ -143,13 +143,11 @@ export default {
     user (value) {
       console.log('user value changed in Home. logout??? ', value)
       if (!value) {
-        this.$refs.mainLayout.hideCurrentSide(() => {
-          this.$router.push({
-            path: loginPath,
-            query: {
-              msg: 'goodbye'
-            }
-          })
+        this.$router.push({
+          path: loginPath,
+          query: {
+            msg: 'goodbye'
+          }
         })
       }
       else {
@@ -168,11 +166,10 @@ export default {
     currentMonth () {
       return this.months[(new Date()).getMonth()]
     },
-    reverseAct () {
-      return this.activities ? (this.activities).reverse() : null
-    },
     displayedActivities () {
-      return this.activities
+      return this.activities.sort((a, b) => {
+        return a.date > b.date ? -1 : (a.date < b.date ? 1 : 0)
+      })
     },
     isProduction () {
       return isProd()
@@ -186,7 +183,7 @@ export default {
         })
     },
     testActi () {
-      console.log('testing activities...')
+      console.log('testing acti...')
       this.$store.dispatch('loadActivities')
     },
     deleteActivity (act) {
@@ -227,7 +224,7 @@ export default {
       this.loadedActivity = null
     },
     fetchData () {
-      console.log('fetching activities...')
+      console.log('fetching activities from home... user: ', this.user)
       this.$store.dispatch('loadActivities')
     },
     welcomeMessage () {

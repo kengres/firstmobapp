@@ -36,7 +36,7 @@ export default {
         position: 'top-right'
       })
     },
-    createActivity ({ commit, getters }, payload) {
+    createActivity ({ commit, getters, dispatch }, payload) {
       const userId = getters.user.id
       const dateRef = firebase.database().ref('activities/' + userId)
       return new Promise((resolve, reject) => {
@@ -53,6 +53,7 @@ export default {
               leave: 'bounceOutRight'
             })
             console.log('act created: ', resp)
+            dispatch('loadActivities')
           })
           .catch(error => {
             reject(error)
@@ -62,17 +63,26 @@ export default {
     },
     loadActivities ({ commit, getters }) {
       const userId = getters.user.id
+      console.log('userId: ', userId)
       const date = '2018-01-'
       const actRef = firebase.database().ref(`activities/${userId}`).orderByChild('date').startAt(date)
       const allActivities = []
-      actRef.on('child_added', snap => {
-        allActivities.unshift({
-          id: snap.key,
-          ...snap.val()
+      actRef.once('value')
+        .then(snap => {
+          console.log('api activities: ', snap.val())
+          const dataObj = snap.val()
+          for (const key in dataObj) {
+            if (dataObj.hasOwnProperty(key)) {
+              const el = dataObj[key]
+              allActivities.push({
+                id: key,
+                ...el
+              })
+            }
+          }
+          console.log('all activities: ', allActivities)
+          commit('setActivities', allActivities)
         })
-        console.log('all activities: ', allActivities)
-        commit('setActivities', allActivities)
-      })
     },
     deleteActivity ({commit, getters, dispatch}, payload) {
       return new Promise((resolve, reject) => {
