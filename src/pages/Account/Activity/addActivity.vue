@@ -11,6 +11,7 @@
         q-item-side(icon="date_range")
         q-item-main
           q-datetime-range(
+              format24h
               color="green-8"
               v-model="activityForm.range" 
               type="datetime"
