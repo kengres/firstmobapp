@@ -48,17 +48,20 @@
                       q-item(@click="deleteActivity(item), $refs[`popover${item.id}`][0].close()")
                         q-icon(name="delete")
                         q-item-tile Delete
+        q-list(no-border v-else)
+          q-list-header
+            h5 Please add new work logs.
+          q-item
+            q-item-main
+              q-item-tile
+                p To do so, click at the plus button below.
+
       template(v-else-if="selectedTab === 'tab-statistics'")
         home-statistics
 
       template(v-else-if="selectedTab === 'tab-shifts'")
         home-shifts
 
-      q-list(v-else)
-        q-item Please add activities.
-        q-item
-          q-item-main
-            q-item-tile To do so, click at the add button below.
 
       //- <q-modal ref="minimizedModal" minimized v-model="open" 
       //-   :content-css="{padding: '20px'}" v-if="logInView">
