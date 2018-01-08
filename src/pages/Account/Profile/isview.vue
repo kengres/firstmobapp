@@ -76,18 +76,25 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+  $pd: 10px;
   .profile {
-    padding: 10px 0;
+    padding: $pd 0;
     margin: 0 auto;
-    min-height: 50px;
-    width: 60vw;
-    min-width: 50px;
-    max-width: 150px;
+    width: 120px;
+    height: calc(120px + #{2 * $pd});
+
+    @media(min-width: 320px){
+      width: 150px;
+      height: calc(150px + #{2 * $pd});
+    }
+    @media(min-width: 350px){
+      width: 170px;
+      height: calc(170px + #{2 * $pd});
+    }
 
     &_image {
       width: 100%;
-      max-width: 100%;
-      height: auto;
+      height: 100%;
       border-radius: 50%;
     }
     &_noimage {
