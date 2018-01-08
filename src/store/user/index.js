@@ -26,14 +26,24 @@ export default {
       firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
         .then(data => {
           console.log('data after user create: ', data)
+          const formatData = {
+            userName: data.displayName,
+            email: data.email,
+            created_at: data.metadata.a,
+            lastSignIn: data.metadata.lastSignInTime,
+            photoUrl: data.photoURL,
+            phoneNumber: data.phoneNumber,
+            id: data.uid
+          }
           firebase.database().ref('users/' + data.uid).set({
             first_name: payload.first_name,
             last_name: payload.last_name,
             email: data.email
           })
-            .then(user => {
-              console.log('returned user details: ', user)
-              dispatch('getUserDetails', data.uid)
+            .then(() => {
+              console.log('created successfully!')
+              commit('setLoading', true)
+              dispatch('getUserDetails', formatData)
             })
             .catch(error => {
               console.log('error user details: ', error)
@@ -49,11 +59,17 @@ export default {
         firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
           .then(data => {
             console.log('user data: ', data)
-            const user = {
+            const formatUser = {
+              userName: data.displayName,
+              email: data.email,
+              created_at: data.metadata.a,
+              lastSignIn: data.metadata.lastSignInTime,
+              photoUrl: data.photoURL,
+              phoneNumber: data.phoneNumber,
               id: data.uid
             }
-            resolve(user)
-            dispatch('getUserDetails', data.uid)
+            resolve(formatUser)
+            dispatch('getUserDetails', formatUser)
           })
           .catch(error => {
             console.log('user error: ', error)
@@ -61,10 +77,19 @@ export default {
           })
       })
     },
-    autoSignIn ({commit, dispatch}, payload) {
-      console.log('autoSigning in...', payload.id)
+    autoSignIn ({commit, dispatch}, user) {
+      const formatUser = {
+        userName: user.displayName,
+        email: user.email,
+        created_at: user.metadata.a,
+        lastSignIn: user.metadata.lastSignInTime,
+        photoUrl: user.photoURL,
+        phoneNumber: user.phoneNumber,
+        id: user.uid
+      }
+      console.log('autoSigning in...', formatUser.id)
       commit('setLoading', true)
-      dispatch('getUserDetails', payload)
+      dispatch('getUserDetails', formatUser)
     },
     getUserDetails ({ commit }, payload) {
       let userDetails = {}

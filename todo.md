@@ -18,3 +18,6 @@
 20. Link to rate us
 21. search for dates shifts
 22. footer on shifts
+23. signin signup firebase errors
+  // auth/user-not-found
+  // auth/wrong-password
