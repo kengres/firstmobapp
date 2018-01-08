@@ -101,11 +101,12 @@
         shifts-footer
       
       q-modal(ref="addNewModal" v-model="addNewOpen" position="left")
-        add-activity(@created="addNewOpen = false")
+        add-activity(@created="addNewOpen = false" @cancel="addNewOpen = false")
 
       q-modal(ref="editLogModal" v-model="editOpen" position="left" 
               v-if="loadedActivity" @close="annulateAct")
-        single-activity(:activity="loadedActivity" @updated="editOpen = false")
+        single-activity(:activity="loadedActivity" 
+          @updated="editOpen = false" @cancel="editOpen = false")
     template(v-else)
       div.fixed-center Loading ...
 

@@ -2,24 +2,24 @@
   div
     q-list
       q-list-header
-        h5.text-green Create a Shift
+        h5.text-green-9 Create a Shift
       q-item
         q-item-side
         q-item-main
-          q-item-tile(color="green-8") Select Start and End
+          q-item-tile(color="green-9") Select Start and End
       q-item
         q-item-side(icon="date_range")
         q-item-main
           q-datetime-range(
               format24h
-              color="green-8"
+              color="green-9"
               v-model="activityForm.range" 
               type="datetime"
               monday-first)
       q-item
         q-item-side
         q-item-main
-          q-item-tile(color="green-8") Pause
+          q-item-tile(color="green-9") Pause
       q-item
         q-item-side(icon="pause_circle_filled")
         q-item-main
@@ -28,7 +28,8 @@
       q-item
         q-item-side
         q-item-main
-          q-btn(color="green-10" @click="createActivity") save
+          q-btn.on-left(color="green-9" @click="createActivity") save
+          q-btn.on-right(color="warning" @click="$emit('cancel')") cancel
 </template>
 <script>
 import { Toast } from 'quasar'
