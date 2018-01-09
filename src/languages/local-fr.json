@@ -1,0 +1,23 @@
+{
+  "app.months": [
+    "Janvier",
+    "Fevrier",
+    "Mars",
+    "Avril",
+    "Mai",
+    "Juin",
+    "Juillet",
+    "Aout",
+    "Septembre",
+    "Octobre",
+    "Novembre",
+    "Decembre"
+  ],
+  "message.title": "Un titre impressionnant",
+  "message.body": "C\"est un message important",
+  "message.footer": "Ceci est un texte de pied de page",
+  "listing": [
+    "Ceci est blocque no. {first}",
+    "Ceci est blocque no. {second}"
+  ]
+}

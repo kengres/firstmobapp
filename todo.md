@@ -15,3 +15,5 @@
 23. signin signup firebase errors
   // auth/user-not-found
   // auth/wrong-password
+25. visibility bar color
+26. settings with choose language support

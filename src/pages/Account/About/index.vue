@@ -6,7 +6,14 @@
       q-toolbar-title {{ $route.meta.title }}
     q-list(no-border)
       q-list-header 
-        h5 About Work Time Manager
+        h5 About this app
+      q-item
+        q-item-side
+          q-item-tile(icon="description")
+        q-item-main
+          q-item-tile 
+            a(href="http://play.google.com/store/apps/details?id=ru.kenguruka.timespentapp") App Name
+          q-item-tile Work Time Manager
       q-item
         q-item-side
           q-item-tile(icon="description")

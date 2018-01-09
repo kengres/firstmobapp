@@ -27,7 +27,9 @@
         template(v-if="displayedActivities && displayedActivities.length > 0")
           q-list(separator)
             q-list-header(inset)
-              h5 {{currentMonth}}
+              h5(v-for="(month, i) in $t('app.months')")
+                span(v-if="i == currentMonth") {{ month }}
+             
             q-item(v-for="item in displayedActivities" :key="item.id")
               q-item-side
                 q-item-tile(color="green" icon="work")
@@ -126,7 +128,6 @@ export default {
   name: 'home',
   data () {
     return {
-      months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       addNewOpen: false,
       search: '',
       shiftInView: null,
@@ -182,12 +183,17 @@ export default {
       return this.$route.query ? (this.$route.query.msg ? this.$route.query.msg : null) : null
     },
     currentMonth () {
-      return this.months[(new Date()).getMonth()]
+      return (new Date()).getMonth()
     },
     displayedActivities () {
-      return this.activities.sort((a, b) => {
-        return a.date > b.date ? -1 : (a.date < b.date ? 1 : 0)
-      })
+      if (this.activities) {
+        return this.activities.sort((a, b) => {
+          return a.date > b.date ? -1 : (a.date < b.date ? 1 : 0)
+        })
+      }
+      else {
+        return null
+      }
     },
     isProduction () {
       return isProd()

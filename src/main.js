@@ -13,6 +13,7 @@ require(`quasar/dist/quasar.${__THEME}.css`)
 import Vue from 'vue'
 import VueCordova from 'vue-cordova'
 import Vuelidate from 'vuelidate'
+import vuexI18n from 'vuex-i18n'
 // import quasar and single components
 import Quasar,
 {
@@ -49,6 +50,18 @@ import Quasar,
 
 import { router } from './router'
 import store from './store'
+Vue.use(vuexI18n.plugin, store, {
+  onTranslationNotFound: (locale, key) => {
+    console.warn(`vuex-i18n :: Key '${key}' not found for locale '${locale}'`)
+  }
+})
+import localeEn from './languages/local-en'
+import localeFr from './languages/local-fr'
+
+Vue.i18n.add('en', localeEn)
+Vue.i18n.add('fr', localeFr)
+Vue.i18n.fallback('en')
+Vue.i18n.set('en')
 
 import Auth from './auth'
 Vue.config.productionTip = false

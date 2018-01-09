@@ -1,0 +1,27 @@
+{
+  "app.months": [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ],
+  "message.title": "An Awesome Title",
+  "message.body": "And some slightly less awesome text",
+  "message.footer": "This is a footer text",
+  "listing": [
+    "this is block no. {first}",
+    "this is block no. {second}"
+  ],
+  "custom": {
+    "option1": "test",
+    "option2": "test2"
+  }
+}
