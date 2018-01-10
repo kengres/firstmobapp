@@ -29,10 +29,10 @@
       q-card-actions
         q-btn(big :color="color + -6" @click="saveUser") register
     
-    q-toolbar(slot="footer" :color="color + -6" @click="$router.replace(loginUrl)")
-      q-toolbar-title Login to your account
-      q-btn(round :color="color + -8" icon="keyboard_arrow_right"
-            @click="$router.replace(loginUrl)")
+    q-toolbar(slot="footer" :color="color + -6")
+      q-toolbar-title(@click="$router.replace(loginUrl)") Login to your account
+      q-btn(round :color="color + -9" icon="keyboard_arrow_right"
+            @click="saveUser")
 </template>
 <script>
 import { loginPath, homePath } from '../../config'

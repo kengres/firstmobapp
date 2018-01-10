@@ -93,10 +93,10 @@
         
       
       q-fixed-position(corner="bottom-right" :offset="[20, 10]")
-        q-btn(round color="positive" @click="addNewOpen = true" icon="add")
+        q-btn(round color="primary" @click="addNewOpen = true" icon="add")
 
       q-fixed-position(corner="bottom-left" :offset="[20, 20]" v-if="!isProduction")
-        q-btn(round color="positive" icon="check" @click="testActi")
+        q-btn(round color="primary" icon="check" @click="testActi")
       
       //- footers
       q-toolbar(slot="footer" color="green-10" v-if="selectedTab === 'tab-shifts'")
@@ -104,11 +104,12 @@
       
       q-modal(ref="addNewModal" v-model="addNewOpen" position="left")
         add-activity(@created="addNewOpen = false" @cancel="addNewOpen = false")
-
-      q-modal(ref="editLogModal" v-model="editOpen" position="left" 
-              v-if="loadedActivity" @close="annulateAct")
-        single-activity(:activity="loadedActivity" 
-          @updated="editOpen = false" @cancel="editOpen = false")
+      
+      template(v-if="loadedActivity && editOpen")
+        q-modal(ref="editLogModal" v-model="editOpen" position="right" 
+                @close="annulateAct")
+          single-activity(:activity="loadedActivity" 
+              v-on:editComplete="closeEditModal" v-on:cancel="closeEditModal")
     template(v-else)
       div.fixed-center Loading ...
 
@@ -150,9 +151,6 @@ export default {
   },
   created () {
     console.log('home is created..', this.user)
-    // Loading.show({
-    //   delay: 0
-    // })
     if (this.user) {
       this.fetchData()
     }
@@ -173,9 +171,6 @@ export default {
         this.fetchData()
       }
     }
-    // loading (value) {
-    //   value ? Loading.show() : Loading.hide()
-    // }
   },
   computed: {
     ...mapGetters(['user', 'loading', 'activities', 'singleActivity']),
@@ -210,6 +205,14 @@ export default {
       console.log('testing acti...')
       this.$store.dispatch('loadActivities')
     },
+    closeEditModal (payload) {
+      console.log('closing edit modal...: ', payload)
+      console.log('loaded acti...: ', this.loadedActivity)
+      this.editOpen = !payload
+    },
+    isupdating (payload) {
+      console.log('is updating...: ', payload)
+    },
     viewSingleShift (shift) {
       console.log('clicked shift...', shift)
       if (shift) {
@@ -231,26 +234,13 @@ export default {
           {
             label: 'Ok',
             handler () {
-              console.log('from handler')
               vm.$store.dispatch('deleteActivity', act)
-                .then(positive => {
-                  Toast.create.positive({
-                    html: 'Delete succeded!'
-                  })
-                })
-                .catch(error => {
-                  Toast.create.warning({
-                    html: 'Delete failed!'
-                  })
-                  console.log(error)
-                })
             }
           }
         ]
       })
     },
     editActivity (act) {
-      console.log('updating ...: ', act)
       this.loadedActivity = act
       this.editOpen = true
     },
@@ -263,9 +253,9 @@ export default {
     },
     welcomeMessage () {
       if (this.queryMsg === 'success') {
-        Toast.create.positive({
-          html: 'Welcome to using our App!',
-          timeout: 4000
+        Toast.create.info({
+          html: 'Thank you for choosing Work Time Manager App! We hope you enjoy it!',
+          timeout: 6000
         })
       }
       setTimeout(() => {

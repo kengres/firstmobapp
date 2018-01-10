@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div(v-if="activity")
     q-list
       q-list-header
         h5.text-green-7 Edit Shift
@@ -28,7 +28,7 @@
         q-item-side
         q-item-main
           q-btn.on-left(color="green" @click="updateActivity") update
-          q-btn.on-right(color="warning" @click="$emit('cancel')") cancel
+          q-btn.on-right(color="warning" @click="$emit('cancel', true)") cancel
 </template>
 <script>
 import { Toast } from 'quasar'
@@ -82,10 +82,7 @@ export default {
       }
       console.log('new activity: ', newActivity)
       this.$store.dispatch('updateActivity', newActivity)
-        .then((resp) => {
-          console.log('update promise: ', resp)
-          this.$emit('updated')
-        })
+      this.$emit('editComplete', true)
     },
     notifyMsg (msg) {
       Toast.create.warning({

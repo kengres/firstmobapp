@@ -1,12 +1,7 @@
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/database'
-import { Alert } from 'quasar'
-// import 'quasar-extras/animate/bounceInRight.css'
-// import 'quasar-extras/animate/bounceOutRight.css'
-
-// constant inti
-// import { ACTIVITIES_KEY } from '../../config'
+import { Toast } from 'quasar'
 
 export default {
   state: {
@@ -26,42 +21,29 @@ export default {
     }
   },
   actions: {
-    notify (payload) {
-      Alert.create({
-        html: 'You already have a log on that date. Edit it instead!',
-        enter: 'bounceInRight',
-        leave: 'bounceOutRight',
-        color: 'warning',
-        icon: 'error',
-        position: 'top-right'
-      })
-    },
     createActivity ({ commit, getters, dispatch }, payload) {
       const userId = getters.user.id
       const dateRef = firebase.database().ref('activities/' + userId)
-      return new Promise((resolve, reject) => {
-        dateRef.push(payload)
-          .then(resp => {
-            resolve('done')
-            Alert.create({
-              html: 'Log successfully created!',
-              color: 'lime-4',
-              icon: 'check',
-              position: 'top-right',
-              dismissable: true,
-              enter: 'bounceInRight',
-              leave: 'bounceOutRight'
-            })
-            console.log('act created: ', resp)
-            dispatch('loadActivities')
+      dateRef.push(payload)
+        .then(resp => {
+          dispatch('loadActivities')
+          Toast.create({
+            html: 'create succeded!',
+            color: 'positive',
+            icon: 'check',
+            bgColor: 'white',
+            timeout: 3000
           })
-          .catch(error => {
-            reject(error)
-            console.log('act not created: ', error)
+        })
+        .catch(error => {
+          console.log(error)
+          Toast.create.negative({
+            html: 'An error occured!'
           })
-      })
+        })
     },
     loadActivities ({ commit, getters }) {
+      commit('setLoading', true)
       const userId = getters.user.id
       console.log('userId: ', userId)
       const date = '2018-01-'
@@ -69,7 +51,7 @@ export default {
       const allActivities = []
       actRef.once('value')
         .then(snap => {
-          console.log('api activities: ', snap.val())
+          // console.log('api activities: ', snap.val())
           const dataObj = snap.val()
           for (const key in dataObj) {
             if (dataObj.hasOwnProperty(key)) {
@@ -80,61 +62,57 @@ export default {
               })
             }
           }
-          console.log('all activities: ', allActivities)
+          // console.log('all activities: ', allActivities)
           commit('setActivities', allActivities)
+          commit('setLoading', false)
+        })
+        .catch(error => {
+          console.log('error loading activities: ', error)
+          commit('setLoading', false)
         })
     },
     deleteActivity ({commit, getters, dispatch}, payload) {
-      return new Promise((resolve, reject) => {
-        const userId = getters.user.id
-        const actId = payload.id
-        const actRef = firebase.database().ref(`activities/${userId}`)
-        actRef.child(actId).remove()
-          .then(data => {
-            console.log('delete complete')
-            resolve('done')
-            Alert.create({
-              html: 'Delete succeded!',
-              color: 'warning',
-              icon: 'check',
-              position: 'top-right',
-              dismissable: true,
-              enter: 'bounceInRight',
-              leave: 'bounceOutRight'
-            })
-            dispatch('loadActivities')
+      commit('setLoading', true)
+      const userId = getters.user.id
+      const actId = payload.id
+      const actRef = firebase.database().ref(`activities/${userId}`)
+      actRef.child(actId).remove()
+        .then(data => {
+          console.log('delete complete')
+          Toast.create.warning({
+            html: 'Log deleted!',
+            icon: 'close',
+            timeout: 3000
           })
-          .catch(error => {
-            reject(error)
-            console.log(error)
-          })
-      })
+          commit('setLoading', false)
+          dispatch('loadActivities')
+        })
+        .catch(error => {
+          console.log(error)
+          commit('setLoading', false)
+        })
     },
     updateActivity ({commit, getters, dispatch}, payload) {
+      commit('setLoading', true)
       const userId = getters.user.id
       const actId = payload.id
       const {id, ...rest} = payload
       const actRef = firebase.database().ref(`activities/${userId}`)
-      return new Promise((resolve, reject) => {
-        actRef.child(actId).update(rest)
-          .then(() => {
-            resolve('done')
-            Alert.create({
-              html: 'Update succeded!',
-              color: 'lime',
-              icon: 'check',
-              position: 'top-left',
-              dismissable: true,
-              enter: 'bounceInRight',
-              leave: 'bounceOutRight'
-            })
-            dispatch('loadActivities')
+      actRef.child(actId).update(rest)
+        .then(() => {
+          Toast.create({
+            html: 'Update succeded!',
+            color: 'positive',
+            icon: 'check',
+            bgColor: 'white',
+            timeout: 3000
           })
-          .catch(error => {
-            console.log(error)
-            reject(error)
-          })
-      })
+          dispatch('loadActivities')
+          commit('setLoading', false)
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
     loadSingleActivity ({ commit, getters }, payload) {
       commit('setLoading', true)

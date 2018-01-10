@@ -1,5 +1,4 @@
 ## to do list
-1. autoclosable alerts
 3. month filert, year
 8. form validation
 11. theming
@@ -17,3 +16,5 @@
   // auth/wrong-password
 25. visibility bar color
 26. settings with choose language support
+27. splash screens
+28. screenshots

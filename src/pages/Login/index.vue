@@ -23,10 +23,10 @@
       q-card-actions
         q-btn.on-right(flat big color="lime-8" @click="login") Login
 
-    q-toolbar(slot="footer" color="green-5" @click="$router.replace(registerUrl)")
-      q-toolbar-title Or create an account
-      q-btn(round color="green-6" icon="keyboard_arrow_right"
-            @click="$router.replace(registerUrl)")
+    q-toolbar(slot="footer" color="green-5")
+      q-toolbar-title(@click="$router.replace(registerUrl)") Or create an account
+      q-btn(round color="green-9" icon="keyboard_arrow_right"
+            @click="login")
 </template>
 <script>
 import { registerPath, homePath } from '../../config'
@@ -54,12 +54,13 @@ export default {
       if (this.queryMsg === 'noToken') {
         Toast.create.negative({
           html: 'Please login first!',
-          timeout: 4000
+          timeout: 4100
         })
       }
       else if (this.queryMsg === 'goodbye') {
         Toast.create.info('See you next time.')
       }
+      this.$router.replace(this.$route.path)
     },
     login () {
       console.log('login...')
