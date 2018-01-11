@@ -2,6 +2,7 @@ import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/database'
 import 'firebase/storage'
+import { isEmpty } from 'js_config'
 import { Alert } from 'quasar'
 
 export default {
@@ -33,7 +34,8 @@ export default {
             lastSignIn: data.metadata.lastSignInTime,
             photoUrl: data.photoURL,
             phoneNumber: data.phoneNumber,
-            id: data.uid
+            id: data.uid,
+            userDetails: false
           }
           firebase.database().ref('users/' + data.uid).set({
             first_name: payload.first_name,
@@ -66,7 +68,8 @@ export default {
               lastSignIn: data.metadata.lastSignInTime,
               photoUrl: data.photoURL,
               phoneNumber: data.phoneNumber,
-              id: data.uid
+              id: data.uid,
+              userDetails: false
             }
             resolve(formatUser)
             dispatch('getUserDetails', formatUser)
@@ -85,13 +88,16 @@ export default {
         lastSignIn: user.metadata.lastSignInTime,
         photoUrl: user.photoURL,
         phoneNumber: user.phoneNumber,
-        id: user.uid
+        id: user.uid,
+        userDetails: false
       }
-      console.log('autoSigning in...', formatUser.id)
+      console.log('autoSigning user:', formatUser)
       commit('setLoading', true)
       dispatch('getUserDetails', formatUser)
     },
-    getUserDetails ({ commit }, payload) {
+    getUserDetails ({ commit, dispatch }, payload) {
+      console.log('getting user details. userId: ', payload.id)
+      console.log('navigator online: ', navigator.onLine)
       let userDetails = {}
       firebase.database().ref(`users/${payload.id}`).once('value')
         .then(data => {
@@ -99,7 +105,8 @@ export default {
           if (result) {
             userDetails = {
               ...result,
-              ...payload
+              ...payload,
+              userDetails: true
             }
           }
           else {
@@ -113,9 +120,16 @@ export default {
           commit('setLoading', false)
         })
         .catch(error => {
-          console.log(error)
+          console.log('error getting user details', error)
           commit('setLoading', false)
         })
+      setTimeout(() => {
+        console.log('isEmpty user 5s: ', isEmpty(userDetails))
+        if (isEmpty(userDetails)) {
+          dispatch('checkInternetConnection')
+          commit('setLoading', false)
+        }
+      }, 10000)
     },
     uploadAvatar ({ commit, getters, dispatch }, file) {
       const user = firebase.auth().currentUser

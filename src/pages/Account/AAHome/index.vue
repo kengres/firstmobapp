@@ -50,6 +50,16 @@
                       q-item(@click="deleteActivity(item), $refs[`popover${item.id}`][0].close()")
                         q-icon(name="delete")
                         q-item-tile Delete
+        q-list.absolute-center(no-border style="width: 80%" v-else-if="!netWorkConnection")
+          q-list-header
+            h5.text-warning
+              q-icon(name="error")
+              span.on-right An Error occured!
+          q-item
+            q-item-main
+              q-item-tile
+                p.on-right Please Check your internet connection!.
+          
         q-list(no-border v-else)
           q-list-header
             h5 Please add new work logs.
@@ -173,7 +183,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['user', 'loading', 'activities', 'singleActivity']),
+    ...mapGetters(['user', 'loading', 'activities', 'singleActivity', 'netWorkConnection']),
     queryMsg () {
       return this.$route.query ? (this.$route.query.msg ? this.$route.query.msg : null) : null
     },
@@ -202,8 +212,7 @@ export default {
         })
     },
     testActi () {
-      console.log('testing acti...')
-      this.$store.dispatch('loadActivities')
+      console.log('connected? : ', this.netWorkConnection)
     },
     closeEditModal (payload) {
       console.log('closing edit modal...: ', payload)

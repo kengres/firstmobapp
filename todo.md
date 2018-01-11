@@ -2,7 +2,6 @@
 3. month filert, year
 8. form validation
 11. theming
-12. custom pause duration input
 13. write data offline
 15. access to files and camera
 16. swipe right and left
@@ -18,3 +17,6 @@
 26. settings with choose language support
 27. splash screens
 28. screenshots
+30. check internet connection wher signin user in
+31. fix average
+32. form auto complete from template settings

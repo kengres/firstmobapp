@@ -27,13 +27,7 @@ export default {
       dateRef.push(payload)
         .then(resp => {
           dispatch('loadActivities')
-          Toast.create({
-            html: 'create succeded!',
-            color: 'positive',
-            icon: 'check',
-            bgColor: 'white',
-            timeout: 3000
-          })
+          Toast.create.positive('create succeded!')
         })
         .catch(error => {
           console.log(error)
@@ -79,16 +73,13 @@ export default {
       actRef.child(actId).remove()
         .then(data => {
           console.log('delete complete')
-          Toast.create.warning({
-            html: 'Log deleted!',
-            icon: 'close',
-            timeout: 3000
-          })
+          Toast.create.positive('Log deleted!')
           commit('setLoading', false)
           dispatch('loadActivities')
         })
         .catch(error => {
           console.log(error)
+          Toast.create.negative('Could not delete!')
           commit('setLoading', false)
         })
     },
@@ -100,17 +91,12 @@ export default {
       const actRef = firebase.database().ref(`activities/${userId}`)
       actRef.child(actId).update(rest)
         .then(() => {
-          Toast.create({
-            html: 'Update succeded!',
-            color: 'positive',
-            icon: 'check',
-            bgColor: 'white',
-            timeout: 3000
-          })
+          Toast.create.positive('Update succeded!')
           dispatch('loadActivities')
           commit('setLoading', false)
         })
         .catch(error => {
+          Toast.create.negative('Could not update!')
           console.log(error)
         })
     },
