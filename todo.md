@@ -18,5 +18,5 @@
 27. splash screens
 28. screenshots
 30. check internet connection wher signin user in
-31. fix average
 32. form auto complete from template settings
+33. animations

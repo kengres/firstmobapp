@@ -25,8 +25,8 @@ export default {
   data () {
     return {
       week: {
-        min: 30,
-        max: 70
+        min: 36,
+        max: 45
       },
       options: {
         responsive: true,
@@ -67,7 +67,7 @@ export default {
       return this.activities.length
     },
     average () {
-      return this.total / this.len
+      return Math.ceil(this.total / this.len)
     },
     dynamicChartData () {
       const labels = []

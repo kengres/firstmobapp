@@ -16,6 +16,8 @@ $ quasar build
 
 # lint code
 $ quasar lint
+
+$ cls; cd ..; quasar build; cd cordova; cordova run android --device
 ```
 
 ## building for release

@@ -126,7 +126,7 @@ export default {
       setTimeout(() => {
         console.log('isEmpty user 5s: ', isEmpty(userDetails))
         if (isEmpty(userDetails)) {
-          dispatch('checkInternetConnection')
+          // dispatch('checkInternetConnection')
           commit('setLoading', false)
         }
       }, 10000)

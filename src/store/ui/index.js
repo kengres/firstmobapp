@@ -3,13 +3,15 @@ export default {
     isEditMode: false,
     avatarModalOpen: false,
     profileUpdated: '',
-    netWorkConnection: false
+    netWorkConnection: false,
+    deviceReady: false
   },
   getters: {
     isEditMode: state => state.isEditMode,
     avatarModalOpen: state => state.avatarModalOpen,
     profileUpdated: state => state.profileUpdated,
-    netWorkConnection: state => state.netWorkConnection
+    netWorkConnection: state => state.netWorkConnection,
+    deviceReady: state => state.deviceReady
   },
   mutations: {
     setEditMode (state, payload) {
@@ -23,6 +25,9 @@ export default {
     },
     setNetWorkConnection (state, payload) {
       state.netWorkConnection = payload
+    },
+    setdeviceready (state) {
+      state.deviceReady = true
     }
   },
   actions: {
@@ -31,6 +36,9 @@ export default {
     },
     setAvatarModalOpen ({ commit }, payload) {
       commit('setAvatarModalOpen', payload)
+    },
+    setdeviceready ({ commit }) {
+      commit('setdeviceready')
     },
     checkInternetConnection ({ commit }, payload) {
       const networkState = navigator.connection.type

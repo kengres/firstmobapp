@@ -1,7 +1,7 @@
 <template lang="pug">
   q-layout(ref="homeLayout" view="hHh lpr lfr")
     q-toolbar(slot="header" color="green-8")
-      q-btn(flat v-go-back="homeUrl")
+      q-btn(flat @click="$router.push({path: homeUrl})")
         q-icon(name="arrow_back")
       q-toolbar-title {{ $route.meta.title }}
       

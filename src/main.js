@@ -113,7 +113,7 @@ import 'quasar-extras/material-icons'
 import 'quasar-extras/animate'
 
 Quasar.start(() => {
-  /* eslint-disable no-new */
+  /* eslint-disable no-new, no-undef */
   new Vue({
     el: '#q-app',
     store,
