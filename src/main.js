@@ -118,18 +118,6 @@ Quasar.start(() => {
     el: '#q-app',
     store,
     router,
-    render: h => h(require('./App').default),
-    created () {
-      console.log('app created...')
-      this.$auth.firebaseInit()
-      this.$auth.getUser()
-        .then(user => {
-          console.log('app getting user...: ', user)
-          this.$store.dispatch('autoSignIn', user)
-        })
-        .catch(error => {
-          console.log('app user error: ', error)
-        })
-    }
+    render: h => h(require('./App').default)
   })
 })

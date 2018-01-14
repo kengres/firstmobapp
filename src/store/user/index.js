@@ -11,15 +11,14 @@ export default {
     userPhotoUrl: null
   },
   getters: {
-    user: state => state.user,
-    userPhotoUrl: state => state.userPhotoUrl
+    user: state => state.user
   },
   mutations: {
     setUser (state, payload) {
       state.user = payload
     },
     previewAvatar (state, url) {
-      state.userPhotoUrl = url
+      state.user.photoUrl = url
     }
   },
   actions: {
@@ -132,32 +131,37 @@ export default {
       }, 10000)
     },
     uploadAvatar ({ commit, getters, dispatch }, file) {
+      console.log('file: ', file)
       const user = firebase.auth().currentUser
       console.log('current user: ', user)
       const userId = getters.user.id
-      const name = file.name
-      const fileName = `avatar${name.slice(name.lastIndexOf('.'))}`
+      const ext = file.substring('data:image/'.length, file.indexOf(';base64'))
+      console.log('ext: ', ext)
+      const hash = Date.now()
+      const fileName = `avatar${hash}.${ext}`
+      console.log('fileName: ', fileName)
       const fileRef = firebase.storage().ref(`userAvatars/${userId}/${fileName}`)
-      fileRef.put(file)
+      fileRef.putString(file, 'data_url')
         .then(fileData => {
           const avatarUrl = fileData.downloadURL
           user.updateProfile({
             photoURL: avatarUrl
           })
             .then(() => {
-              dispatch('setAvatarModalOpen', false)
               commit('previewAvatar', avatarUrl)
             })
             .catch(error => console.log('update error: ', error))
           console.log(fileData)
           console.log(avatarUrl)
         })
+        .catch(error => console.log('error avatar: ', error))
     },
     updateUserProfile ({ commit, getters, dispatch }, payload) {
+      console.log('payload: ', payload)
+      dispatch('uploadAvatar', payload.data.file)
       const userId = getters.user.id
       const user = firebase.auth().currentUser
       console.log(user, userId)
-      console.log('payload: ', payload)
       if (payload.values.indexOf('email') !== -1) {
         user.updateEmail(payload.data.email)
           .then(() => {

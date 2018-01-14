@@ -25,6 +25,9 @@ $ cls; cd ..; quasar build; cd cordova; cordova run android --device
 # adding a platform
 cordova platform add android
 
+# chrome debugging
+adb forward tcp:9222 localabstract:chrome_devtools_remote
+
 # check requirements
 cordova requirements
 

@@ -21,40 +21,11 @@ Vue.use(Router)
 export const routes = [
   {
     path: nav.landingUrl,
-    component: Landing,
-    beforeEnter: (to, from, next) => {
-      console.log('entering landing...')
-      Vue.auth.getUser()
-        .then(user => {
-          console.log('got user before landing... push to account')
-          router.push({
-            path: nav.homeUrl
-          })
-        })
-        .catch(error => {
-          console.log('landing route user error...', error)
-          next()
-        })
-    }
+    component: Landing
   },
   {
     path: nav.loginUrl,
-    component: Login,
-    beforeEnter: (to, from, next) => {
-      // console.log('entering login...')
-      Vue.auth.getUser()
-        .then(user => {
-          router.push({
-            path: nav.homeUrl,
-            query: {
-              msg: 'inSession'}
-          })
-        })
-        .catch(error => {
-          console.log('you R not logged in...', error)
-          next()
-        })
-    }
+    component: Login
   },
   {
     path: nav.registerUrl,
@@ -63,23 +34,6 @@ export const routes = [
   {
     path: nav.homeUrl,
     component: Layout,
-    beforeEnter: (to, from, next) => {
-      // dont chech if from landing
-      // console.log(from, to)
-      Vue.auth.getUser()
-        .then(user => {
-          next()
-        })
-        .catch(error => {
-          console.log('no logged in my friend.', error)
-          router.push({
-            path: nav.loginUrl,
-            query: {
-              msg: 'noToken'
-            }
-          })
-        })
-    },
     children: [
       {
         path: nav.homeUrl,

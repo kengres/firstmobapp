@@ -2,14 +2,13 @@
   q-card(v-if="user")
     q-card-media.bg-lime-8
       .profile
-        img.profile_image(:src="userPhotoUrl" v-if="userPhotoUrl")
+        img.profile_image(:src="imageSrc" v-if="imageSrc")
         .profile_noimage.bg-green(v-else)
           span.absolute-center.text-white {{ user.first_name | firstLetter }} {{ user.last_name | firstLetter}}
       .text-center.text-white
-        q-btn(flat @click="openModalAvatar") change avatar
-        q-btn(flat @click="openCamera") open camera
+        q-btn(flat @click="openCamera") Take Picture
+        q-btn(flat @click="openLibrary") choose picture
     q-card-main
-      img.profile_image(:src="uploadUrl" v-if="uploadUrl")
       q-field()
         q-input(v-model="userForm.first_name" float-label="First Name")
       q-field()
@@ -24,22 +23,20 @@
       q-btn.on-right(outline color="green" icon-right="check" @click="updateUser") save
       q-btn.on-right(outline color="warning" icon-right="close" @click="cancelEdit") cancel
     
-    q-modal(ref="avatarModal" v-model="avatarModalOpen" position="bottom"
-            :content-css="{padding: '20px', width: '100vw'}")
-      input(type="file" @change="handleChange" @click.prevent="uploadFile")
-      q-btn.float-right(round icon="cloud" color="green" @click="uploadAvatar")
+    
   q-card.fixed-center(v-else)
     q-card-title Loading...
 </template>
 <script>
 /* eslint-disable no-undef, no-unused-vars */
 import { mapGetters } from 'vuex'
-import { QUploader, Toast } from 'quasar'
+import { Toast } from 'quasar'
 const setOptions = (srcType) => {
   const options = {
     // Some common settings are 20, 50, and 100
     quality: 50,
     destinationType: Camera.DestinationType.FILE_URI,
+    // destinationType: Camera.DestinationType.DATA_URL,
     // In this app, dynamically set the picture source, Camera or photo gallery
     sourceType: srcType,
     encodingType: Camera.EncodingType.JPEG,
@@ -52,18 +49,14 @@ const setOptions = (srcType) => {
 export default {
   data () {
     return {
-      avatar: '',
-      imageSrc: false,
+      imageSrc: '',
+      file: null,
       userForm: {
         first_name: '',
         last_name: '',
         email: ''
-      },
-      uploadUrl: ''
+      }
     }
-  },
-  components: {
-    QUploader
   },
   created () {
     this.updateForm()
@@ -76,33 +69,18 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['user', 'avatarModalOpen', 'userPhotoUrl', 'profileUpdated'])
+    ...mapGetters(['user', 'avatarModalOpen', 'profileUpdated'])
   },
   methods: {
-    uploadFile () {
-      console.log('clicked the input')
-      window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, (fs) => {
-        alert('file system open: ' + fs.name)
-        const fileName = 'kengres.txt'
-        const dirEntry = fs.root
-        dirEntry.getFile(fileName, {
-          create: true,
-          exclusive: false
-        }, (fileEntry) => {
-          // Write something to the file before uploading it.
-          this.writeFile(fileEntry)
-        }, () => alert('error reading file'))
-      }, () => alert('error loading'))
-    },
     writeFile (fileEntry, dataObj) {
       // Create a FileWriter object for our FileEntry (log.txt).
       fileEntry.createWriter(function (fileWriter) {
         fileWriter.onwriteend = function () {
-          alert('Successful file write...')
+          console.log('Successful file write...')
           this.upload(fileEntry)
         }
         fileWriter.onerror = function (e) {
-          alert('Failed file write: ' + e.toString())
+          console.log('Failed file write: ' + e.toString())
         }
         if (!dataObj) {
           dataObj = new Blob(['file data to upload'], { type: 'text/plain' })
@@ -114,12 +92,12 @@ export default {
       // !! Assumes variable fileURL contains a valid URL to a text file on the device,
       const fileURL = fileEntry.toURL()
       const success = function (r) {
-        alert('Successful upload...')
-        alert('Code = ' + r.responseCode)
+        console.log('Successful upload...')
+        console.log('Code = ' + r.responseCode)
         // displayFileData(fileEntry.fullPath + ' (content uploaded to server)')
       }
       const fail = function (error) {
-        alert('An error has occurred: Code = ' + error.code)
+        console.log('An error has occurred: Code = ' + error.code)
       }
       const options = new FileUploadOptions()
       options.fileKey = 'file'
@@ -138,6 +116,7 @@ export default {
       console.log('update form... ', this.user)
       this.userForm.first_name = this.user.first_name
       this.userForm.last_name = this.user.last_name
+      this.imageSrc = this.user.photoUrl
       // this.userForm.userName = this.user.userName ? this.user.userName : ''
       this.userForm.email = this.user.email
     },
@@ -145,8 +124,10 @@ export default {
       this.$store.dispatch('setEditMode', false)
     },
     updateUser () {
-      console.log(this.userForm)
-      const data = this.userForm
+      console.log('userform: ', this.userForm)
+      console.log('image src: ', this.imageSrc)
+      console.log('image file: ', this.file)
+      let data = this.userForm
       for (const input in data) {
         if (data.hasOwnProperty(input)) {
           const element = data[input]
@@ -154,6 +135,12 @@ export default {
             this.notifyMsg('No empty fields allowed!')
             return
           }
+        }
+      }
+      if (this.imageSrc) {
+        data = {
+          file: this.file,
+          ...data
         }
       }
       let canSave = false
@@ -172,50 +159,75 @@ export default {
       console.log('can save: ', canSave)
       console.log('changed values: ', changedValues)
       if (canSave) {
-        this.$store.dispatch('updateUserProfile', {data: this.userForm, values: changedValues})
+        this.$store.dispatch('updateUserProfile', {data, values: changedValues})
       }
     },
-    openModalAvatar () {
-      this.$store.dispatch('setAvatarModalOpen', true)
-    },
-    openCamera () {
-      alert('taking a picture')
+    openCamera (selection) {
+      console.log('picture selection: ', selection)
       const srcType = Camera.PictureSourceType.CAMERA
-      alert('srcType' + srcType.toString())
+      console.log('srcType' + srcType.toString())
       const options = setOptions(srcType)
-      alert('options' + JSON.stringify(options))
-      const func = createNewFileEntry
-      navigator.camera.getPicture((imageUri) => {
-        alert('image uri: ' + imageUri)
-        this.uploadUrl = imageUri
-        // You may choose to copy the picture, save it somewhere, or upload.
-        func(imageUri)
-        alert('image uri: ' + imageUri.toString())
-      }, (error) => {
-        alert('Unable to obtain picture: ' + error.toString())
-      }, options)
-      this.$cordova.camera.getPicture((imageUri) => {
-        alert('vue image uri: ' + imageUri)
-        this.uploadUrl = imageUri
-        // You may choose to copy the picture, save it somewhere, or upload.
-        func(imageUri)
-        alert('vue image uri: ' + imageUri.toString())
-      }, (error) => {
-        alert('Unable to obtain picture: ' + error.toString())
-      }, options)
-    },
-    handleChange (e) {
-      const file = e.target.files[0]
-      this.avatar = file
-      console.log('file changed...', file)
-    },
-    uploadAvatar () {
-      if (!this.avatar) {
-        console.log('no file choose...')
-        return
+      console.log('options' + JSON.stringify(options))
+      // const func = createNewFileEntry
+      if (selection === 'camera-thmb') {
+        options.targetHeight = 130
+        options.targetWidth = 130
       }
-      console.log(this.avatar)
-      this.$store.dispatch('uploadAvatar', this.avatar)
+      navigator.camera.getPicture((imageUri) => {
+        console.log('imageUri: ', imageUri)
+        this.imageSrc = imageUri
+        this.getFileContentAsBase64(imageUri)
+        // this.createNewFileEntry(imageUri)
+        // You may choose to copy the picture, save it somewhere, or upload.
+      }, (error) => {
+        console.log('Unable to obtain picture: ' + error.toString())
+      }, options)
+    },
+    openLibrary (selection) {
+      const srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM
+      const options = setOptions(srcType)
+      console.log('options' + JSON.stringify(options))
+      // const func = createNewFileEntry
+      if (selection === 'picker-thmb') {
+        options.targetHeight = 130
+        options.targetWidth = 130
+      }
+      navigator.camera.getPicture((imageUri) => {
+        console.log('imageUri: ', imageUri)
+        this.imageSrc = imageUri
+        this.getFileContentAsBase64(imageUri)
+      }, (error) => {
+        console.log('Unable to obtain picture: ' + error.toString())
+      }, options)
+    },
+    getFileContentAsBase64 (path) {
+      window.resolveLocalFileSystemURL(path, success, fail)
+      const vm = this
+      function fail (e) {
+        console.log('Cannot found requested file: ', e)
+      }
+      function success (fileEntry) {
+        fileEntry.file(function (file) {
+          const reader = new FileReader()
+          reader.onloadend = function (e) {
+            const content = this.result
+            console.log('content, e: ', content, e)
+            vm.file = content
+          }
+          reader.readAsDataURL(file)
+        })
+      }
+    },
+    createNewFileEntry (imgUri) {
+      window.resolveLocalFileSystemURL(cordova.file.cacheDirectory, function success (dirEntry) {
+        // JPEG file
+        dirEntry.getFile('tempFile.jpeg', { create: true, exclusive: false }, function (fileEntry) {
+          // Do something with it, like write to it, upload it, etc.
+          // writeFile(fileEntry, imgUri);
+          console.log('got file: ' + fileEntry.fullPath)
+          // displayFileData(fileEntry.fullPath, 'File copied to')
+        }, (error) => console.log('error creating file', error))
+      }, (error) => console.log('error resolving url', error))
     },
     notifyMsg (msg) {
       Toast.create.warning({

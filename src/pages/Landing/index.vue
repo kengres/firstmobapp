@@ -11,17 +11,15 @@
             .component
               .component_inner
                 component(:is="slide.comp")
-            .carousel_actionBtn(v-if="showButtons")
-              .carousel_actionBtn--inner.row.now-wrap.justify-between
-                q-btn(outline color="white" big 
-                    @click="landingSeen(); $router.push({path: loginUrl})") SignIn
-                q-btn(outline color="white" big 
-                    @click="landingSeen(); $router.push({path: registerUrl})") SignUp
+        q-fixed-position(corner="bottom-right" :offset="[18, 18]")
+          q-btn(color="green-10" big round icon="keyboard_arrow_right"
+              @click="landingSeen(); $router.push({path: homeUrl})")
+                
         
       
 </template>
 <script>
-import { loginPath, registerPath } from 'js_config'
+import { homePath, registerPath } from 'js_config'
 import { LocalStorage } from 'quasar'
 import SlideOne from './slide1'
 import SlideTwo from './slide2'
@@ -53,7 +51,7 @@ export default {
           comp: 'SlideThree'
         }
       ],
-      loginUrl: loginPath,
+      homeUrl: homePath,
       registerUrl: registerPath
     }
   },
@@ -69,7 +67,7 @@ export default {
     }
     else if (this.seenLanding) {
       this.$router.push({
-        path: this.loginUrl
+        path: this.homeUrl
       })
     }
   },

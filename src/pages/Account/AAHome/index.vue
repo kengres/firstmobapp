@@ -50,15 +50,7 @@
                       q-item(@click="deleteActivity(item), $refs[`popover${item.id}`][0].close()")
                         q-icon(name="delete")
                         q-item-tile Delete
-        q-list.absolute-center(no-border style="width: 80%" v-else-if="!netWorkConnection")
-          q-list-header
-            h5.text-warning
-              q-icon(name="error")
-              span.on-right An Error occured!
-          q-item
-            q-item-main
-              q-item-tile
-                p.on-right Please Check your internet connection!.
+        
           
         q-list(no-border v-else)
           q-list-header
@@ -105,8 +97,15 @@
       q-fixed-position(corner="bottom-right" :offset="[20, 10]")
         q-btn(round color="primary" @click="addNewOpen = true" icon="add")
 
-      q-fixed-position(corner="bottom-left" :offset="[20, 20]" v-if="!isProduction")
-        q-btn(round color="primary" icon="check" @click="testActi")
+      q-fixed-position(corner="bottom-left" :offset="[20, 20]")
+        q-btn(round color="primary" icon="fiber_new" @click="createDb")
+
+      q-fixed-position(corner="bottom-left" :offset="[80, 20]")
+        q-btn(round color="primary" @click="readTable" icon="chrome_reader_mode")
+
+      q-fixed-position(corner="bottom-left" :offset="[150, 20]")
+        q-btn(round color="primary" @click="addData" icon="face")
+
       
       //- footers
       q-toolbar(slot="footer" color="green-10" v-if="selectedTab === 'tab-shifts'")
@@ -160,10 +159,7 @@ export default {
     QTab
   },
   created () {
-    console.log('home is created..', this.user)
-    if (this.user) {
-      this.fetchData()
-    }
+    console.log('home is created..')
     this.welcomeMessage()
   },
   watch: {
@@ -205,14 +201,38 @@ export default {
     }
   },
   methods: {
-    logout () {
-      this.$auth.logUserOut()
-        .then(() => {
-          this.$router.push(loginPath)
-        })
+    createDb () {
+      const openReq = window.indexedDB.open('newdemo', 1)
+      openReq.onupgradeneeded = function (event) {
+        const db = event.target.result
+        db.createObjectStore('activities', {autoIncrement: true})
+      }
+      openReq.onsuccess = function (event) {
+        const db = event.target.result,
+          activity = {
+            start: '10:00',
+            end: '19:00',
+            date: new Date(),
+            pause: 40
+          }
+        this.addData(activity)
+      }
+      openReq.onerror = function (event) {
+        console.log('Operation failed')
+      }
     },
-    testActi () {
-      console.log('connected? : ', this.netWorkConnection)
+    readTable () {
+      console.log('reading table')
+    },
+    addData (activity) {
+      console.log('adding some data')
+      const addReq = db.transaction('activities', 'readwrite').objectStore('activities').add(activity)
+        addReq.onsuccess = function (event) {
+          console.log('Operation completed successfully')
+        }
+        addReq.onerror = function (event) {
+          console.log('Operation failed')
+        }
     },
     closeEditModal (payload) {
       console.log('closing edit modal...: ', payload)
