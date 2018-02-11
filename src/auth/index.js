@@ -40,7 +40,7 @@ export default (Vue) => {
             resolve('done')
           })
           .catch(error => {
-            console.log('sing out error: ', error)
+            // console.log('sing out error: ', error)
             reject(error)
           })
       })
